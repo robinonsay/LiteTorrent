@@ -5,3 +5,4 @@ peer
 tracker
 logs/*
 trrnt-files/*
+output/*
