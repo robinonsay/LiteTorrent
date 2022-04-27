@@ -2,9 +2,9 @@
 BUILD_DIR ?= ./build
 
 SRCS := errors.cpp
-SRCS_tracker := $(SRCS) tracker.cpp
+SRCS_tracker := $(SRCS) tracker-main.cpp tracker.cpp
 OBJS_tracker := $(SRCS_tracker:%=$(BUILD_DIR)/%.o)
-SRCS_peer:= $(SRCS) peer.cpp
+SRCS_peer:= $(SRCS) peer-main.cpp peer.cpp
 OBJS_peer := $(SRCS_peer:%=$(BUILD_DIR)/%.o)
 
 CXXFLAGS := -g -Wall
