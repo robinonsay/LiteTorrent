@@ -1,12 +1,13 @@
 #ifndef TRACKER_H
 #define TRACKER_H
 
+#include "btldefs.h"
+
 #include <fstream>
 #include <list>
 #include <netinet/in.h>
 
-#define PORT 6969
-#define CHUNK_SIZE 512000
+
 
 typedef struct sockaddr_in IP_ADDR;
 

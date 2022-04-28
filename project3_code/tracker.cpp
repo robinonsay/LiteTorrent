@@ -1,5 +1,6 @@
 #include "tracker.h"
 #include "crc32.h"
+#include "btldefs.h"
 
 #include <string>
 #include <fstream>
