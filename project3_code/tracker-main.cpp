@@ -1,4 +1,5 @@
 #include "errors.h"
+#include "tracker.h"
 
 #include <fstream>
 #include <stdio.h>
@@ -16,6 +17,7 @@ int main(int argc, char *argv[]){
     std::ifstream *inFile;
     std::ofstream *tFile;
     std::ofstream *log;
+    Tracker *trackerServer = NULL;
     if(argc != MIN_ARGS){
         printf("Invalid Arguments\nUsage:\n./tracker <peers-list> <input-file> <torrent-file> <log>\n");
         exit(1);
@@ -51,10 +53,14 @@ int main(int argc, char *argv[]){
         printf("Log file could not be opened. Check path\n");
         fstreamOpen = false;
     }
+    if(fstreamOpen){
+        trackerServer = new Tracker(peersList, inFile, tFile, log);
+    }
     peersList->close();
     inFile->close();
     tFile->close();
     log->close();
+    delete trackerServer;
     delete peersList;
     delete inFile;
     delete tFile;
