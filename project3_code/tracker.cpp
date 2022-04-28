@@ -1,4 +1,5 @@
 #include "tracker.h"
+#include "crc32.h"
 
 #include <string>
 #include <fstream>
@@ -11,6 +12,8 @@ Tracker::Tracker(std::ifstream *pListFile, std::ifstream *inFile,
     int status;
     std::string ip_str;
     IP_ADDR peer_addr;
+    CHUNK chunk;
+    char chunkBuff[CHUNK_SIZE];
     peer_addr.sin_family = AF_INET;
     peer_addr.sin_port = htons(PORT);
     while(!pListFile->eof()){
@@ -25,6 +28,20 @@ Tracker::Tracker(std::ifstream *pListFile, std::ifstream *inFile,
     *tFile << this->ipAddrs.size() << std::endl;
     for(std::list<IP_ADDR>::iterator it=this->ipAddrs.begin(); it != this->ipAddrs.end(); ++it){
         *tFile << inet_ntoa(it->sin_addr) << std::endl;
+    }
+    for(int i=0; !inFile->eof(); i++){
+        inFile->read(chunkBuff, CHUNK_SIZE);
+        if(inFile->fail() && !inFile->eof()){
+            fprintf(stderr, "ERROR could not read input file\n");
+            exit(1);
+        }
+        chunk.index = i;
+        chunk.hash = crc32(chunkBuff, CHUNK_SIZE);
+        this->chunks.push_back(chunk);
+    }
+    *tFile << this->chunks.size() << std::endl;
+    for(std::list<CHUNK>::iterator it=this->chunks.begin(); it != this->chunks.end(); ++it){
+        *tFile << it->index << ' ' << it->hash << std::endl;
     }
 }
 
