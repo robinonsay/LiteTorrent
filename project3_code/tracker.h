@@ -21,7 +21,7 @@ class Tracker{
         std::list<CHUNK> chunks;
     public:
         Tracker(std::ifstream *pListFile, std::ifstream *inFile,
-                std::ofstream *tFile, std::ofstream *log);
+                char *tFilePath, std::ofstream *log);
 };
 #endif
 

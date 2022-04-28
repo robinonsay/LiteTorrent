@@ -15,7 +15,6 @@ int main(int argc, char *argv[]){
     bool fstreamOpen = true;
     std::ifstream *peersList;
     std::ifstream *inFile;
-    std::ofstream *tFile;
     std::ofstream *log;
     Tracker *trackerServer = NULL;
     if(argc != MIN_ARGS){
@@ -35,7 +34,6 @@ int main(int argc, char *argv[]){
 //    }
     peersList = new std::ifstream(argv[1]);
     inFile = new std::ifstream(argv[2], std::ifstream::binary);
-    tFile = new std::ofstream(argv[3]);
     log = new std::ofstream(argv[4], std::ofstream::app);
     if(!peersList->is_open()){
         printf("Peers list file does not exist\n");
@@ -45,25 +43,19 @@ int main(int argc, char *argv[]){
         printf("Input file does not exist\n");
         fstreamOpen = false;
     }
-    if(!tFile->is_open()){
-        printf("Torrent file could not be opened. Check path\n");
-        fstreamOpen = false;
-    }
     if(!log->is_open()){
         printf("Log file could not be opened. Check path\n");
         fstreamOpen = false;
     }
     if(fstreamOpen){
-        trackerServer = new Tracker(peersList, inFile, tFile, log);
+        trackerServer = new Tracker(peersList, inFile, argv[3], log);
     }
     peersList->close();
     inFile->close();
-    tFile->close();
     log->close();
     delete trackerServer;
     delete peersList;
     delete inFile;
-    delete tFile;
     delete log;
     return 0;
 }

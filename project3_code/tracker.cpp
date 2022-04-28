@@ -8,12 +8,17 @@
 #include <arpa/inet.h>
 
 Tracker::Tracker(std::ifstream *pListFile, std::ifstream *inFile,
-                 std::ofstream *tFile, std::ofstream *log){
+                 char *tFilePath, std::ofstream *log){
     int status;
     std::string ip_str;
+    std::ofstream tFile (tFilePath, std::ofstream::out);
     IP_ADDR peer_addr;
     CHUNK chunk;
     char chunkBuff[CHUNK_SIZE];
+    if(!tFile.is_open()){
+        printf("Torrent file could not be opened. Check path\n");
+        exit(1);
+    }
     peer_addr.sin_family = AF_INET;
     peer_addr.sin_port = htons(PORT);
     while(!pListFile->eof()){
@@ -25,9 +30,9 @@ Tracker::Tracker(std::ifstream *pListFile, std::ifstream *inFile,
         }
         this->ipAddrs.push_back(peer_addr);
     }
-    *tFile << this->ipAddrs.size() << std::endl;
+    tFile << this->ipAddrs.size() << std::endl;
     for(std::list<IP_ADDR>::iterator it=this->ipAddrs.begin(); it != this->ipAddrs.end(); ++it){
-        *tFile << inet_ntoa(it->sin_addr) << std::endl;
+        tFile << inet_ntoa(it->sin_addr) << std::endl;
     }
     for(int i=0; !inFile->eof(); i++){
         inFile->read(chunkBuff, CHUNK_SIZE);
@@ -39,9 +44,10 @@ Tracker::Tracker(std::ifstream *pListFile, std::ifstream *inFile,
         chunk.hash = crc32(chunkBuff, CHUNK_SIZE);
         this->chunks.push_back(chunk);
     }
-    *tFile << this->chunks.size() << std::endl;
+    tFile << this->chunks.size() << std::endl;
     for(std::list<CHUNK>::iterator it=this->chunks.begin(); it != this->chunks.end(); ++it){
-        *tFile << it->index << ' ' << it->hash << std::endl;
+        tFile << it->index << ' ' << it->hash << std::endl;
     }
+    tFile.close();
 }
 
