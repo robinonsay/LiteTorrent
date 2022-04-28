@@ -19,9 +19,9 @@ class Tracker{
     private:
         std::list<IP_ADDR> ipAddrs;
         std::list<CHUNK> chunks;
+        std::ofstream *log;
     public:
-        Tracker(std::ifstream *pListFile, std::ifstream *inFile,
-                char *tFilePath, std::ofstream *log);
+        Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstream *log);
 };
 #endif
 

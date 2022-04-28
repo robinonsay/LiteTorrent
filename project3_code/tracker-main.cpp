@@ -12,9 +12,6 @@ int main(int argc, char *argv[]){
 //    socklen_t addrlen = sizeof(server_addr);
 //    int status, sockfd, receiverPort; 
 //    char *receiverIP;
-    bool fstreamOpen = true;
-    std::ifstream *peersList;
-    std::ifstream *inFile;
     std::ofstream *log;
     Tracker *trackerServer = NULL;
     if(argc != MIN_ARGS){
@@ -32,30 +29,14 @@ int main(int argc, char *argv[]){
 //        fprintf(stderr, "ERROR invalid IP address\n");
 //        exit(1);
 //    }
-    peersList = new std::ifstream(argv[1]);
-    inFile = new std::ifstream(argv[2], std::ifstream::binary);
     log = new std::ofstream(argv[4], std::ofstream::app);
-    if(!peersList->is_open()){
-        printf("Peers list file does not exist\n");
-        fstreamOpen = false;
-    }
-    if(!inFile->is_open()){
-        printf("Input file does not exist\n");
-        fstreamOpen = false;
-    }
-    if(!log->is_open()){
+    if(log->is_open()){
+        trackerServer = new Tracker(argv[1], argv[3], argv[2], log);
+    }else{
         printf("Log file could not be opened. Check path\n");
-        fstreamOpen = false;
     }
-    if(fstreamOpen){
-        trackerServer = new Tracker(peersList, inFile, argv[3], log);
-    }
-    peersList->close();
-    inFile->close();
     log->close();
     delete trackerServer;
-    delete peersList;
-    delete inFile;
     delete log;
     return 0;
 }
