@@ -4,16 +4,28 @@
 #include <fstream>
 #include <stdio.h>
 #include <string.h>
+#include <csignal>
 
 #define MIN_ARGS 5
+
+Tracker *trackerServer = NULL;
+std::ofstream *log = NULL;
+
+void signalHandler(int signum){
+    if(trackerServer != NULL) delete trackerServer;
+    if(log != NULL){
+        log->close();
+        delete log;
+    }
+    exit(signum);
+}
 
 int main(int argc, char *argv[]){
 //    struct sockaddr_in server_addr;
 //    socklen_t addrlen = sizeof(server_addr);
 //    int status, sockfd, receiverPort; 
 //    char *receiverIP;
-    std::ofstream *log;
-    Tracker *trackerServer = NULL;
+    signal(SIGINT, signalHandler);
     if(argc != MIN_ARGS){
         printf("Invalid Arguments\nUsage:\n./tracker <peers-list> <input-file> <torrent-file> <log>\n");
         exit(1);

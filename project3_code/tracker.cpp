@@ -1,12 +1,15 @@
 #include "tracker.h"
 #include "crc32.h"
 #include "btldefs.h"
+#include "errors.h"
 
 #include <string>
 #include <fstream>
 #include <list>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstream *log){
     int status;
@@ -31,7 +34,7 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
         exit(1);
     }
     peer_addr.sin_family = AF_INET;
-    peer_addr.sin_port = htons(PORT);
+    peer_addr.sin_port = htons(TRACKER_PORT);
     while(peersList.good()){
         peersList >> ip_str;
         status = inet_aton(ip_str.c_str(), &peer_addr.sin_addr);
@@ -60,5 +63,22 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
         tFile << it->index << ' ' << it->hash << std::endl;
     }
     tFile.close();
+    peersList.close();
+    inFile.close();
+    this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(this->sockfd < 0) sysError("ERROR opening socket");
+    memset(&this->tracker_addr, 0, sizeof(this->tracker_addr));
+    this->tracker_addr.sin_family = AF_INET;
+    this->tracker_addr.sin_port = htons(TRACKER_PORT);
+    this->tracker_addr.sin_addr.s_addr = INADDR_ANY;
+    status = bind(this->sockfd, (struct sockaddr *) &this->tracker_addr, sizeof(this->tracker_addr));
+    if(status < 0) sysError("ERROR on binding");
 }
+
+Tracker::~Tracker(){
+    if(close(this->sockfd) < 0) sysError("ERROR closing socket");
+    printf("\nTracker Server Closed\n");
+}
+
+
 
