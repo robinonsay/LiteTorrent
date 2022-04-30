@@ -28,5 +28,10 @@ typedef struct Packet{
     char payload[CHUNK_SIZE];
 } PACKET;
 
+typedef struct chunk{
+    unsigned int index;
+    uint32_t hash;
+} CHUNK;
+
 #endif
 

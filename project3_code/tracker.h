@@ -11,10 +11,7 @@
 #define TIMEOUT_ms 60000
 
 
-typedef struct chunk{
-    unsigned int index;
-    uint32_t hash;
-} CHUNK;
+
 
 class Tracker{
     private:
