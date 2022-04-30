@@ -97,10 +97,10 @@ void Tracker::run(){
     cliAddrLen = sizeof(cliAddr);
     status = listen(this->sockfd, BACKLOG_QUEUE_SIZE);
     if(status < 0) sysError("ERROR on listen");
+    printf("Listening on port %d\n", TRACKER_PORT);
     while(1){
         connSockfd = accept(this->sockfd, (struct sockaddr *) &cliAddr, (socklen_t *) &cliAddrLen);
         if(connSockfd < 0) sysError("ERROR accepting connection");
-        printf("Accepting connection from %s\n", inet_ntoa(cliAddr.sin_addr));
         this->threads.push_back(std::thread(&Tracker::connHandler, this, connSockfd, cliAddr));
     }
 }
@@ -115,6 +115,7 @@ void Tracker::connHandler(int sockfd, IP_ADDR cliAddr){
     pfds[0].fd = sockfd;
     pfds[0].events = POLLIN;
     memset((char *) &recvHeader, 0, sizeof(recvHeader));
+    printf("Accepting connection from %s\n", inet_ntoa(cliAddr.sin_addr));
     while(!(timeout || recvPkt)){
         numEvents = poll(pfds, SIZE, TIMEOUT_ms);
         if(numEvents < 0){
@@ -130,10 +131,12 @@ void Tracker::connHandler(int sockfd, IP_ADDR cliAddr){
             if(recvPkt){
                 status = write(sockfd, &this->trrntPkt, sizeof(this->trrntPkt));
                 if(status < 0) sysError("ERROR writing to cli socket");
+                printf("Writing torrent file to %s\n", inet_ntoa(cliAddr.sin_addr));
             }
         }
     }
     status = close(sockfd);
     if(status < 0) sysError("ERROR closing cli socket");
+    printf("Closing connection to %s\n", inet_ntoa(cliAddr.sin_addr));
 }
 

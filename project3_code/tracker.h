@@ -10,7 +10,6 @@
 
 #define TIMEOUT_ms 60000
 
-typedef struct sockaddr_in IP_ADDR;
 
 typedef struct chunk{
     unsigned int index;

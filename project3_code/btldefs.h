@@ -3,9 +3,14 @@
 
 #include "PacketHeader.h"
 
+#include <netinet/in.h>
+
 #define TRACKER_PORT 6969
+#define PEER_PORT 6881
 #define CHUNK_SIZE 512000
 #define BACKLOG_QUEUE_SIZE 20
+
+typedef struct sockaddr_in IP_ADDR;
 
 enum types{
     TrrntFileReq=0,
