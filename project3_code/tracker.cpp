@@ -2,6 +2,7 @@
 #include "crc32.h"
 #include "btldefs.h"
 #include "errors.h"
+#include "PacketHeader.h"
 
 #include <string>
 #include <fstream>
@@ -10,6 +11,8 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <thread>
+#include <poll.h>
 
 Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstream *log){
     int status;
@@ -65,6 +68,11 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
     tFile.close();
     peersList.close();
     inFile.close();
+    std::ifstream trrntFile (tFilePath);
+    memset((char *) &this->trrntPkt, 0, sizeof(this->trrntPkt));
+    this->trrntPkt.ph.type = TrrntFileResp;
+    trrntFile.read((char *) &this->trrntPkt.payload, sizeof(this->trrntPkt.payload));
+    this->trrntPkt.ph.length = trrntFile.gcount();
     this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(this->sockfd < 0) sysError("ERROR opening socket");
     memset(&this->tracker_addr, 0, sizeof(this->tracker_addr));
@@ -77,8 +85,55 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
 
 Tracker::~Tracker(){
     if(close(this->sockfd) < 0) sysError("ERROR closing socket");
+    for(std::list<std::thread>::iterator th=this->threads.begin(); th != this->threads.end(); ++th){
+        th->join();
+    }
     printf("\nTracker Server Closed\n");
 }
 
+void Tracker::run(){
+    int connSockfd, cliAddrLen, status;
+    IP_ADDR cliAddr;
+    cliAddrLen = sizeof(cliAddr);
+    status = listen(this->sockfd, BACKLOG_QUEUE_SIZE);
+    if(status < 0) sysError("ERROR on listen");
+    while(1){
+        connSockfd = accept(this->sockfd, (struct sockaddr *) &cliAddr, (socklen_t *) &cliAddrLen);
+        if(connSockfd < 0) sysError("ERROR accepting connection");
+        printf("Accepting connection from %s\n", inet_ntoa(cliAddr.sin_addr));
+        this->threads.push_back(std::thread(&Tracker::connHandler, this, connSockfd, cliAddr));
+    }
+}
 
+void Tracker::connHandler(int sockfd, IP_ADDR cliAddr){
+    int status, numEvents;
+    const int SIZE = 1;
+    bool timeout = false;
+    bool recvPkt = false;
+    struct pollfd pfds[SIZE];
+    PACKET_HEADER recvHeader;
+    pfds[0].fd = sockfd;
+    pfds[0].events = POLLIN;
+    memset((char *) &recvHeader, 0, sizeof(recvHeader));
+    while(!(timeout || recvPkt)){
+        numEvents = poll(pfds, SIZE, TIMEOUT_ms);
+        if(numEvents < 0){
+            sysError("ERROR polling cli socket");
+        } else if(numEvents == 0){
+            // timeout
+            timeout = true;
+        }else if((pfds[0].revents & POLLIN) == 1){
+            // Data on fd
+            status = read(sockfd, (char *) &recvHeader, sizeof(recvHeader));
+            if(status < 0) sysError("ERROR reading cli socket");
+            recvPkt = recvHeader.type == TrrntFileReq && recvHeader.length == 0;
+            if(recvPkt){
+                status = write(sockfd, &this->trrntPkt, sizeof(this->trrntPkt));
+                if(status < 0) sysError("ERROR writing to cli socket");
+            }
+        }
+    }
+    status = close(sockfd);
+    if(status < 0) sysError("ERROR closing cli socket");
+}
 

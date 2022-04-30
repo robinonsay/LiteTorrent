@@ -7,7 +7,7 @@ OBJS_tracker := $(SRCS_tracker:%=$(BUILD_DIR)/%.o)
 SRCS_peer:= $(SRCS) peer-main.cpp peer.cpp
 OBJS_peer := $(SRCS_peer:%=$(BUILD_DIR)/%.o)
 
-CXXFLAGS := -g -Wall
+CXXFLAGS := -std=c++20 -g -Wall
 CXX := g++
 
 all: tracker peer
