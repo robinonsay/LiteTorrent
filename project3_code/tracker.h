@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include <thread>
 
-#define TIMEOUT_ms 60000
+#define TIMEOUT_ms 30000
 
 
 

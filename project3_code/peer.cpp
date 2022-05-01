@@ -15,6 +15,7 @@
 #include <atomic>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdlib.h>
 
 Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
            std::ofstream *outFile, std::ofstream *log){
@@ -50,6 +51,7 @@ Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
     if(trrntFPkt.ph.type == TrrntFileResp && trrntFPkt.ph.length > 0){
         printf("Recieved torrent file\n");
     }
+    if(close(trckrSockfd) < 0) sysError("ERROR closing tracker socket");
     std::istringstream iss (std::string(trrntFPkt.payload));
     int peerLen;
     iss >> peerLen;
@@ -76,7 +78,7 @@ Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
             iss >> chunk.index;
         }else {
             iss >> chunk.hash;
-            this->allChunkhs.push_back(chunk);
+            this->allChunkHdrs.push_back(chunk);
         }
     }
     this->owndChunksPkt.ph.type = ChunkInqResp;
@@ -106,11 +108,11 @@ Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
 Peer::~Peer(){
 }
 
-void Peer::run(){
+std::map<std::string, std::list<uint32_t>> Peer::chunkInq(int peerSockfd){
     PACKET pkt;
-    int status, peerSockfd = socket(AF_INET, SOCK_STREAM, 0);
+    int status;
     IP_ADDR peer;
-    this->threads.push_back(std::thread(&Peer::server, this));
+    std::map<std::string, std::list<uint32_t>> chunkMap;
     pkt.ph.type = ChunkInqReq;
     pkt.ph.length = 0;
     for(std::list<IP_ADDR>::iterator it=this->peers.begin();
@@ -121,16 +123,39 @@ void Peer::run(){
         do{
             status = connect(peerSockfd, (sockaddr *) &peer, sizeof(peer));
             tryAgain = status < 0 && errno == ECONNREFUSED;
-            if(tryAgain) sleep(5);
+            if(tryAgain) sleep(1);
         } while(tryAgain);
         if(status < 0) sysError("ERROR connecting to peer");
         status = write(peerSockfd, (char *) &pkt.ph, sizeof(pkt.ph));
         if(status < 0) sysError("ERROR writing chunk inquiry packet");
         status = read(peerSockfd, (char *) &pkt, sizeof(pkt));
         if(status < 0) sysError("ERROR reading chunk inquiry response");
-        printf("Type: %d\nLength: %d\n", pkt.ph.type, pkt.ph.length);
+        if(pkt.ph.type == ChunkInqResp && pkt.ph.length > 0){
+            printf("Type: %d\nLength: %d\n", pkt.ph.type, pkt.ph.length);
+            std::list<uint32_t> chunkIDs;
+            uint32_t chunkID;
+            for(unsigned int i=0; i<pkt.ph.length; i+=sizeof(chunkID)){
+                memcpy(&chunkID, &pkt.payload[i], sizeof(chunkID));
+                chunkIDs.push_back(chunkID);
+            }
+            chunkIDs.sort();
+            std::string peerIP (inet_ntoa(peer.sin_addr));
+            chunkMap[peerIP] = chunkIDs;
+        }
     }
-    while(1);
+    return chunkMap;
+}
+
+void Peer::run(){
+    int status, peerSockfd;
+    std::map<std::string, std::list<uint32_t>> chunkMap;
+    this->threads.push_back(std::thread(&Peer::server, this));
+    peerSockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(peerSockfd < 0) sysError("ERROR opening socket");
+    chunkMap = this->chunkInq(peerSockfd);
+    while(1){
+        sleep(1);
+    }
 }
 
 void Peer::closePeer(){
