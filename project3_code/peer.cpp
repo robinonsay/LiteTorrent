@@ -13,7 +13,7 @@
 #include <thread>
 #include <poll.h>
 
-Peer::Peer(char *myIP, char *trackerIP, std::map<unsigned int, CHUNK> *owndChunks,
+Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
            std::ofstream *outFile, std::ofstream *log){
     int status, trckrSockfd;
     IP_ADDR trckr_addr;

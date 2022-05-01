@@ -36,7 +36,7 @@ void signalHandler(int sigNum){
 int main(int argc, char *argv[]){
     bool filesOpnd = true;
     std::list<unsigned int> ocIndicies;
-    std::map<unsigned int, CHUNK> owndChunks;
+    std::map<uint32_t, CHUNK> owndChunks;
     std::ifstream owndChunksFile (argv[4]);
     signal(SIGINT, signalHandler);
     if(argc != MIN_ARGS){
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]){
             chunk.ch.hash = crc32(chunk.payload, CHUNK_SIZE);
             printf("%u %u\n", i, chunk.ch.hash);
             if(ocIndicies.empty()) break;
-            owndChunks[i] = chunk;
+            owndChunks[chunk.ch.hash] = chunk;
             i = ocIndicies.front();
             ocIndicies.pop_front();
             pos = i * CHUNK_SIZE;

@@ -15,10 +15,11 @@ class Peer{
         IP_ADDR addr;
         std::list<IP_ADDR> peers;
         std::list<CHUNK_H> allChunks;
-        std::map<unsigned int, CHUNK> *owndChunks;
+        std::map<uint32_t, CHUNK> *owndChunks;
         std::list<CHUNK> chunks;
+        int sockfd;
     public:
-        Peer(char *myIP, char *trackerIP, std::map<unsigned int, CHUNK> *owndChunks,
+        Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
              std::ofstream *outFile, std::ofstream *log);
         void run();
 };
