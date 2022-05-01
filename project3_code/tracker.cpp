@@ -21,7 +21,7 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
     std::ifstream peersList (pListPath);
     std::ifstream inFile (inFilePath, std::ifstream::binary);
     IP_ADDR peer_addr;
-    CHUNK chunk;
+    CHUNK_H chunk;
     char chunkBuff[CHUNK_SIZE];
     this->log = log;
     if(!peersList.is_open()){
@@ -62,7 +62,7 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
         this->chunks.push_back(chunk);
     }
     tFile << this->chunks.size() << std::endl;
-    for(std::list<CHUNK>::iterator it=this->chunks.begin(); it != this->chunks.end(); ++it){
+    for(std::list<CHUNK_H>::iterator it=this->chunks.begin(); it != this->chunks.end(); ++it){
         tFile << it->index << ' ' << it->hash << std::endl;
     }
     tFile.close();

@@ -13,13 +13,14 @@
 #include <thread>
 #include <poll.h>
 
-Peer::Peer(char *myIP, char *trackerIP, std::ifstream *owndChunksFile, std::ofstream *outFile, std::ofstream *log){
+Peer::Peer(char *myIP, char *trackerIP, std::map<unsigned int, CHUNK> *owndChunks,
+           std::ofstream *outFile, std::ofstream *log){
     int status, trckrSockfd;
     IP_ADDR trckr_addr;
     PACKET trrntFPkt;
-    this->owndChunksFile = owndChunksFile;
     this->outFile = outFile;
     this->log = log;
+    this->owndChunks = owndChunks;
     memset((char *) &trrntFPkt, 0, sizeof(trrntFPkt));
     trckrSockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(trckrSockfd < 0) sysError("ERROR opening socket");
@@ -71,7 +72,7 @@ Peer::Peer(char *myIP, char *trackerIP, std::ifstream *owndChunksFile, std::ofst
         this->peers.push_back(peer_addr);
     }
     int chunksLen;
-    CHUNK chunk;
+    CHUNK_H chunk;
     iss >> chunksLen;
     printf("%d\n", chunksLen);
     for(int i=0; i < chunksLen*2 && iss.good(); i++){

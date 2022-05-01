@@ -16,7 +16,7 @@
 class Tracker{
     private:
         std::list<IP_ADDR> ipAddrs;
-        std::list<CHUNK> chunks;
+        std::list<CHUNK_H> chunks;
         std::list<std::thread> threads;
         std::ofstream *log;
         PACKET trrntPkt;

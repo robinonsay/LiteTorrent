@@ -28,10 +28,15 @@ typedef struct Packet{
     char payload[CHUNK_SIZE];
 } PACKET;
 
-typedef struct chunk{
+typedef struct chunkHeader{
     unsigned int index;
     uint32_t hash;
-} CHUNK;
+} CHUNK_H;
+
+ typedef struct chunk{
+    CHUNK_H ch;
+    char payload[CHUNK_SIZE];
+ } CHUNK;
 
 #endif
 
