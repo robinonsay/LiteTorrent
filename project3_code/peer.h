@@ -12,6 +12,8 @@
 
 #define PEER_TIMEOUT_ms 30000
 
+bool comp(CHUNK& lhs, CHUNK& rhs);
+
 class Peer{
     private:
         std::ofstream *outFile;
@@ -19,7 +21,8 @@ class Peer{
         IP_ADDR addr;
         char *ip;
         std::list<IP_ADDR> peers;
-        std::list<CHUNK_H> allChunkHdrs;
+        std::map<uint32_t, uint32_t> chunkHashMap;
+        std::map<uint32_t, uint32_t> chunkIDMap;
         std::map<uint32_t, CHUNK> *owndChunks;
         PACKET owndChunksPkt;
         std::list<CHUNK> chunks;
@@ -28,9 +31,10 @@ class Peer{
         std::atomic<bool> end;
         void server();
         void connHandler(int sockfd, IP_ADDR cliAddr);
-        void chunkInqReqHandler(int sockfd, PACKET *pkt);
+        void chunkInqReqHandler(int sockfd);
         void chunkReqHandler(int sockfd, PACKET *pkt);
-        std::map<std::string, std::list<uint32_t>> chunkInq(int peerSockfd);
+        std::map<uint32_t, std::list<std::string>> chunkInq();
+        int reqChunk(std::string peerIP, uint32_t hash, CHUNK *chunk);
     public:
         Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
              std::ofstream *outFile, std::ofstream *log);

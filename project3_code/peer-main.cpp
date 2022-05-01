@@ -35,7 +35,7 @@ void signalHandler(int sigNum){
 
 int main(int argc, char *argv[]){
     bool filesOpnd = true;
-    std::list<unsigned int> ocIndicies;
+    std::list<uint32_t> ocIndicies;
     std::map<uint32_t, CHUNK> owndChunks;
     std::ifstream owndChunksFile (argv[4]);
     signal(SIGINT, signalHandler);
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
         filesOpnd = false;
     }
     if(filesOpnd){
-        unsigned int index;
+        uint32_t index;
         while(owndChunksFile >> index){
             printf("index: %d\n", index);
             ocIndicies.push_back(index);
@@ -84,8 +84,10 @@ int main(int argc, char *argv[]){
                 fprintf(stderr, "ERROR could not read input file\n");
                 exit(1);
             }
+            int bytesRead = inFile->gcount();
             chunk.ch.index = i;
             chunk.ch.hash = crc32(chunk.payload, CHUNK_SIZE);
+            chunk.ch.length = bytesRead;
             printf("%u %u\n", i, chunk.ch.hash);
             owndChunks[chunk.ch.hash] = chunk;
             if(ocIndicies.empty()) break;

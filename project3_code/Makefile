@@ -1,7 +1,7 @@
 # Credit: https://spin.atomicobject.com/2016/08/26/makefile-c-projects/
 BUILD_DIR ?= ./build
 
-SRCS := errors.cpp
+SRCS := errors.cpp crc32.cpp
 SRCS_tracker := $(SRCS) tracker-main.cpp tracker.cpp
 OBJS_tracker := $(SRCS_tracker:%=$(BUILD_DIR)/%.o)
 SRCS_peer:= $(SRCS) peer-main.cpp peer.cpp

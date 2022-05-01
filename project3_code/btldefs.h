@@ -29,8 +29,9 @@ typedef struct Packet{
 } PACKET;
 
 typedef struct chunkHeader{
-    unsigned int index;
+    uint32_t index;
     uint32_t hash;
+    int length;
 } CHUNK_H;
 
  typedef struct chunk{
