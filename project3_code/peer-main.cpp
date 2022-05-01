@@ -17,7 +17,7 @@ std::ofstream *log = NULL;
 Peer *peer = NULL;
 
 void signalHandler(int sigNum){
-    delete peer;
+    if(peer != NULL) peer->closePeer();
     if(inFile != NULL){
         inFile->close();
         delete inFile;
@@ -95,6 +95,7 @@ int main(int argc, char *argv[]){
         }
         peer = new Peer(argv[1], argv[2], &owndChunks, outFile, log);
         peer->run();
+        peer->closePeer();
     }
     inFile->close();
     outFile->close();

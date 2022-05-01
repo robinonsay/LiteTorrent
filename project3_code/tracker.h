@@ -27,6 +27,7 @@ class Tracker{
         Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstream *log);
         ~Tracker();
         void run();
+        void closeTracker();
 };
 #endif
 

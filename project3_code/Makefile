@@ -7,16 +7,16 @@ OBJS_tracker := $(SRCS_tracker:%=$(BUILD_DIR)/%.o)
 SRCS_peer:= $(SRCS) peer-main.cpp peer.cpp
 OBJS_peer := $(SRCS_peer:%=$(BUILD_DIR)/%.o)
 
-CXXFLAGS := -std=c++20 -g -Wall
+CXXFLAGS := -std=c++11 -g -Wall
 CXX := g++
 
 all: tracker peer
 
 tracker: $(OBJS_tracker)
-	$(CXX) $(OBJS_tracker) -o $@
+	$(CXX) $(OBJS_tracker) -o $@ -pthread
 
 peer: $(OBJS_peer)
-	$(CXX) $(OBJS_peer) -o $@
+	$(CXX) $(OBJS_peer) -o $@ -pthread
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)

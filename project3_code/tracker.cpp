@@ -5,6 +5,7 @@
 #include "PacketHeader.h"
 
 #include <string>
+#include <string.h>
 #include <fstream>
 #include <list>
 #include <netinet/in.h>
@@ -79,16 +80,14 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
     this->tracker_addr.sin_family = AF_INET;
     this->tracker_addr.sin_port = htons(TRACKER_PORT);
     this->tracker_addr.sin_addr.s_addr = INADDR_ANY;
-    status = bind(this->sockfd, (struct sockaddr *) &this->tracker_addr, sizeof(this->tracker_addr));
+    status = bind(this->sockfd,
+                  (struct sockaddr *) &this->tracker_addr,
+                  sizeof(this->tracker_addr));
     if(status < 0) sysError("ERROR on binding");
 }
 
 Tracker::~Tracker(){
-    if(close(this->sockfd) < 0) sysError("ERROR closing socket");
-    for(std::list<std::thread>::iterator th=this->threads.begin(); th != this->threads.end(); ++th){
-        th->join();
-    }
-    printf("\nTracker Server Closed\n");
+
 }
 
 void Tracker::run(){
@@ -103,6 +102,16 @@ void Tracker::run(){
         if(connSockfd < 0) sysError("ERROR accepting connection");
         this->threads.push_back(std::thread(&Tracker::connHandler, this, connSockfd, cliAddr));
     }
+}
+
+void Tracker::closeTracker(){
+    for(std::list<std::thread>::iterator th=this->threads.begin();
+        th != this->threads.end(); ++th){
+        th->join();
+    }
+    if(close(this->sockfd) < 0) sysError("ERROR closing socket");
+
+    printf("\nTracker Server Closed\n");
 }
 
 void Tracker::connHandler(int sockfd, IP_ADDR cliAddr){
@@ -137,6 +146,6 @@ void Tracker::connHandler(int sockfd, IP_ADDR cliAddr){
     }
     status = close(sockfd);
     if(status < 0) sysError("ERROR closing cli socket");
-    printf("Closing connection to %s\n", inet_ntoa(cliAddr.sin_addr));
+    printf("Connection to %s closed\n", inet_ntoa(cliAddr.sin_addr));
 }
 

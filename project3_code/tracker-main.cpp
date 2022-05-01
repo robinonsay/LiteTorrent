@@ -12,7 +12,7 @@ Tracker *trackerServer = NULL;
 std::ofstream *log = NULL;
 
 void signalHandler(int signum){
-    if(trackerServer != NULL) delete trackerServer;
+    if(trackerServer != NULL) trackerServer->closeTracker();
     if(log != NULL){
         log->close();
         delete log;
@@ -30,6 +30,7 @@ int main(int argc, char *argv[]){
     if(log->is_open()){
         trackerServer = new Tracker(argv[1], argv[3], argv[2], log);
         trackerServer->run();
+        trackerServer->closeTracker();
     }else{
         printf("Log file could not be opened. Check path\n");
     }
