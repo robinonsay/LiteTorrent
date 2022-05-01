@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
             }
             chunk.ch.index = i;
             chunk.ch.hash = crc32(chunk.payload, CHUNK_SIZE);
-            printf("%d %d\n", i, chunk.ch.hash);
+            printf("%u %u\n", i, chunk.ch.hash);
             if(ocIndicies.empty()) break;
             owndChunks[i] = chunk;
             i = ocIndicies.front();

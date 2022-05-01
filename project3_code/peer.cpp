@@ -81,7 +81,7 @@ Peer::Peer(char *myIP, char *trackerIP, std::map<unsigned int, CHUNK> *owndChunk
         }else {
             iss >> chunk.hash;
             this->allChunks.push_back(chunk);
-            printf("%d %d\n", chunk.index, chunk.hash);
+            printf("%u %u\n", chunk.index, chunk.hash);
         }
     }
 }
