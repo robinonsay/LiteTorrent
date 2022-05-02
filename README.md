@@ -1,2 +1,3 @@
-# Bittorrent Lite
-Robin Onsay
+# BitTorrent Lite
+
+BitTorrent Lite is a simple peer to peer file sharing network.
