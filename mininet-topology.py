@@ -1,3 +1,6 @@
+import time
+import subprocess
+
 from mininet.cli import CLI
 from mininet.net import Mininet
 from mininet.link import TCLink
@@ -29,8 +32,18 @@ if __name__ == '__main__':
     topo = AssignmentNetworks()
     net = Mininet(topo=topo, link=TCLink, autoSetMacs=True,
            autoStaticArp=True)
+    trackerCmd = "./tracker peers/peerlist.txt test-files/test3.jpg trrnt-files/torrent-file.txt logs/log.txt" 
 
     # Run network
     net.start()
+#    h1 = net.get('h1')
+#    h2 = net.get('h2')
+#    h1.cmdPrint(trackerCmd)
+#     h1p = h1.popen(, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#     time.sleep(3)
+#     h1p.kill()
+#     h1out = h1p.communicate()[0]
+#     print(h1out.decode('ascii'))
     CLI(net)
     net.stop()
+
