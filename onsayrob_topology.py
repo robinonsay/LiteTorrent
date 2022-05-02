@@ -15,8 +15,8 @@ class AssignmentNetworks(Topo):
         """
         hosts = []
         num_hosts = 10
-        for i in xrange(1, num_hosts+1):
-            hosts.append(self.addHost('h%s'%i))
+        for i in range(1, num_hosts+1):
+            hosts.append(self.addHost(f'h{i}'))
         # Add Links
         switch = self.addSwitch('s0')
         for host in hosts:
