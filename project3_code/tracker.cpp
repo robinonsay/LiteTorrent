@@ -140,8 +140,10 @@ void Tracker::connHandler(int sockfd, IP_ADDR cliAddr){
             if(status < 0) sysError("ERROR reading cli socket");
             recvPkt = recvHeader.type == TrrntFileReq && recvHeader.length == 0;
             if(recvPkt){
+                (*this->log) << inet_ntoa(cliAddr.sin_addr) << " " << TrrntFileReq << " " << 0 << std::endl;
                 status = write(sockfd, &this->trrntPkt, sizeof(this->trrntPkt));
                 if(status < 0) sysError("ERROR writing to cli socket");
+                (*this->log) << inet_ntoa(cliAddr.sin_addr) << " " << TrrntFileResp << " " << this->trrntPkt.ph.length << std::endl;
                 printf("Writing torrent file to %s\n", inet_ntoa(cliAddr.sin_addr));
             }
         }

@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
     }
     inFile = new std::ifstream(argv[3]);
     outFile = new std::ofstream(argv[5]);
-    log = new std::ofstream(argv[6], std::ofstream::app);
+    log = new std::ofstream(argv[6]);
     if(!inFile->is_open()){
         printf("Input file does not exist\n");
         filesOpnd = false;

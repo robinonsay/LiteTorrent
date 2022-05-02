@@ -52,11 +52,13 @@ Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
     trrntFPkt.ph.length = 0;
     status = write(trckrSockfd, (char *) &trrntFPkt.ph, sizeof(trrntFPkt.ph));
     if(status < 0) sysError("ERROR writing to tracker socket file descriptor");
+    (*this->log) << inet_ntoa(trckr_addr.sin_addr) << " " << TrrntFileReq << " " << 0 << std::endl;
     memset((char *) &trrntFPkt, 0, sizeof(trrntFPkt));
     status = read(trckrSockfd, (char *) &trrntFPkt, sizeof(trrntFPkt));
     if(status < 0) sysError("ERROR reading from tracker socket file descriptor");
     if(trrntFPkt.ph.type == TrrntFileResp && trrntFPkt.ph.length > 0){
         printf("Recieved torrent file\n");
+        (*this->log) << inet_ntoa(trckr_addr.sin_addr) << " " << TrrntFileResp << " " << trrntFPkt.ph.length << std::endl;
     }
     if(close(trckrSockfd) < 0) sysError("ERROR closing tracker socket");
     std::istringstream iss (std::string(trrntFPkt.payload));
@@ -140,10 +142,12 @@ std::map<uint32_t, std::list<std::string>> Peer::chunkInq(){
         if(status < 0) sysError("ERROR connecting to peer");
         status = this->write_p(peerSockfd, (char *) &pkt, sizeof(pkt));
         if(status < 0) sysError("ERROR writing chunk inquiry packet");
+        (*this->log) << inet_ntoa(peer.sin_addr) << " " << ChunkInqReq << " " << 0 << std::endl;
         status = this->read_p(peerSockfd, (char *) &pkt, sizeof(pkt));
         if(status < 0) sysError("ERROR reading chunk inquiry response");
         if(pkt.ph.type == ChunkInqResp && pkt.ph.length > 0){
             printf("Recieved chunk list from %s\n", peerIP.c_str());
+            (*this->log) << inet_ntoa(peer.sin_addr) << " " << ChunkInqResp << " " << pkt.ph.length << std::endl;
             std::list<uint32_t> chunkIDs;
             uint32_t chunkID;
             for(unsigned int i=0; i<pkt.ph.length; i+=sizeof(chunkID)){
@@ -197,11 +201,13 @@ int Peer::reqChunk(std::string peerIP, uint32_t hash, CHUNK *chunk){
         if(close(peerSockfd) < 0) sysError("ERROR couldn't close peer socket");
         return -1;
     }
+    (*this->log) << inet_ntoa(peer_addr.sin_addr) << " " << ChunkReq << " " << pkt.ph.length << " " << hash << std::endl;
     memset((char *) &pkt, 0, sizeof(pkt));
     bytesRead = this->read_p(peerSockfd, (char *) &pkt, sizeof(pkt));
     if(bytesRead < 0) sysError("ERROR couldn't read peer socket");
     uint32_t calcHash = crc32(pkt.payload, CHUNK_SIZE);
     if(pkt.ph.type == ChunkResp && pkt.ph.length > 0 && hash == calcHash){
+        (*this->log) << inet_ntoa(peer_addr.sin_addr) << " " << ChunkResp << " " << pkt.ph.length << " " << hash<< std::endl;
         memcpy(chunk->payload, pkt.payload, pkt.ph.length);
         chunk->ch.index = this->chunkHashMap[hash];
         chunk->ch.hash = hash;
@@ -310,11 +316,17 @@ void Peer::connHandler(int cliSockfd, IP_ADDR cliAddr){
             status = this->read_p(cliSockfd, (char *) &pkt, sizeof(pkt));
             if(status < 0) sysError("ERROR reading cli socket");
             if(pkt.ph.type == ChunkInqReq && pkt.ph.length == 0){
+                (*this->log) << inet_ntoa(cliAddr.sin_addr) << " " << ChunkInqReq << " " << 0 << std::endl;
                 this->chunkInqReqHandler(cliSockfd);
+                (*this->log) << inet_ntoa(cliAddr.sin_addr) << " " << ChunkInqResp << " " << this->owndChunksPkt.ph.length << std::endl;
                 printf("Wrote chunk list to %s\n", inet_ntoa(cliAddr.sin_addr));
                 recvPkt = true;
             }else if(pkt.ph.type == ChunkReq && pkt.ph.length == sizeof(uint32_t)){
+                uint32_t reqHash;
+                memcpy(&reqHash, pkt.payload, sizeof(uint32_t));
+                (*this->log) << inet_ntoa(cliAddr.sin_addr) << " " << ChunkReq << " " << pkt.ph.length << " " << reqHash<< std::endl;
                 this->chunkReqHandler(cliSockfd, &pkt);
+                (*this->log) << inet_ntoa(cliAddr.sin_addr) << " " << ChunkResp << " " << pkt.ph.length << " " << reqHash << std::endl;
                 printf("Wrote chunk to %s\n", inet_ntoa(cliAddr.sin_addr));
                 recvPkt = true;
             }

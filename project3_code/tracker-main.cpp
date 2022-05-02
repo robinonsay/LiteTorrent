@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
         printf("Invalid Arguments\nUsage:\n./tracker <peers-list> <input-file> <torrent-file> <log>\n");
         exit(1);
     }
-    log = new std::ofstream(argv[4], std::ofstream::app);
+    log = new std::ofstream(argv[4]);
     if(log->is_open()){
         trackerServer = new Tracker(argv[1], argv[3], argv[2], log);
         trackerServer->run();
