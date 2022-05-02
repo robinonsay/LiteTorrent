@@ -123,6 +123,7 @@ std::map<uint32_t, std::list<std::string>> Peer::chunkInq(){
     std::map<uint32_t, std::list<std::string>> chunkMap;
     for(std::list<IP_ADDR>::iterator it=this->peers.begin();
         it != this->peers.end(); ++it){
+        memset((char *) &peer, 0, sizeof(pkt));
         pkt.ph.type = ChunkInqReq;
         pkt.ph.length = 0;
         peerSockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -137,9 +138,9 @@ std::map<uint32_t, std::list<std::string>> Peer::chunkInq(){
             tryAgain = status < 0 && errno == ECONNREFUSED;
         } while(tryAgain);
         if(status < 0) sysError("ERROR connecting to peer");
-        status = write(peerSockfd, (char *) &pkt.ph, sizeof(pkt.ph));
+        status = this->write_p(peerSockfd, (char *) &pkt, sizeof(pkt));
         if(status < 0) sysError("ERROR writing chunk inquiry packet");
-        status = read(peerSockfd, (char *) &pkt, sizeof(pkt));
+        status = this->read_p(peerSockfd, (char *) &pkt, sizeof(pkt));
         if(status < 0) sysError("ERROR reading chunk inquiry response");
         if(pkt.ph.type == ChunkInqResp && pkt.ph.length > 0){
             printf("Recieved chunk list from %s\n", peerIP.c_str());
@@ -190,14 +191,14 @@ int Peer::reqChunk(std::string peerIP, uint32_t hash, CHUNK *chunk){
         if(close(peerSockfd) < 0) sysError("ERROR couldn't close peer socket");
         return -1;
     }
-    status = write(peerSockfd, (char *) &pkt, sizeof(pkt));
+    status = this->write_p(peerSockfd, (char *) &pkt, sizeof(pkt));
     if(status < 0){
         printf("Could not write chunk request pkt to %s\n", inet_ntoa(peer_addr.sin_addr));
         if(close(peerSockfd) < 0) sysError("ERROR couldn't close peer socket");
         return -1;
     }
     memset((char *) &pkt, 0, sizeof(pkt));
-    bytesRead = read(peerSockfd, (char *) &pkt, sizeof(pkt));
+    bytesRead = this->read_p(peerSockfd, (char *) &pkt, sizeof(pkt));
     if(bytesRead < 0) sysError("ERROR couldn't read peer socket");
     printf("Bytes read: %d\n", bytesRead);
     uint32_t calcHash = crc32(pkt.payload, CHUNK_SIZE);
@@ -281,7 +282,6 @@ void Peer::server(){
     while(!this->end){
         connSockfd = accept(this->sockfd, (struct sockaddr *) &cliAddr, (socklen_t *) &cliAddrLen);
         if(connSockfd > 0){
-            printf("Open Socket fd: %d\n", connSockfd);
             this->threads.push_back(std::thread(&Peer::connHandler, this, connSockfd, cliAddr));
         }else if(errno != EAGAIN && errno != EWOULDBLOCK){
             sysError("ERROR accepting connection");
@@ -309,7 +309,7 @@ void Peer::connHandler(int cliSockfd, IP_ADDR cliAddr){
             timeout = true;
         }else if((pfds[0].revents & POLLIN) == 1){
             // Data on fd
-            status = read(cliSockfd, (char *) &pkt, sizeof(pkt));
+            status = this->read_p(cliSockfd, (char *) &pkt, sizeof(pkt));
             if(status < 0) sysError("ERROR reading cli socket");
             if(pkt.ph.type == ChunkInqReq && pkt.ph.length == 0){
                 this->chunkInqReqHandler(cliSockfd);
@@ -322,7 +322,6 @@ void Peer::connHandler(int cliSockfd, IP_ADDR cliAddr){
             }
         }
     }
-    printf("CLose Socket fd: %d\n", cliSockfd);
     status = close(cliSockfd);
     if(status < 0) sysError("ERROR closing cli socket");
     printf("Connection to peer at %s closed\n", inet_ntoa(cliAddr.sin_addr));
@@ -330,7 +329,7 @@ void Peer::connHandler(int cliSockfd, IP_ADDR cliAddr){
 
 void Peer::chunkInqReqHandler(int cliSockfd){
     int status;
-    status = write(cliSockfd, (char *) &this->owndChunksPkt, sizeof(this->owndChunksPkt));
+    status = this->write_p(cliSockfd, (char *) &this->owndChunksPkt, sizeof(this->owndChunksPkt));
     if(status < 0) sysError("ERROR writing owned chunks packet");
 }
 
@@ -352,19 +351,23 @@ void Peer::chunkReqHandler(int cliSockfd, PACKET *pkt){
 }
 
 int Peer::write_p(int fd, char *buffer, size_t size){
-    int pos = 0;
+    int bytesRead = 0;
+    uint32_t pos = 0;
     do{
-        pos = write(fd, buffer[pos], size-pos);
-        if(pos < 0) break;
+        bytesRead = write(fd, &buffer[pos], size-pos);
+        if(bytesRead < 0) return bytesRead;
+        pos += (uint32_t) bytesRead;
     }while(pos < size);
-    return pos;
+    return (int) pos;
 }
 int Peer::read_p(int fd, char *buffer, size_t size){
-    int pos = 0;
+    int bytesRead = 0;
+    uint32_t pos = 0;
     do{
-        pos = read(fd, buffer[pos], size-pos);
-        if(pos < 0) break;
+        bytesRead = read(fd, &buffer[pos], size-pos);
+        if(bytesRead < 0) return bytesRead;
+        pos += (uint32_t) bytesRead;
     }while(pos < size);
-    return pos;
+    return (int) pos;
 }
 
