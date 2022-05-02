@@ -53,6 +53,7 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
         tFile << inet_ntoa(it->sin_addr) << std::endl;
     }
     for(int i=0; inFile.good(); i++){
+        memset((char *) chunkBuff, 0, sizeof(chunkBuff));
         inFile.read(chunkBuff, CHUNK_SIZE);
         if(inFile.fail() && !inFile.eof()){
             fprintf(stderr, "ERROR could not read input file\n");
@@ -77,7 +78,7 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
     this->trrntPkt.ph.length = trrntFile.gcount();
     this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(this->sockfd < 0) sysError("ERROR opening socket");
-    memset(&this->tracker_addr, 0, sizeof(this->tracker_addr));
+    memset((char *) &this->tracker_addr, 0, sizeof(this->tracker_addr));
     this->tracker_addr.sin_family = AF_INET;
     this->tracker_addr.sin_port = htons(TRACKER_PORT);
     this->tracker_addr.sin_addr.s_addr = INADDR_ANY;

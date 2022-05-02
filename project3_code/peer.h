@@ -30,11 +30,13 @@ class Peer{
         int sockfd;
         std::atomic<bool> end;
         void server();
-        void connHandler(int sockfd, IP_ADDR cliAddr);
-        void chunkInqReqHandler(int sockfd);
-        void chunkReqHandler(int sockfd, PACKET *pkt);
+        void connHandler(int cliSockfd, IP_ADDR cliAddr);
+        void chunkInqReqHandler(int cliSockfd);
+        void chunkReqHandler(int cliSockfd, PACKET *pkt);
         std::map<uint32_t, std::list<std::string>> chunkInq();
         int reqChunk(std::string peerIP, uint32_t hash, CHUNK *chunk);
+        int write_p(int fd, char *buffer, size_t size);
+        int read_p(int fd, char *buffer, size_t size);
     public:
         Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
              std::ofstream *outFile, std::ofstream *log);

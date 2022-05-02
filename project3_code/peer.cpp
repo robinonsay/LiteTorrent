@@ -170,13 +170,13 @@ int Peer::reqChunk(std::string peerIP, uint32_t hash, CHUNK *chunk){
     int status, peerSockfd, bytesRead;
     IP_ADDR peer_addr;
     PACKET pkt;
-    memset(&pkt, 0, sizeof(pkt));
+    memset((char *) &pkt, 0, sizeof(pkt));
     pkt.ph.type = ChunkReq;
     pkt.ph.length = sizeof(hash);
     memcpy(pkt.payload, &hash, sizeof(hash));
     peer_addr.sin_family = AF_INET;
     peer_addr.sin_port = htons(PEER_PORT);
-    printf("Requesting Chunk from %s\n", peerIP.c_str());
+    printf("Requesting Chunk %u from %s\n", hash, peerIP.c_str());
     status = inet_aton(peerIP.c_str(), &peer_addr.sin_addr);
     if(status == 0){
         fprintf(stderr, "ERROR invalid peer IP address\n");
@@ -196,9 +196,13 @@ int Peer::reqChunk(std::string peerIP, uint32_t hash, CHUNK *chunk){
         if(close(peerSockfd) < 0) sysError("ERROR couldn't close peer socket");
         return -1;
     }
-    memset(&pkt, 0, sizeof(pkt));
+    memset((char *) &pkt, 0, sizeof(pkt));
     bytesRead = read(peerSockfd, (char *) &pkt, sizeof(pkt));
-    if(pkt.ph.type == ChunkResp && pkt.ph.length > 0 && hash == crc32(pkt.payload, CHUNK_SIZE)){
+    if(bytesRead < 0) sysError("ERROR couldn't read peer socket");
+    printf("Bytes read: %d\n", bytesRead);
+    uint32_t calcHash = crc32(pkt.payload, CHUNK_SIZE);
+    printf("hash: %u CRC: %u\n", hash, crc32(pkt.payload, CHUNK_SIZE));
+    if(pkt.ph.type == ChunkResp && pkt.ph.length > 0 && hash == calcHash){
         memcpy(chunk->payload, pkt.payload, pkt.ph.length);
         chunk->ch.index = this->chunkHashMap[hash];
         chunk->ch.hash = hash;
@@ -220,38 +224,38 @@ void Peer::run(){
     std::mutex mtx;
     this->threads.push_back(std::thread(&Peer::server, this));
     chunkMap = this->chunkInq();
- //   mtx.lock();
- //   for(std::map<uint32_t, CHUNK>::iterator it=this->owndChunks->begin();
- //       it != this->owndChunks->end(); ++it){
- //       this->chunks.push_back(it->second);
- //       chunkMap.erase(it->second.ch.index);
- //   }
- //   mtx.unlock();
-    printf("Chunk Map\n");
+    mtx.lock();
+    for(std::map<uint32_t, CHUNK>::iterator it=this->owndChunks->begin();
+        it != this->owndChunks->end(); ++it){
+        this->chunks.push_back(it->second);
+        chunkMap.erase(it->second.ch.index);
+    }
+    mtx.unlock();
+    printf("Chunk Map:\n");
     for(std::map<uint32_t, std::list<std::string>>::iterator it=chunkMap.begin();
         it != chunkMap.end(); ++it){
-        printf("%u -> %s\n", it->first, it->second.front().c_str());
+        printf("\t%u -> %s\n", it->first, it->second.front().c_str());
     }
- //   while(!chunkMap.empty()){
- //       std::map<uint32_t, std::list<std::string>>::iterator it = chunkMap.begin();
- //       uint32_t rarestChunk_id = it->first;
- //       ++it;
- //       while(it != chunkMap.end()){
- //           if(chunkMap[rarestChunk_id].size() > it->second.size()){
- //               rarestChunk_id = it->first;
- //           }
- //           ++it;
- //       }
- //       status = this->reqChunk(chunkMap[rarestChunk_id].front(), this->chunkIDMap[rarestChunk_id], &chunk);
- //       if(status < 0) exit(1);
- //       this->chunks.push_back(chunk);
- //       chunkMap.erase(rarestChunk_id);
- //   }
- //   this->chunks.sort(comp);
- //   for(std::list<CHUNK>::iterator it=this->chunks.begin();
- //       it != this->chunks.end(); ++it){
- //       this->outFile->write(it->payload, it->ch.length);
- //   }
+    while(!chunkMap.empty()){
+        std::map<uint32_t, std::list<std::string>>::iterator it = chunkMap.begin();
+        uint32_t rarestChunk_id = it->first;
+        ++it;
+        while(it != chunkMap.end()){
+            if(chunkMap[rarestChunk_id].size() > it->second.size()){
+                rarestChunk_id = it->first;
+            }
+            ++it;
+        }
+        status = this->reqChunk(chunkMap[rarestChunk_id].front(), this->chunkIDMap[rarestChunk_id], &chunk);
+        if(status < 0) exit(1);
+        this->chunks.push_back(chunk);
+        chunkMap.erase(rarestChunk_id);
+    }
+    this->chunks.sort(comp);
+    for(std::list<CHUNK>::iterator it=this->chunks.begin();
+        it != this->chunks.end(); ++it){
+        this->outFile->write(it->payload, it->ch.length);
+    }
     while(1){
         sleep(1);
     }
@@ -277,6 +281,7 @@ void Peer::server(){
     while(!this->end){
         connSockfd = accept(this->sockfd, (struct sockaddr *) &cliAddr, (socklen_t *) &cliAddrLen);
         if(connSockfd > 0){
+            printf("Open Socket fd: %d\n", connSockfd);
             this->threads.push_back(std::thread(&Peer::connHandler, this, connSockfd, cliAddr));
         }else if(errno != EAGAIN && errno != EWOULDBLOCK){
             sysError("ERROR accepting connection");
@@ -284,14 +289,14 @@ void Peer::server(){
     }
 }
 
-void Peer::connHandler(int sockfd, IP_ADDR cliAddr){
+void Peer::connHandler(int cliSockfd, IP_ADDR cliAddr){
     int status, numEvents;
     const int SIZE = 1;
     bool timeout = false;
     bool recvPkt = false;
     struct pollfd pfds[SIZE];
     PACKET pkt;
-    pfds[0].fd = sockfd;
+    pfds[0].fd = cliSockfd;
     pfds[0].events = POLLIN;
     memset((char *) &pkt, 0, sizeof(pkt));
     printf("Accepting connection from peer at %s\n", inet_ntoa(cliAddr.sin_addr));
@@ -304,43 +309,62 @@ void Peer::connHandler(int sockfd, IP_ADDR cliAddr){
             timeout = true;
         }else if((pfds[0].revents & POLLIN) == 1){
             // Data on fd
-            status = read(sockfd, (char *) &pkt, sizeof(pkt));
+            status = read(cliSockfd, (char *) &pkt, sizeof(pkt));
             if(status < 0) sysError("ERROR reading cli socket");
             if(pkt.ph.type == ChunkInqReq && pkt.ph.length == 0){
-                this->chunkInqReqHandler(sockfd);
+                this->chunkInqReqHandler(cliSockfd);
                 printf("Wrote chunk list to %s\n", inet_ntoa(cliAddr.sin_addr));
                 recvPkt = true;
             }else if(pkt.ph.type == ChunkReq && pkt.ph.length == sizeof(uint32_t)){
-                this->chunkReqHandler(sockfd, &pkt);
+                this->chunkReqHandler(cliSockfd, &pkt);
                 printf("Wrote chunk to %s\n", inet_ntoa(cliAddr.sin_addr));
                 recvPkt = true;
             }
         }
     }
-    status = close(sockfd);
+    printf("CLose Socket fd: %d\n", cliSockfd);
+    status = close(cliSockfd);
     if(status < 0) sysError("ERROR closing cli socket");
     printf("Connection to peer at %s closed\n", inet_ntoa(cliAddr.sin_addr));
 }
 
-void Peer::chunkInqReqHandler(int sockfd){
+void Peer::chunkInqReqHandler(int cliSockfd){
     int status;
-    status = write(sockfd, (char *) &this->owndChunksPkt, sizeof(this->owndChunksPkt));
+    status = write(cliSockfd, (char *) &this->owndChunksPkt, sizeof(this->owndChunksPkt));
     if(status < 0) sysError("ERROR writing owned chunks packet");
 }
 
-void Peer::chunkReqHandler(int sockfd, PACKET *pkt){
+void Peer::chunkReqHandler(int cliSockfd, PACKET *pkt){
     uint32_t reqHash;
     int status;
     std::mutex mtx;
     memcpy(&reqHash, pkt->payload, sizeof(uint32_t));
-    memset(pkt, 0, sizeof(PACKET));
+    memset((char *) pkt, 0, sizeof(PACKET));
     pkt->ph.type = ChunkResp;
     mtx.lock();
     CHUNK reqChunk = this->owndChunks->at(reqHash);
     mtx.unlock();
     pkt->ph.length = reqChunk.ch.length;
-    memcpy(pkt->payload, reqChunk.payload, reqChunk.ch.length);
-    status = write(sockfd, (char *) pkt, sizeof(PACKET));
+    memcpy(pkt->payload, reqChunk.payload, sizeof(pkt->payload));
+    status = this->write_p(cliSockfd, (char *) pkt, sizeof(PACKET));
     if(status < 0) sysError("ERROR writing chunk packet");
+    printf("Bytes written: %d\n", status);
+}
+
+int Peer::write_p(int fd, char *buffer, size_t size){
+    int pos = 0;
+    do{
+        pos = write(fd, buffer[pos], size-pos);
+        if(pos < 0) break;
+    }while(pos < size);
+    return pos;
+}
+int Peer::read_p(int fd, char *buffer, size_t size){
+    int pos = 0;
+    do{
+        pos = read(fd, buffer[pos], size-pos);
+        if(pos < 0) break;
+    }while(pos < size);
+    return pos;
 }
 

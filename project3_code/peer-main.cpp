@@ -78,6 +78,7 @@ int main(int argc, char *argv[]){
         int fileLen = inFile->tellg();
         inFile->seekg(0, inFile->beg);
         while(inFile->good() && pos < fileLen){
+            memset((char *) &chunk, 0, sizeof(chunk));
             inFile->seekg(pos);
             inFile->read((char *) &chunk.payload, sizeof(chunk.payload));
             if(inFile->fail() && !inFile->eof()){
