@@ -200,9 +200,7 @@ int Peer::reqChunk(std::string peerIP, uint32_t hash, CHUNK *chunk){
     memset((char *) &pkt, 0, sizeof(pkt));
     bytesRead = this->read_p(peerSockfd, (char *) &pkt, sizeof(pkt));
     if(bytesRead < 0) sysError("ERROR couldn't read peer socket");
-    printf("Bytes read: %d\n", bytesRead);
     uint32_t calcHash = crc32(pkt.payload, CHUNK_SIZE);
-    printf("hash: %u CRC: %u\n", hash, crc32(pkt.payload, CHUNK_SIZE));
     if(pkt.ph.type == ChunkResp && pkt.ph.length > 0 && hash == calcHash){
         memcpy(chunk->payload, pkt.payload, pkt.ph.length);
         chunk->ch.index = this->chunkHashMap[hash];
