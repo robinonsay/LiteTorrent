@@ -21,8 +21,9 @@
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
 void sysError(const char msg[]);
-void error(std::ostream *stream, const char msg[]);
-void warning(std::ostream *stream, const char msg[]);
-void info(std::ostream *stream, const char msg[]);
+void fatalError(std::ostream& stream, const char msg[]);
+void error(std::ostream& stream, const char msg[]);
+void warning(std::ostream& stream, const char msg[]);
+void info(std::ostream& stream, const char msg[]);
 
 #endif
