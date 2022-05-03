@@ -3,6 +3,7 @@
 #include "btldefs.h"
 #include "crc32.h"
 
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
@@ -42,10 +43,7 @@ Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
     trckr_addr.sin_family = AF_INET;
     trckr_addr.sin_port = htons(TRACKER_PORT);
     status = inet_aton(trackerIP, &trckr_addr.sin_addr);
-    if(status == 0){
-        fprintf(stderr, "ERROR invalid tracker IP address\n");
-        exit(1);
-    }
+    if(status == 0) error(&std::cerr, "ERROR invalid tracker IP address");
     status = connect(trckrSockfd, (sockaddr *) &trckr_addr, sizeof(trckr_addr));
     if(status < 0) sysError("ERROR connecting to tracker");
     trrntFPkt.ph.type = TrrntFileReq;
@@ -72,10 +70,7 @@ Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
         std::string currLine;
         iss >> currLine;
         status = inet_aton(currLine.c_str(), &peer_addr.sin_addr);
-        if(status == 0){
-            fprintf(stderr, "ERROR invalid peer IP address\n");
-            exit(1);
-        }
+        if(status == 0) error(&std::cerr, "ERROR invalid peer IP address");
         this->peers.push_back(peer_addr);
     }
     int chunksLen;
@@ -102,10 +97,7 @@ Peer::Peer(char *myIP, char *trackerIP, std::map<uint32_t, CHUNK> *owndChunks,
     this->addr.sin_family = AF_INET;
     this->addr.sin_port = htons(PEER_PORT);
     status = inet_aton(myIP, &this->addr.sin_addr);
-    if(status == 0){
-        fprintf(stderr, "ERROR invalid peer IP address\n");
-        exit(1);
-    }
+    if(status == 0) error(&std::cerr, "ERROR invalid peer IP address");
     this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
     fcntl(this->sockfd, F_SETFL, O_NONBLOCK);
     if(this->sockfd < 0) sysError("ERROR opening socket");
@@ -183,10 +175,7 @@ int Peer::reqChunk(std::string peerIP, uint32_t hash, CHUNK *chunk){
     peer_addr.sin_port = htons(PEER_PORT);
     printf("Requesting Chunk %u from %s\n", hash, peerIP.c_str());
     status = inet_aton(peerIP.c_str(), &peer_addr.sin_addr);
-    if(status == 0){
-        fprintf(stderr, "ERROR invalid peer IP address\n");
-        exit(1);
-    }
+    if(status == 0) error(&std::cerr, "ERROR invalid peer IP address");
     peerSockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(peerSockfd < 0) sysError("ERROR opening socket");
     status = connect(peerSockfd, (sockaddr *) &peer_addr, sizeof(peer_addr));
@@ -252,7 +241,7 @@ void Peer::run(){
             ++it;
         }
         status = this->reqChunk(chunkMap[rarestChunk_id].front(), this->chunkIDMap[rarestChunk_id], &chunk);
-        if(status < 0) exit(1);
+        if(status < 0)  error(&std::cerr, "Chunk Request Failed");
         this->chunks.push_back(chunk);
         chunkMap.erase(rarestChunk_id);
     }

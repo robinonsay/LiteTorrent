@@ -2,6 +2,7 @@
 #include "tracker/tracker.h"
 
 #include <fstream>
+#include <iostream>
 #include <stdio.h>
 #include <string.h>
 #include <csignal>
@@ -22,9 +23,9 @@ void signalHandler(int signum){
 
 int main(int argc, char *argv[]){
     signal(SIGINT, signalHandler);
-    if(argc != MIN_ARGS){
-        printf("Invalid Arguments\nUsage:\n./tracker <peers-list> <input-file> <torrent-file> <logFile>\n");
-        exit(1);
+    if(argc != MIN_ARGS) {
+        info(&std::cout, "Usage:\n./tracker <peers-list> <input-file> <torrent-file> <logFile>");
+        error(&std::cerr, "Invalid Arguments");
     }
     logFile = new std::ofstream(argv[4]);
     if(logFile->is_open()){
@@ -32,7 +33,8 @@ int main(int argc, char *argv[]){
         trackerServer->run();
         trackerServer->closeTracker();
     }else{
-        printf("Log file could not be opened. Check path\n");
+        logFile->close();
+        error(&std::cerr, "Log file could not be opened. Check path");
     }
     logFile->close();
     delete trackerServer;
