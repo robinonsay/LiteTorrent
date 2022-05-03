@@ -26,23 +26,14 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
     CHUNK_H chunk;
     char chunkBuff[CHUNK_SIZE];
     this->log = log;
-    if(!peersList.is_open()) error(&std::cout, "Peers list file does not exist");
-    if(!tFile.is_open()){
-        printf("Torrent file could not be opened. Check path\n");
-        exit(1);
-    }
-    if(!inFile.is_open()){
-        printf("Input file does not exist\n");
-        exit(1);
-    }
+    if(!peersList.is_open()) error(&std::cerr, "Peers list file does not exist");
+    if(!tFile.is_open()) error(&std::cerr, "Torrent file could not be opened. Check path");
+    if(!inFile.is_open()) error(&std::cerr, "Input file does not exist");
     peer_addr.sin_family = AF_INET;
     peer_addr.sin_port = htons(TRACKER_PORT);
     while(peersList >> ip_str){
         status = inet_aton(ip_str.c_str(), &peer_addr.sin_addr);
-        if(status == 0){
-            fprintf(stderr, "ERROR invalid IP address\n");
-            exit(1);
-        }
+        if(status == 0) error(&std::cerr, "ERROR invalid IP address");
         this->ipAddrs.push_back(peer_addr);
     }
     tFile << this->ipAddrs.size() << std::endl;
@@ -53,10 +44,7 @@ Tracker::Tracker(char *pListPath, char *tFilePath, char *inFilePath, std::ofstre
     for(int i=0; inFile.good(); i++){
         memset((char *) chunkBuff, 0, sizeof(chunkBuff));
         inFile.read(chunkBuff, CHUNK_SIZE);
-        if(inFile.fail() && !inFile.eof()){
-            fprintf(stderr, "ERROR could not read input file\n");
-            exit(1);
-        }
+        if(inFile.fail() && !inFile.eof()) error(&std::cerr, "ERROR could not read input file");
         chunk.index = i;
         chunk.hash = crc32(chunkBuff, CHUNK_SIZE);
         this->chunks.push_back(chunk);

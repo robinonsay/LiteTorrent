@@ -9,7 +9,7 @@ void sysError(const char msg[]){
 }
 
 void error(std::ostream *stream, const char msg[]){
-    (*stream) << msg << std::endl;
+    (*stream) << RED << msg << RESET << std::endl;
     exit(1);
 }
 
