@@ -5,11 +5,6 @@ peer
 !peer/
 tracker
 !tracker/
-logs/*
-trrnt-files/*
-output/*
-test-files/*
-ownd-chunks/*
-peers/*
 test
 !test/
+testing/
