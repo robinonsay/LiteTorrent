@@ -4,6 +4,7 @@ TRACKER_DIR ?= $(SRC_DIR)/tracker
 PEER_DIR ?= $(SRC_DIR)/peer
 BUILD_DIR ?= ./bin
 INC_DIR ?= ./include
+BOOST_ROOT ?= /usr/local/boost_1_79_0
 
 SRCS := $(shell ls $(SRC_DIR)/*.cpp)
 DEPS := $(shell find $(INC_DIR) -name *.h)
@@ -13,7 +14,7 @@ PEER_SRCS := $(SRCS) $(shell find $(PEER_DIR) -name *.cpp)
 PEER_OBJS := $(PEER_SRCS:%=$(BUILD_DIR)/%.o)
 OBJS := $(TRACKER_OBJS) $(PEER_OBJS)
 
-CXXFLAGS := -std=c++11 -g -Wall -I$(INC_DIR)
+CXXFLAGS := -std=c++11 -g -Wall -I$(INC_DIR) -I$(BOOST_ROOT)
 CXX := g++
 
 all: tracker peer
