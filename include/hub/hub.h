@@ -28,7 +28,7 @@ class Hub{
         std::istream& in;
         std::ostream& log;
         Packet torrentPkt;
-        TCPServer *server;
+        TCPServer server;
         ThreadList threads;
         AddrChunkMap clientMap;
         PeerfdList peerFDs;

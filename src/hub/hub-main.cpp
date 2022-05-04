@@ -32,6 +32,9 @@ int main(int argc, char *argv[]){
         fatalError(std::cerr, "Could not open log file. Check path");
     hub = new Hub(*inFile);
     hub->run();
+    hub->close();
+    inFile->close();
+    logFile->close();
     return 0;
 }
 

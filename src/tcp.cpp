@@ -28,10 +28,10 @@ int TCPServer::listen(uint32_t backlog){
 int TCPServer::accept(sockaddr_in *client_addr, size_t *addrlen){
     return ::accept(this->sockfd, (struct sockaddr *) client_addr, (socklen_t *) addrlen);
 }
-int TCPServer::read(int cliSockfd, char *buff, size_t size, bool bestEffort){
+int TCPServer::read(int cliSockfd, char *buff, size_t size, bool readAll){
     int bytesRead = 0;
     int pos = 0;
-    if(bestEffort){
+    if(!readAll){
         pos = ::read(cliSockfd, buff, size);
     }else{
         do{
@@ -42,10 +42,10 @@ int TCPServer::read(int cliSockfd, char *buff, size_t size, bool bestEffort){
     }
     return pos;
 }
-int TCPServer::write(int cliSockfd, char *buff, size_t size, bool bestEffort){
+int TCPServer::write(int cliSockfd, char *buff, size_t size, bool writeAll){
     int bytesRead = 0;
     int pos = 0;
-    if(bestEffort){
+    if(!writeAll){
         pos = ::write(cliSockfd, buff, size);
     }else{
         do{
@@ -89,10 +89,10 @@ TCPClient::TCPClient(const char ip[], uint32_t port, bool blocking){
 int TCPClient::connect(){
     return ::connect(this->sockfd, (sockaddr *) &this->addr, sizeof(this->addr));
 }
-int TCPClient::read(char *buff, size_t size, bool bestEffort){
+int TCPClient::read(char *buff, size_t size, bool readAll){
     int bytesRead = 0;
     int pos = 0;
-    if(bestEffort){
+    if(!readAll){
         pos = ::read(this->sockfd, buff, size);
     }else{
         do{
@@ -103,10 +103,10 @@ int TCPClient::read(char *buff, size_t size, bool bestEffort){
     }
     return pos;
 }
-int TCPClient::write(char *buff, size_t size, bool bestEffort){
+int TCPClient::write(char *buff, size_t size, bool writeAll){
     int bytesRead = 0;
     int pos = 0;
-    if(bestEffort){
+    if(!writeAll){
         pos = ::write(this->sockfd, buff, size);
     }else{
         do{

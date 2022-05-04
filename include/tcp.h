@@ -12,8 +12,8 @@ class TCPServer{
         TCPServer(uint32_t port, bool blocking=true);
         int listen(uint32_t backlog);
         int accept(sockaddr_in *client_addr, size_t *addrlen);
-        static int read(int cliSockfd, char *buff, size_t size, bool bestEffort=true);
-        static int write(int cliSockfd, char *buff, size_t size, bool bestEffort=true);
+        static int read(int cliSockfd, char *buff, size_t size, bool readAll=true);
+        static int write(int cliSockfd, char *buff, size_t size, bool writeAll=true);
         static int close(int sockfd);
         static int shutdown(int sockfd);
         int getFD();
@@ -26,8 +26,8 @@ class TCPClient{
     public:
         TCPClient(const char ip[], uint32_t port, bool blocking=true);
         int connect();
-        int read(char *buff, size_t size, bool bestEffort=true);
-        int write(char *buff, size_t size, bool bestEffort=true);
+        int read(char *buff, size_t size, bool readAll=true);
+        int write(char *buff, size_t size, bool writeAll=true);
         int close();
         int getFD();
 };

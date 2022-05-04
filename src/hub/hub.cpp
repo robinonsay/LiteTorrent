@@ -13,12 +13,11 @@
 #include <netinet/in.h>
 
 
-Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s){
+Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(HUB_PORT){
     std::ostringstream tstream;
     std::string torrent;
     Chunk currChunk;
     std::list<ChunkHeader> chList;
-    this->server = new TCPServer(HUB_PORT);
     for(int i=0; this->in.good(); i++){
         memset((char *) &currChunk, 0, sizeof(currChunk));
         this->in.read(currChunk.payload, sizeof(currChunk.payload));
@@ -40,9 +39,10 @@ Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s){
     this->torrentPkt.ph.size = torrent.size();
     memcpy(this->torrentPkt.payload, torrent.c_str(), torrent.size());
 }
+
 Hub::~Hub(){
-    delete this->server;
 }
+
 void Hub::close(){
     int status;
     ThreadList::iterator th;
@@ -54,28 +54,28 @@ void Hub::close(){
     this->log << std::endl;
     this->log << "Closing client connections..." << std::endl;
     for(pfd=this->peerFDs.begin(); pfd != this->peerFDs.end(); ++pfd){
-        status = TCPServer::write(*pfd, (char *) &finPkt, sizeof(finPkt), false);
+        status = TCPServer::write(*pfd, (char *) &finPkt, sizeof(finPkt), true);
         if(status < 0) sysError("ERROR: writing FIN to socket");
-//        do{
-//            memset((char *) &finPkt, 0, sizeof(finPkt));
-//            status = TCPServer::read(*pfd, &finPkt, sizeof(finPkt), false);
-//            if(status < 0) sysError("ERROR: reading FIN to socket");
-//        } while(finPkt.type != FIN);
+        do{
+            memset((char *) &finPkt, 0, sizeof(finPkt));
+            status = TCPServer::read(*pfd, (char *) &finPkt, sizeof(finPkt), true);
+            if(status < 0) sysError("ERROR: reading FIN to socket");
+        } while(finPkt.type != FIN);
         status = TCPServer::shutdown(*pfd);
         if(status < 0) sysError("ERROR: shutting down peer socket");
     }
-    if(TCPServer::close(this->server->getFD()) < 0) sysError("ERROR closing socket");
+    if(TCPServer::close(this->server.getFD()) < 0) sysError("ERROR closing socket");
     warning(this->log, "Hub Closed");
 }
 void Hub::run(){
-    int status = this->server->listen(BACKLOG_SIZE);
+    int status = this->server.listen(BACKLOG_SIZE);
     int peerSockfd;
     sockaddr_in peerAddr;
     size_t peerAddrLen = sizeof(peerAddr);
     if(status < 0) sysError("ERROR: TCP server listen failed");
     this->log << "Listening on port " << HUB_PORT << std::endl;
     while(1){
-        peerSockfd = this->server->accept(&peerAddr, &peerAddrLen);
+        peerSockfd = this->server.accept(&peerAddr, &peerAddrLen);
         if(peerSockfd < 0)
             sysError("ERROR: accepting connection");
         else
