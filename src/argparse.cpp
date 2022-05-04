@@ -8,9 +8,10 @@
 #include <stdio.h>
 #include <map>
 #include <list>
+#include <initializer_list>
 
-ArgParse::ArgParse(int argc, char *argv[]){
-    this->order = {"input-file", "log-file"};
+ArgParse::ArgParse(int argc, char *argv[], std::initializer_list<std::string> il){
+    this->order = il;
     ArgList::iterator it;
     std::ostringstream oss;
     oss << "Usage:" << std::endl;
