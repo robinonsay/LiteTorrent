@@ -60,6 +60,18 @@ int TCPServer::close(int sockfd){
     return ::close(sockfd);
 }
 
+int TCPServer::shutdown(int sockfd){
+    int status;
+    char buff[1];
+//    status = ::shutdown(sockfd, how);
+//    if(status < 0) return status;
+    do{
+        status = ::read(sockfd, buff, sizeof(buff));
+        if(status < 0) return status;
+    }while (status != 0);
+    return ::close(sockfd);
+}
+
 int TCPServer::getFD(){
     return this->sockfd;
 }

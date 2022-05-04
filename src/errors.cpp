@@ -2,8 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <stdexcept>
 
 void sysError(const char msg[]){
+    perror(msg);
+    throw std::runtime_error(msg);
+}
+
+void fatalSysError(const char msg[]){
     perror(msg);
     exit(1);
 }

@@ -4,13 +4,16 @@
 #include "ltdefs.h"
 #include "tcp.h"
 
+#include <map>
 #include <list>
 #include <thread>
 #include <mutex>
 #include <iostream>
 
 typedef std::list<std::thread> ThreadList;
-typedef std::map<std::string, ChunkHeader> AddrChunkMap;
+typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;
+typedef std::list<int> PeerfdList;
+
 
 #define TIMEOUT 30000  // in ms
 #define BACKLOG_SIZE 10
@@ -28,6 +31,7 @@ class Hub{
         TCPServer *server;
         ThreadList threads;
         AddrChunkMap clientMap;
+        PeerfdList peerFDs;
         std::mutex mutex;
         void connHandler(int sockfd, sockaddr_in peerAddr);
 };

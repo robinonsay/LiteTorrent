@@ -15,6 +15,7 @@ class TCPServer{
         static int read(int cliSockfd, char *buff, size_t size, bool bestEffort=true);
         static int write(int cliSockfd, char *buff, size_t size, bool bestEffort=true);
         static int close(int sockfd);
+        static int shutdown(int sockfd);
         int getFD();
 };
 

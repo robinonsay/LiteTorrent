@@ -16,7 +16,8 @@ enum reqTypes{
     ChunkInqReq=2,
     ChunkInqResp=3,
     ChunkReq=4,
-    ChunkResp=5
+    ChunkResp=5,
+    FIN=6
 };
 
 typedef struct PacketHeader {

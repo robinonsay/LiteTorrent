@@ -44,12 +44,28 @@ Hub::~Hub(){
     delete this->server;
 }
 void Hub::close(){
+    int status;
     ThreadList::iterator th;
-    for(th=this->threads.begin();th != this->threads.end(); ++th){
+    PeerfdList::iterator pfd;
+    PacketHeader finPkt = {FIN, 0};
+    for(th=this->threads.begin(); th != this->threads.end(); ++th){
         th->join();
     }
-    if(this->server->close(this->server->getFD()) < 0) sysError("ERROR closing socket");
-    warning(this->log, "\nClosing Hub");
+    this->log << std::endl;
+    this->log << "Closing client connections..." << std::endl;
+    for(pfd=this->peerFDs.begin(); pfd != this->peerFDs.end(); ++pfd){
+        status = TCPServer::write(*pfd, (char *) &finPkt, sizeof(finPkt), false);
+        if(status < 0) sysError("ERROR: writing FIN to socket");
+//        do{
+//            memset((char *) &finPkt, 0, sizeof(finPkt));
+//            status = TCPServer::read(*pfd, &finPkt, sizeof(finPkt), false);
+//            if(status < 0) sysError("ERROR: reading FIN to socket");
+//        } while(finPkt.type != FIN);
+        status = TCPServer::shutdown(*pfd);
+        if(status < 0) sysError("ERROR: shutting down peer socket");
+    }
+    if(TCPServer::close(this->server->getFD()) < 0) sysError("ERROR closing socket");
+    warning(this->log, "Hub Closed");
 }
 void Hub::run(){
     int status = this->server->listen(BACKLOG_SIZE);
@@ -60,18 +76,22 @@ void Hub::run(){
     this->log << "Listening on port " << HUB_PORT << std::endl;
     while(1){
         peerSockfd = this->server->accept(&peerAddr, &peerAddrLen);
-        if(peerSockfd < 0) sysError("ERROR: accepting connection");
-        this->threads.push_back(std::thread(&Hub::connHandler, this, peerSockfd, peerAddr));
+        if(peerSockfd < 0)
+            sysError("ERROR: accepting connection");
+        else
+            this->threads.push_back(std::thread(&Hub::connHandler, this, peerSockfd, peerAddr));
     }
 }
 void Hub::connHandler(int sockfd, sockaddr_in peerAddr){
     int status;
-    this->log << "Accepted connection from " << inet_ntoa(peerAddr.sin_addr);
-    this->log << ":"<< ntohs(peerAddr.sin_port) << std::endl;
-    
-    status = TCPServer::close(sockfd);
-    if(status < 0) sysError("ERROR: closing peer socket");
-    this->log << "Closing connection to " << inet_ntoa(peerAddr.sin_addr);
-    this->log << ":"<< ntohs(peerAddr.sin_port) << std::endl;
+    std::ostringstream addrStream;
+    std::list<ChunkHeader> chList;
+    addrStream << inet_ntoa(peerAddr.sin_addr) << ":" << ntohs(peerAddr.sin_port);
+    this->log << "Accepted connection from " << addrStream.str() << std::endl;
+    this->mutex.lock();
+    this->clientMap[addrStream.str()] = chList;
+    this->peerFDs.push_back(sockfd);
+    this->mutex.unlock();
+
 }
 
