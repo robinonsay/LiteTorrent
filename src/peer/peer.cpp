@@ -36,7 +36,7 @@ void Peer::open(){
     int status;
     bool isFIN = false;
     Packet pkt;
-//    this->threads.push_back(std::thread(&Peer::server, this));
+    this->threads.push_back(std::thread(&Peer::server, this));
     // Connect to hub
     status = this->hub.connect();
     // Error out if a connection couldn't be established to hub
@@ -68,28 +68,38 @@ int Peer::getTorrent(){
         error(this->log, "Hub not connected");
         return -1;
     }
+    // Set packet to 0
     memset((char *) &pkt, 0, sizeof(pkt));
+    // Form torrent request
     pkt.ph.type = TRRNT_REQ;
     pkt.ph.size = 0;
+    // Write torrent request to hub
     status = this->hub.write((char *) &pkt.ph, sizeof(pkt.ph));
     if(status < 0){
         error(this->log, "Could not write torrent request");
         perror("ERR0R");
         return -1;
     }
+    // Read torrent response from hub
     status = this->hub.read((char *) &pkt, sizeof(pkt));
     if(status < 0){
         error(this->log, "Could not read torrent request");
         perror("ERR0R");
         return -1;
     }
+    // Determine number of chunk headers
     numCHs = pkt.ph.size / sizeof(ChunkHeader);
-    int n = 0;
+    int n = 0;  // Chunk header location in payload
     for(int i=0; i < numCHs; i++){
+        // Calculate chunk header location in payload
         n = i * sizeof(ChunkHeader);
+        // Set temp chunk header to 0
         memset(&chunkHeader, 0 , sizeof(chunkHeader));
+        // Copy memory to temp chunk header
         memcpy(&chunkHeader, &pkt.payload[n], sizeof(ChunkHeader));
+        // TODO: Remove debugging statement
         this->log << chunkHeader.index << ' ' << chunkHeader.size << ' ' << chunkHeader.hash << std::endl;
+        // Push chunk header onto torrent linked list
         this->torrent.push_back(chunkHeader);
     }
     return 0;
@@ -97,7 +107,9 @@ int Peer::getTorrent(){
 
 int Peer::sendFIN(){
     int status;
+    // Form FIN packet
     PacketHeader finHdr = {FIN, 0};
+    // Write FIN packet to hub
     status = this->hub.write((char *) &finHdr, sizeof(finHdr));
     if(status < 0){
         error(this->log, "Couldn't write FIN to hub");
@@ -110,14 +122,19 @@ int Peer::sendFIN(){
 
 void Peer::close(){
     int status;
+    this->log << std::endl;
+    // Send FIN to hub
     status = this->sendFIN();
     if(status < 0) error(this->log, "Error sending FIN");
+    // Notify other threads of closing
     this->closing = true;
+    // Close socket connection to hub
     status = this->hub.close();
     if(status < 0){
         error(this->log, "Couldn't close hub connection");
         perror("ERROR");
     }
+    // Join threads
     ThreadList::iterator thi;
     for(thi=this->threads.begin(); thi != this->threads.end(); ++thi){
         thi->join();
