@@ -44,7 +44,6 @@ int main(int argc, char *argv[]){
         fatalError(std::cerr, "Could not open log file. Check path");
     peer = new Peer(args["myIP"].c_str(), args["hubIP"].c_str(), *outFile);
     peer->run();
-    peer->close();
     outFile->close();
     logFile->close();
     return 0;

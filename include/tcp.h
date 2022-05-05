@@ -2,6 +2,7 @@
 #define TCP_H
 
 #include "ltdefs.h"
+#include <atomic>
 #include <sys/socket.h>
 
 class TCPServer{
@@ -23,6 +24,7 @@ class TCPClient{
     private:
         int sockfd;
         sockaddr_in addr;
+        std::atomic<bool> connected;
     public:
         TCPClient(const char ip[], uint32_t port, bool blocking=true);
         int connect();
@@ -30,6 +32,7 @@ class TCPClient{
         int write(char *buff, size_t size, bool writeAll=true);
         int close();
         int getFD();
+        bool isConn();
 };
 
 #endif

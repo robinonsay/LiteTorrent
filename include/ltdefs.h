@@ -11,13 +11,10 @@
 typedef struct sockaddr_in sockaddr_in;
 
 enum reqTypes{
-    TFileReq=0,
-    TFileResp=1,
-    ChunkInqReq=2,
-    ChunkInqResp=3,
-    ChunkReq=4,
-    ChunkResp=5,
-    FIN=6
+    FIN=100,
+    UPDATE=200,
+    TRRNT_REQ=300,
+    TRRNT_RESP=400
 };
 
 typedef struct PacketHeader {

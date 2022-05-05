@@ -9,10 +9,11 @@
 #include <thread>
 #include <mutex>
 #include <iostream>
+#include <atomic>
 
 typedef std::list<std::thread> ThreadList;
 typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;
-typedef std::list<int> PeerfdList;
+typedef std::map<std::string, int> AddrFDMap;
 
 
 #define TIMEOUT 30000  // in ms
@@ -30,9 +31,12 @@ class Hub{
         Packet torrentPkt;
         TCPServer server;
         ThreadList threads;
-        AddrChunkMap clientMap;
-        PeerfdList peerFDs;
-        std::mutex mutex;
+        AddrChunkMap peerMap;
+        AddrFDMap peerFDMap;
+        std::mutex peerMapMutex;
+        std::mutex peerFDMapMutex;
+        std::atomic<bool> closing;
+        std::atomic<uint32_t> numPeers;
         void connHandler(int sockfd, sockaddr_in peerAddr);
 };
 

@@ -15,6 +15,9 @@
 #define PEER_TIMEOUT_ms 30000
 
 typedef std::list<std::thread> ThreadList;
+typedef std::map<uint32_t, ChunkHeader> HashChunkHMap;
+typedef std::map<uint32_t, ChunkHeader> IndexChunkHMap;
+typedef std::list<ChunkHeader> ChunkHList;
 
 class Peer{
     private:
@@ -24,14 +27,17 @@ class Peer{
         TCPServer peerServer;
         const char *myIP;
         ThreadList threads;
-        std::mutex mutex;
         std::atomic<bool> closing;
+        ChunkHList torrent;
+        int getTorrent();
+        int sendFIN();
         void server();
         void connHandler(int peerSockfd, sockaddr_in peerAddr);
     public:
         Peer(const char myIP[], const char hubIP[], std::ostream& out_s, std::ostream& log_s=std::cout);
         ~Peer();
         void run();
+        void open();
         void close();
 };
 

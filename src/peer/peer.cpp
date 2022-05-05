@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdio.h>
 
 
 
@@ -27,33 +28,96 @@ Peer::~Peer(){
 }
 
 void Peer::run(){
+    this->open();
+    this->close();
+}
+
+void Peer::open(){
     int status;
     bool isFIN = false;
     Packet pkt;
-    memset((char *) &pkt, 0, sizeof(pkt));
+//    this->threads.push_back(std::thread(&Peer::server, this));
+    // Connect to hub
     status = this->hub.connect();
+    // Error out if a connection couldn't be established to hub
     if(status < 0 && errno != EISCONN) sysError("ERROR connecting to hub");
-    this->log << "Connected to hub" << std::endl;
-    this->threads.push_back(std::thread(&Peer::server, this));
+    info(this->log, "Connected to hub");
+    // Request torrent
+    status = this->getTorrent();
+    if(status < 0) error(this->log, "Could not get torrent");
     do{
-        status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph)); 
-        if(status < 0) sysError("ERROR reading hub packet");
-        switch(pkt.ph.type){
-            case FIN:
-                isFIN = true;
+        // Set packet to 0
+        memset((char *) &pkt, 0, sizeof(pkt));       
+        status = this->hub.read((char *) &pkt, sizeof(pkt));
+        if(status < 0){
+            error(this->log, "Could not read packet from hub");
+            perror("ERROR");
+            break;
         }
+        isFIN = pkt.ph.type == FIN && pkt.ph.size == 0;
     }while(!isFIN);
-    this->log << "Recieved FIN" << std::endl;
+}
+
+int Peer::getTorrent(){
+    int status;
+    Packet pkt;
+    ChunkHeader chunkHeader;
+    int numCHs;
+    // Check if connected
+    if(!this->hub.isConn()){
+        error(this->log, "Hub not connected");
+        return -1;
+    }
+    memset((char *) &pkt, 0, sizeof(pkt));
+    pkt.ph.type = TRRNT_REQ;
+    pkt.ph.size = 0;
+    status = this->hub.write((char *) &pkt.ph, sizeof(pkt.ph));
+    if(status < 0){
+        error(this->log, "Could not write torrent request");
+        perror("ERR0R");
+        return -1;
+    }
+    status = this->hub.read((char *) &pkt, sizeof(pkt));
+    if(status < 0){
+        error(this->log, "Could not read torrent request");
+        perror("ERR0R");
+        return -1;
+    }
+    numCHs = pkt.ph.size / sizeof(ChunkHeader);
+    int n = 0;
+    for(int i=0; i < numCHs; i++){
+        n = i * sizeof(ChunkHeader);
+        memset(&chunkHeader, 0 , sizeof(chunkHeader));
+        memcpy(&chunkHeader, &pkt.payload[n], sizeof(ChunkHeader));
+        this->log << chunkHeader.index << ' ' << chunkHeader.size << ' ' << chunkHeader.hash << std::endl;
+        this->torrent.push_back(chunkHeader);
+    }
+    return 0;
+}
+
+int Peer::sendFIN(){
+    int status;
+    PacketHeader finHdr = {FIN, 0};
+    status = this->hub.write((char *) &finHdr, sizeof(finHdr));
+    if(status < 0){
+        error(this->log, "Couldn't write FIN to hub");
+        perror("ERROR");
+        return -1;
+    }
+    info(this->log, "FIN sent");
+    return 0;
 }
 
 void Peer::close(){
     int status;
-    PacketHeader finPkt = {FIN, 0};
+    status = this->sendFIN();
+    if(status < 0) error(this->log, "Error sending FIN");
     this->closing = true;
-    status = this->hub.write((char *) &finPkt, sizeof(finPkt));
-    if(status < 0) sysError("ERROR writing FIN to hub");
     status = this->hub.close();
-    if(status < 0) sysError("ERROR closing hub connection");
+    if(status < 0){
+        error(this->log, "Couldn't close hub connection");
+        perror("ERROR");
+    }
     ThreadList::iterator thi;
     for(thi=this->threads.begin(); thi != this->threads.end(); ++thi){
         thi->join();
