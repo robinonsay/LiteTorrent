@@ -3,6 +3,7 @@
 
 #include "ltdefs.h"
 #include <atomic>
+#include <mutex>
 #include <sys/socket.h>
 #include <map>
 
@@ -15,7 +16,9 @@ class TCPServer{
         int sockfd;  /** Socket file descriptor */
         sockaddr_in addr;  /** Server address */
         AddrFDMap addrFDMap;
-        std::atomic<uint32_t> clientCount;
+        std::atomic<uint32_t> clientCount;  /** Counts the number of clients */
+        std::mutex rwMutex;  /** Synchronizes reads and writes */
+        std::mutex mapMutex;  /** Synchronizes map access */
     public:
 
         /**
@@ -52,7 +55,9 @@ class TCPServer{
         * @return status of the read() system call;
         * returns bytes read on success, -1 on failure and sets errno
         */
-        int read(sockaddr_in *client_addr, char *buff, size_t size, bool readAll=true);
+        ssize_t read(sockaddr_in *client_addr,
+                     char *buff, ssize_t size,
+                     bool complete=true, bool blocking=true);
 
         /**
         * Writes to client socket file descriptor
@@ -63,8 +68,9 @@ class TCPServer{
         * @return status of the write() system call;
         * returns bytes written on success, -1 on failure and sets errno
         */
-        int write(sockaddr_in *client_addr,
-                  char *buff, size_t size, bool writeAll=true);
+        ssize_t write(sockaddr_in *client_addr,
+                  char *buff, ssize_t size,
+                  bool complete=true, bool blocking=true);
 
         /** Returns number of clients connected to the server atomically */
         uint32_t getClientCount();
@@ -97,6 +103,7 @@ class TCPClient{
         int sockfd;  /** Socket file descriptor */
         sockaddr_in addr;  /** Server socket address */
         std::atomic<bool> connected;  /** Connection state */
+        std::mutex rwMutex;  /** Mutex synchronizing reads and writes */
     public:
 
         /**
@@ -120,7 +127,8 @@ class TCPClient{
         * @return status of the read() system call;
         * returns bytes read on success, -1 on failure and sets errno
         */
-        int read(char *buff, size_t size, bool readAll=true);
+        ssize_t read(char *buff, ssize_t size,
+                     bool complete=true);
 
         /**
         * Write from server socket file descriptor
@@ -130,7 +138,8 @@ class TCPClient{
         * @return status of the write() system call;
         * returns bytes read on success, -1 on failure and sets errno
         */
-        int write(char *buff, size_t size, bool writeAll=true);
+        ssize_t write(char *buff, ssize_t size,
+                      bool complete=true);
 
         /** Close socket connection to server */
         int close();

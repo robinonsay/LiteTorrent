@@ -48,7 +48,7 @@ void Peer::open(){
     do{
         // Set packet to 0
         memset((char *) &pkt, 0, sizeof(pkt));
-        status = this->hub.read((char *) &pkt, sizeof(pkt));
+        status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph));
         if(status < 0){
             sysError("Could not read packet from hub", this->log);
             break;
@@ -79,7 +79,13 @@ int Peer::getTorrent(){
         return -1;
     }
     // Read torrent response from hub
-    status = this->hub.read((char *) &pkt, sizeof(pkt));
+    status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph));
+    if(status < 0){
+        sysError("Could not read torrent request", this->log);
+        return -1;
+    }
+    // Read torrent response from hub
+    status = this->hub.read((char *) pkt.payload, pkt.ph.size);
     if(status < 0){
         sysError("Could not read torrent request", this->log);
         return -1;
