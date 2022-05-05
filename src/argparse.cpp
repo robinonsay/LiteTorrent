@@ -18,7 +18,7 @@ ArgParse::ArgParse(int argc, char *argv[], std::initializer_list<std::string> il
     // String stream for help message
     std::ostringstream oss;
     // Build help message
-    oss << "Usage:" << std::endl;
+    print("Usage:", oss);
     oss << argv[0];
     for(it = this->order.begin(); it != this->order.end(); ++it){
         oss << " <" << *it << ">";
@@ -42,8 +42,8 @@ ArgMap& ArgParse::parseArgs(){
     int i = 1;
     // Check if number of arguments was passed
     if(this->order.size() != (size_t) this->argc - 1){
-        error(std::cerr, "Invalid Argument(s)");
-        info(std::cout, this->helpMsg.c_str());
+        error("Invalid Argument(s)");
+        info(this->helpMsg.c_str());
         exit(1);
     }
     // Set arguments to map
@@ -54,4 +54,3 @@ ArgMap& ArgParse::parseArgs(){
     // Return map by reference
     return this->args;
 }
-

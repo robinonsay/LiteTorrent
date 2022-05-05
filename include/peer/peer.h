@@ -32,7 +32,7 @@ class Peer{
         int getTorrent();
         int sendFIN();
         void server();
-        void connHandler(int peerSockfd, sockaddr_in peerAddr);
+        void connHandler(sockaddr_in peerAddr);
     public:
         Peer(const char myIP[], const char hubIP[], std::ostream& out_s, std::ostream& log_s=std::cout);
         ~Peer();
@@ -42,4 +42,3 @@ class Peer{
 };
 
 #endif
-

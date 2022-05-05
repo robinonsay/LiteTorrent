@@ -2,6 +2,7 @@
 #define LTDEFS_H
 
 #include <netinet/in.h>
+#include <string>
 
 #define HUB_PORT 6969
 #define PEER_PORT 6881
@@ -10,34 +11,42 @@
 
 typedef struct sockaddr_in sockaddr_in;
 
-enum reqTypes{
-    FIN=100,
-    UPDATE=200,
-    TRRNT_REQ=300,
-    TRRNT_RESP=400
+/**
+* Types for packets
+* Starts at 100 so it is not confused with NULL packets
+*/
+enum types{
+    FIN=100,  /** FIN packet type*/
+    UPDATE=200, /** Update packet type */
+    TRRNT_REQ=300, /** Torrent request packet type */
+    TRRNT_RESP=400  /** Torrent response packet type */
 };
 
+/** Packet header structure */
 typedef struct PacketHeader {
-    uint32_t type;
-    uint32_t size;
+    uint32_t type;  /** Packet type, see types */
+    uint32_t size;  /** Packet payload size */
 } PacketHeader;
 
+/** Packet structure*/
 typedef struct Packet{
-    PacketHeader ph;
-    char payload[CHUNK_SIZE];
+    PacketHeader ph;  /** Packet header, see PacketHeader */
+    char payload[CHUNK_SIZE];  /** Packet payload with size CHUNK_SIZE */
 } Packet;
 
+/** Chunk Header structure */
 typedef struct ChunkHeader{
-    uint32_t index;
-    uint32_t size;
-    uint32_t hash;
+    uint32_t index;  /** Chunk index */
+    uint32_t size;  /** Chunk size */
+    uint32_t hash;  /** Chunk hash */
 } ChunkHeader;
 
+/** Chunk structure */
 typedef struct Chunk{
-    ChunkHeader ch;
-    char payload[CHUNK_SIZE];
+    ChunkHeader ch;  /** Chunk header, see ChunkHeader */
+    char payload[CHUNK_SIZE]; /** Chunk data, with size CHUNK_SIZE*/
 } Chunk;
 
+std::string addrIPv4ToString(sockaddr_in *addr);
 
 #endif
-

@@ -41,17 +41,16 @@ void Peer::open(){
     status = this->hub.connect();
     // Error out if a connection couldn't be established to hub
     if(status < 0 && errno != EISCONN) sysError("ERROR connecting to hub");
-    info(this->log, "Connected to hub");
+    info("Connected to hub", this->log);
     // Request torrent
     status = this->getTorrent();
-    if(status < 0) error(this->log, "Could not get torrent");
+    if(status < 0) error("Could not get torrent", this->log);
     do{
         // Set packet to 0
-        memset((char *) &pkt, 0, sizeof(pkt));       
+        memset((char *) &pkt, 0, sizeof(pkt));
         status = this->hub.read((char *) &pkt, sizeof(pkt));
         if(status < 0){
-            error(this->log, "Could not read packet from hub");
-            perror("ERROR");
+            sysError("Could not read packet from hub", this->log);
             break;
         }
         isFIN = pkt.ph.type == FIN && pkt.ph.size == 0;
@@ -65,7 +64,7 @@ int Peer::getTorrent(){
     int numCHs;
     // Check if connected
     if(!this->hub.isConn()){
-        error(this->log, "Hub not connected");
+        error("Hub not connected", this->log);
         return -1;
     }
     // Set packet to 0
@@ -76,15 +75,13 @@ int Peer::getTorrent(){
     // Write torrent request to hub
     status = this->hub.write((char *) &pkt.ph, sizeof(pkt.ph));
     if(status < 0){
-        error(this->log, "Could not write torrent request");
-        perror("ERR0R");
+        sysError("Could not write torrent request", this->log);
         return -1;
     }
     // Read torrent response from hub
     status = this->hub.read((char *) &pkt, sizeof(pkt));
     if(status < 0){
-        error(this->log, "Could not read torrent request");
-        perror("ERR0R");
+        sysError("Could not read torrent request", this->log);
         return -1;
     }
     // Determine number of chunk headers
@@ -112,11 +109,10 @@ int Peer::sendFIN(){
     // Write FIN packet to hub
     status = this->hub.write((char *) &finHdr, sizeof(finHdr));
     if(status < 0){
-        error(this->log, "Couldn't write FIN to hub");
-        perror("ERROR");
+        sysError("Couldn't write FIN to hub", this->log);
         return -1;
     }
-    info(this->log, "FIN sent");
+    info("FIN sent", this->log);
     return 0;
 }
 
@@ -125,14 +121,13 @@ void Peer::close(){
     this->log << std::endl;
     // Send FIN to hub
     status = this->sendFIN();
-    if(status < 0) error(this->log, "Error sending FIN");
+    if(status < 0) error("Error sending FIN", this->log);
     // Notify other threads of closing
     this->closing = true;
     // Close socket connection to hub
     status = this->hub.close();
     if(status < 0){
-        error(this->log, "Couldn't close hub connection");
-        perror("ERROR");
+        sysError("Couldn't close hub connection", this->log);
     }
     // Join threads
     ThreadList::iterator thi;
@@ -145,9 +140,8 @@ void Peer::server(){
     while(!this->closing){
         sleep(1);
     }
-    this->log << "Closing peer server" << std::endl;
+    warning("Closing peer server", this->log);
 }
 
-void Peer::connHandler(int peerSockfd, sockaddr_in peerAddr){
+void Peer::connHandler(sockaddr_in peerAddr){
 }
-
