@@ -20,9 +20,39 @@
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
-void sysError(const char msg[]);
-void error(std::ostream *stream, const char msg[]);
-void warning(std::ostream *stream, const char msg[]);
-void info(std::ostream *stream, const char msg[]);
+/**
+* Logs system error to stream and prints message to console
+* @param stream Stream to log error to; defaults to std::cerr
+* @param msg Error message
+*/
+void sysError(const char msg[], std::ostream& stream=std::cerr);
+
+/**
+* Logs error to stream
+* @param stream Stream to log error to; defaults to std::cerr
+* @param msg Error message
+*/
+void error(const char msg[], std::ostream& stream=std::cerr);
+
+/**
+* Logs warning to stream
+* @param stream Stream to log warning to; defaults to std::cout
+* @param msg Warning message
+*/
+void warning(const char msg[], std::ostream& stream=std::cout);
+
+/**
+* Logs info to stream
+* @param stream Stream to log info to; defaults to std::cout
+* @param msg Error message
+*/
+void info(const char msg[], std::ostream& stream=std::cout);
+
+/**
+* Prints info to stream
+* @param stream Stream to log info to; defaults to std::cout
+* @param msg Error message
+*/
+void print(const char msg[], std::ostream& stream=std::cout);
 
 #endif

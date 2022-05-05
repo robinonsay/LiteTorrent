@@ -8,3 +8,7 @@ tracker
 test
 !test/
 testing/
+vim-sessions/
+bin/
+hub
+!hub/
