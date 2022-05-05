@@ -48,7 +48,7 @@ void Peer::open(){
     do{
         // Set packet to 0
         memset((char *) &pkt, 0, sizeof(pkt));
-        status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph), true);
+        status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph), true, false);
         if(status < 0){
             sysError("Could not read packet from hub", this->log);
             break;
