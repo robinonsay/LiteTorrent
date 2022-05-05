@@ -13,7 +13,7 @@
 
 typedef std::list<std::thread> ThreadList;
 typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;
-typedef std::map<std::string, int> AddrFDMap;
+typedef std::map<std::string, sockaddr_in> AddrMap;
 
 
 #define TIMEOUT 30000  // in ms
@@ -32,13 +32,9 @@ class Hub{
         TCPServer server;
         ThreadList threads;
         AddrChunkMap peerMap;
-        AddrFDMap peerFDMap;
-        std::mutex peerMapMutex;
-        std::mutex peerFDMapMutex;
+        AddrMap peerAddrMap;
         std::atomic<bool> closing;
-        std::atomic<uint32_t> numPeers;
-        void connHandler(int sockfd, sockaddr_in peerAddr);
+        void connHandler(std::string peerIPv4);
 };
 
 #endif
-

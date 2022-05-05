@@ -8,13 +8,14 @@
 #include <string>
 #include <string.h>
 #include <list>
+#include <map>
 #include <thread>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdio.h>
 
 
-Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(HUB_PORT), closing(false), numPeers(0){
+Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(HUB_PORT), closing(false){
     Chunk currChunk;
     std::list<ChunkHeader> chList;
     ChunkHeader *torrent;
@@ -29,7 +30,7 @@ Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(
         chList.push_back(currChunk.ch);
     }
     // Create chunk header list used for payload
-    info(this->log, "Torrent:");
+    info("Torrent:", this->log);
     torrent = new ChunkHeader[chList.size()];
     std::list<ChunkHeader>::iterator it;
     int i = 0;
@@ -53,97 +54,91 @@ Hub::~Hub(){
 void Hub::close(){
     int status;
     ThreadList::iterator th;
-    AddrFDMap::iterator pfd;
+    AddrMap::iterator ami;
     // Create FIN packet
     PacketHeader finPkt = {FIN, 0};
     // Notify other threads of closing
     this->closing = true;
     this->log << std::endl;
-    warning(this->log, "Closing client connections...");
+    warning("Closing client connections...", this->log);
     // Write FIN to all peers
     // Connection handler will take care of closing in a clean manner
-    for(pfd=this->peerFDMap.begin(); pfd != this->peerFDMap.end(); ++pfd){
-        status = TCPServer::write(pfd->second, (char *) &finPkt, sizeof(finPkt));
-        if(status < 0) sysError("ERROR: writing FIN to socket");
+    for(ami=this->peerAddrMap.begin(); ami != this->peerAddrMap.end(); ++ami){
+        status = this->server.write(&ami->second, (char *) &finPkt, sizeof(finPkt));
+        if(status < 0) sysError("ERROR: writing FIN to socket", this->log);
     }
     // Join threads
     for(th=this->threads.begin(); th != this->threads.end(); ++th){
         th->join();
     }
     // Close main fd connection
-    if(TCPServer::close(this->server.getFD()) < 0) sysError("ERROR closing socket");
-    warning(this->log, "Hub Closed");
+    if(this->server.close() < 0) sysError("ERROR closing socket", this->log);
+    warning("Hub Closed", this->log);
 }
 void Hub::run(){
     int status;
-    int peerSockfd;
     sockaddr_in peerAddr;
     size_t peerAddrLen = sizeof(peerAddr);
-    std::ostringstream addrStream;
+    std::string peerIPv4;
     // Listen for incoming connections
     status = this->server.listen(BACKLOG_SIZE);
-    if(status < 0) sysError("ERROR: TCP server listen failed");
+    if(status < 0) sysError("ERROR: TCP server listen failed", this->log);
     this->log << "Listening on port " << HUB_PORT << std::endl;
     while(1){
         // Accept the connection
-        peerSockfd = this->server.accept(&peerAddr, &peerAddrLen);
-        if(peerSockfd < 0)
-            sysError("ERROR: accepting connection");
+        status = this->server.accept(&peerAddr, &peerAddrLen);
+        if(status < 0)
+            sysError("ERROR: accepting connection", this->log);
         else{
             // Create address string stream
-            addrStream.str(std::string());
+            peerIPv4 = addrIPv4ToString(&peerAddr);
             // Push connection to its own thread via the connection handler
-            this->threads.push_back(std::thread(&Hub::connHandler, this, peerSockfd, peerAddr));
-            addrStream << inet_ntoa(peerAddr.sin_addr) << ":" << ntohs(peerAddr.sin_port);
-            this->log << "Accepted connection from " << addrStream.str() << std::endl;
+            this->threads.push_back(std::thread(&Hub::connHandler, this, peerIPv4));
+            this->log << "Accepted connection from " << peerIPv4 << std::endl;
             // Add peer to peer maps
-            this->peerMap[addrStream.str()] = std::list<ChunkHeader>();
-            this->peerFDMap[addrStream.str()] = peerSockfd;
+            this->peerMap[peerIPv4] = std::list<ChunkHeader>();
+            this->peerAddrMap[peerIPv4] = peerAddr;
         }
     }
 }
 
-void Hub::connHandler(int sockfd, sockaddr_in peerAddr){
+void Hub::connHandler(std::string peerIPv4){
     int status;
     bool isFIN = false;
-    std::ostringstream addrStream;
     Packet pkt;
-    // Create address string for lookup
-    addrStream << inet_ntoa(peerAddr.sin_addr) << ":" << ntohs(peerAddr.sin_port);
-    // Increment atomic variable number of peers
-    this->numPeers++;
+    sockaddr_in *peerAddr;
+    peerAddr = &this->peerAddrMap[peerIPv4];
     do{
         // Clear packet
         memset((char *) &pkt, 0, sizeof(pkt));
         // Read data into packet
-        status = TCPServer::read(sockfd, (char *) &pkt, sizeof(pkt));
+        status = this->server.read(peerAddr, (char *) &pkt, sizeof(pkt));
         if(status < 0){
-            error(this->log, "ERROR reading from client sockfd");
+            error("ERROR reading from client sockfd", this->log);
             perror("ERROR");
             break;
         }
         if(pkt.ph.type == FIN && pkt.ph.size == 0){
             // If FIN erase peer from map and indicate that connection is done
-            this->peerFDMap.erase(addrStream.str());
-            this->peerMap.erase(addrStream.str());
+            this->peerAddrMap.erase(peerIPv4);
+            this->peerMap.erase(peerIPv4);
             isFIN = true;
         }else if(pkt.ph.type == TRRNT_REQ && pkt.ph.size == 0){
             // If torrent request respond with torrent
-            this->log << "Torrent request from: " << addrStream.str() << std::endl;
-            status = TCPServer::write(sockfd, (char *) &this->torrentPkt, sizeof(this->torrentPkt));
+            this->log << "Torrent request from: " << peerIPv4 << std::endl;
+            status = this->server.write(peerAddr,
+                                      (char *) &this->torrentPkt,
+                                      sizeof(this->torrentPkt));
             if(status < 0){
-                error(this->log, "ERROR writing torrent to client sockfd");
-                perror("ERROR");
+                sysError("ERROR writing torrent to client sockfd", this->log);
                 break;
             }
         }
     }while(!isFIN);
     // Connection is finished, shutdown (close) connection to peer
-    if(TCPServer::shutdown(sockfd) < 0){
-        error(this->log, "ERROR closing client sockfd");
+    status = this->server.shutdownCli(peerAddr);
+    if(status < 0){
+        sysError("ERROR closing client sockfd", this->log);
         perror("ERROR");
     }
-    // Decrement number of peers
-    this->numPeers--;
 }
-

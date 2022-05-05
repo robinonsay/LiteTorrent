@@ -75,7 +75,7 @@ class TCPServer{
         * @return status of the close() system call;
         * returns 0 on success, -1 on failure and sets errno
         */
-        int close(sockaddr_in *client_addr);
+        int closeCli(sockaddr_in *client_addr);
 
         /**
         * Shutsdown the Socket
@@ -83,7 +83,10 @@ class TCPServer{
         * @return status of the close() system call;
         * returns 0 on success, -1 on failure and sets errno
         */
-        int shutdown(sockaddr_in *client_addr);
+        int shutdownCli(sockaddr_in *client_addr);
+
+        /** Closes server */
+        int close();
 
         /** Gets the socket file descriptor */
         int getFD();

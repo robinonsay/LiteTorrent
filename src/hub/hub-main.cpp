@@ -26,10 +26,14 @@ int main(int argc, char *argv[]){
     signal(SIGINT, signalHandler);
     inFile = new std::ifstream(args["input-file"]);
     logFile = new std::ofstream(args["log-file"]);
-    if(!inFile->is_open())
-        fatalError(std::cerr, "Could not open input file. Check path");
-    if(!logFile->is_open())
-        fatalError(std::cerr, "Could not open log file. Check path");
+    if(!inFile->is_open()){
+        sysError("Could not open input file. Check path");
+        exit(1);
+    }
+    if(!logFile->is_open()){
+        sysError("Could not open log file. Check path");
+        exit(1);
+    }
     hub = new Hub(*inFile);
     hub->run();
     hub->close();
@@ -37,4 +41,3 @@ int main(int argc, char *argv[]){
     logFile->close();
     return 0;
 }
-

@@ -39,8 +39,9 @@ int TCPServer::accept(sockaddr_in *client_addr, size_t *addrlen){
                   (struct sockaddr *) client_addr,
                   (socklen_t *) addrlen);
     if(fd < 0) return fd;
+    this->clientCount++;
     this->addrFDMap[addrIPv4ToString(client_addr)] = fd;
-    return fd;
+    return 0;
 }
 int TCPServer::read(sockaddr_in *client_addr, char *buff, size_t size, bool readAll){
     AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
@@ -63,16 +64,17 @@ uint32_t TCPServer::getClientCount(){
     return this->clientCount;
 }
 
-int TCPServer::close(sockaddr_in *client_addr){
+int TCPServer::closeCli(sockaddr_in *client_addr){
     AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
     if(it == this->addrFDMap.end()){
         error("Address not found");
         return -1;
     }
+    this->clientCount--;
     return ::close(it->second);
 }
 
-int TCPServer::shutdown(sockaddr_in *client_addr){
+int TCPServer::shutdownCli(sockaddr_in *client_addr){
     // Orderly shutdown of socket
     int status;
     char buff[1];
@@ -82,7 +84,11 @@ int TCPServer::shutdown(sockaddr_in *client_addr){
         if(status < 0) return status;
     }while (status != 0);
     // Close socket
-    return this->close(client_addr);
+    return this->closeCli(client_addr);
+}
+
+int TCPServer::close(){
+    return ::close(this->sockfd);
 }
 
 int TCPServer::getFD(){
