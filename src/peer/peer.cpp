@@ -48,11 +48,12 @@ void Peer::open(){
     do{
         // Set packet to 0
         memset((char *) &pkt, 0, sizeof(pkt));
-        status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph));
+        status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph), true);
         if(status < 0){
             sysError("Could not read packet from hub", this->log);
             break;
         }
+        if(status == 0) continue;
         isFIN = pkt.ph.type == FIN && pkt.ph.size == 0;
     }while(!isFIN);
 }
@@ -113,6 +114,7 @@ int Peer::sendFIN(){
     // Form FIN packet
     PacketHeader finHdr = {FIN, 0};
     // Write FIN packet to hub
+    info("FIN sending", this->log);
     status = this->hub.write((char *) &finHdr, sizeof(finHdr));
     if(status < 0){
         sysError("Couldn't write FIN to hub", this->log);

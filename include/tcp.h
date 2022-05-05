@@ -10,6 +10,33 @@
 /** Address-to-FD mapping type*/
 typedef std::map<std::string, int> AddrFDMap;
 
+namespace tcp{
+/**
+* Reads from socket file descriptor
+* @param sockfd The socket file desciptor
+* @param buff The buffer to read in to
+* @param size The size of the read
+* @param readAll Flag to read the whole size
+* @return status of the read() system call;
+* returns bytes read on success, -1 on failure and sets errno
+*/
+ssize_t read(int sockfd,
+             char *buff, ssize_t size,
+             bool complete=true, bool blocking=true);
+
+/**
+* Write from socket file descriptor
+* @param sockfd The socket file desciptor
+* @param buff The buffer to write from
+* @param size The size of the write
+* @param readAll Flag to write the whole size
+* @return status of the write() system call;
+* returns bytes written on success, -1 on failure and sets errno
+*/
+ssize_t write(int sockfd,
+          char *buff, ssize_t size,
+          bool complete=true, bool blocking=true);
+}
 /** TCPServer Class */
 class TCPServer{
     private:
@@ -128,7 +155,7 @@ class TCPClient{
         * returns bytes read on success, -1 on failure and sets errno
         */
         ssize_t read(char *buff, ssize_t size,
-                     bool complete=true);
+                     bool complete=true, bool blocking=true);
 
         /**
         * Write from server socket file descriptor
@@ -139,7 +166,7 @@ class TCPClient{
         * returns bytes read on success, -1 on failure and sets errno
         */
         ssize_t write(char *buff, ssize_t size,
-                      bool complete=true);
+                      bool complete=true, bool blocking=true);
 
         /** Close socket connection to server */
         int close();

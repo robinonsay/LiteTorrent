@@ -15,6 +15,84 @@
 #include <limits.h>
 #include <errno.h>
 
+ssize_t tcp::read(int sockfd,
+                  char *buff, ssize_t size,
+                  bool complete, bool blocking){
+    int flags;
+    ssize_t bytes, pos = 0;
+    bool err;
+     // Get fd flags
+     flags = fcntl(sockfd, F_GETFL);
+     if(flags < 0)return flags;
+     // If blocking unset O_NONBLOCK
+     if(blocking) flags = fcntl(sockfd, F_SETFL, flags & ~O_NONBLOCK);
+     // Else set O_NONBLOCK
+     else flags = fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+     if(flags < 0) return flags;
+     if(complete){
+         // If complete read is required go into while loop
+         while(pos < size){
+             // Read bytes
+             bytes = ::read(sockfd, &buff[pos], size - pos);
+             err = bytes < 0;
+             if(err) break;
+             // Increment position to the next unread byte, or end if finished
+             pos += bytes;
+         }
+         // Bytes = the number of bytes read
+         if(!err) bytes = pos;
+     }else{
+         // Else perform basic best effort read
+         bytes = ::read(sockfd, buff, size);
+         err = bytes < 0;
+     }
+     if(err){
+         // If it could not read...
+         if(errno == EAGAIN || errno == EWOULDBLOCK) return 0;
+         else return -1;
+     }
+     return bytes;
+}
+
+ssize_t tcp::write(int sockfd,
+                   char *buff, ssize_t size,
+                   bool complete, bool blocking){
+    int flags;
+    ssize_t bytes, pos = 0;
+    bool err = false;
+    // Get fd flags
+    flags = fcntl(sockfd, F_GETFL);
+    if(flags < 0)return flags;
+    // If blocking unset O_NONBLOCK
+    if(blocking) flags = fcntl(sockfd, F_SETFL, flags & ~O_NONBLOCK);
+    // Else set O_NONBLOCK
+    else flags = fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+    if(flags < 0) return flags;
+    if(complete){
+        // If complete read is required go into while loop
+        while(pos < size){
+            // Read bytes
+            bytes = ::write(sockfd, &buff[pos], size - pos);
+            err = bytes < 0;
+            if(err) break;
+            // Increment position to the next unread byte, or end if finished
+            pos += bytes;
+        }
+        // Bytes = the number of bytes read
+        if(!err) bytes = pos;
+    }else{
+        // Else perform basic best effort read
+        bytes = ::write(sockfd, buff, size);
+        err = bytes < 0;
+    }
+    if(err){
+        // If it could not read...
+        if(errno == EAGAIN || errno == EWOULDBLOCK) return 0;
+        else return -1;
+    }
+    return bytes;
+}
+
 TCPServer::TCPServer(uint32_t port, bool blocking){
     int status, flags;
     // Create socket
@@ -67,9 +145,8 @@ int TCPServer::accept(sockaddr_in *client_addr, size_t *addrlen){
 
 ssize_t TCPServer::read(sockaddr_in *client_addr,
                         char *buff, ssize_t size, bool complete, bool blocking){
-    int fd, flags;
+    int fd;
     ssize_t bytes;
-    ssize_t pos = 0;
     this->mapMutex.lock();
     // Check if address is in map
     AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
@@ -81,60 +158,17 @@ ssize_t TCPServer::read(sockaddr_in *client_addr,
     }
     fd = it->second;
     this->mapMutex.unlock();
-    // Write socket
+    // Read socket
     this->rwMutex.lock();
-    // Get fd flags
-    flags = fcntl(fd, F_GETFL);
-    if(flags < 0){
-        this->rwMutex.unlock();
-        return flags;
-    }
-    if(blocking){
-        // If blocking unset O_NONBLOCK flag
-        flags = fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
-    }else{
-        // Else set O_NONBLOCK flag
-        flags = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-    }
-    if(flags < 0) {
-        this->rwMutex.unlock();
-        return flags;
-    }
-    if(complete){
-        // If complete read is required go into while loop
-        while(pos < size){
-            // Read bytes
-            bytes = ::read(fd, &buff[pos], size - pos);
-            if(bytes < 0){
-                // If it could not read...
-                if(errno == EAGAIN || errno == EWOULDBLOCK){
-                    // If it was going to block, release mutex and return 0
-                    this->rwMutex.unlock();
-                    return 0;
-                }else{
-                    // Else return -1 (errno is set)
-                    this->rwMutex.unlock();
-                    return bytes;
-                }
-            }
-            // Increment position to the next unread byte, or end if finished
-            pos += bytes;
-        }
-        // Bytes = the number of bytes read
-        bytes = pos;
-    }else{
-        // Else perform basic best effort read
-        bytes = ::read(fd, buff, size);
-    }
+    bytes = tcp::read(fd, buff, size, complete, blocking);
     this->rwMutex.unlock();
     return bytes;
 }
 
 ssize_t TCPServer::write(sockaddr_in *client_addr,
                          char *buff, ssize_t size, bool complete, bool blocking){
-    int fd, flags;
+    int fd;
     ssize_t bytes;
-    ssize_t pos = 0;
     this->mapMutex.lock();
     // Check if address is in map
     AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
@@ -146,50 +180,9 @@ ssize_t TCPServer::write(sockaddr_in *client_addr,
     }
     fd = it->second;
     this->mapMutex.unlock();
-    // Read socket
+    // Write socket
     this->rwMutex.lock();
-    // Get current flags set
-    flags = fcntl(fd, F_GETFL);
-    if(flags < 0){
-        this->rwMutex.unlock();
-        return flags;
-    }
-    if(blocking){
-        // If blocking unset O_NONBLOCK flag
-        flags = fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
-    }else{
-        // Else set O_NONBLOCK flag
-        flags = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-    }
-    if(flags < 0){
-        this->rwMutex.unlock();
-        return flags;
-    }
-    if(complete){
-        // If complete write is required go into while loop
-        while(pos < size){
-            // Write bytes
-            bytes = ::write(fd, &buff[pos], size - pos);
-            if(bytes < 0){
-                // If bytes were not written
-                if(errno == EAGAIN || errno == EWOULDBLOCK){
-                    // And if it would have blocked, return 0
-                    this->rwMutex.unlock();
-                    return 0;
-                }else{
-                    // Otherwise set errno and return -1
-                    this->rwMutex.unlock();
-                    return bytes;
-                }
-            }
-            pos += bytes;
-        }
-        // Bytes = number of bytes written
-        bytes = pos;
-    }else{
-        // Else write bytes with simple best effort write
-        bytes = ::write(fd, buff, size);
-    }
+    bytes = tcp::write(fd, buff, size, complete, blocking);
     this->rwMutex.unlock();
     return bytes;
 }
@@ -283,53 +276,19 @@ int TCPClient::connect(){
     this->connected = status == 0;
     return status;
 }
-ssize_t TCPClient::read(char *buff, ssize_t size, bool complete){
+ssize_t TCPClient::read(char *buff, ssize_t size, bool complete, bool blocking){
     ssize_t bytes;
-    ssize_t pos = 0;
     // Write socket
     this->rwMutex.lock();
-    if(complete){
-        // If complete is required go into while loop
-        while(pos < size){
-            // Read bytes
-            bytes = ::read(this->sockfd, &buff[pos], size - pos);
-            if(bytes < 0){
-                this->rwMutex.unlock();
-                return bytes;
-            }
-            pos += bytes;
-        }
-        // bytes = the total number of bytes read
-        bytes = pos;
-    }else{
-        // Else perform simple read best effort
-        bytes = ::read(this->sockfd, buff, size);
-    }
+    bytes = tcp::read(this->sockfd, buff, size, complete, blocking);
     this->rwMutex.unlock();
     return bytes;
 }
-ssize_t TCPClient::write(char *buff, ssize_t size, bool complete){
+ssize_t TCPClient::write(char *buff, ssize_t size, bool complete, bool blocking){
     ssize_t bytes;
-    ssize_t pos = 0;
     // Write socket
     this->rwMutex.lock();
-    if(complete){
-        // If complete write is required go into while loop
-        while(pos < size){
-            // Write bytes
-            bytes = ::write(this->sockfd, &buff[pos], size - pos);
-            if(bytes < 0){
-                this->rwMutex.unlock();
-                return bytes;
-            }
-            pos += bytes;
-        }
-        // bytes = the total number of bytes written
-        bytes = pos;
-    }else{
-        // Else perform simple write best effort
-        bytes = ::write(this->sockfd, buff, size);
-    }
+    bytes = tcp::write(this->sockfd, buff, size, complete, blocking);
     this->rwMutex.unlock();
     return bytes;
 }
