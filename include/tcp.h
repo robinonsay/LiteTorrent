@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 #include <map>
 
+#define ADDR_NOT_FOUND -500
+
 /** Address-to-FD mapping type*/
 typedef std::map<std::string, int> AddrFDMap;
 

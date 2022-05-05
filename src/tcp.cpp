@@ -93,7 +93,7 @@ ssize_t tcp::write(int sockfd,
     return bytes;
 }
 
-TCPServer::TCPServer(uint32_t port, bool blocking){
+TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
     int status, flags;
     // Create socket
     this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -154,7 +154,7 @@ ssize_t TCPServer::read(sockaddr_in *client_addr,
         // If address is not in map error out
         error("Address not found");
         this->mapMutex.unlock();
-        return -1;
+        return ADDR_NOT_FOUND;
     }
     fd = it->second;
     this->mapMutex.unlock();
