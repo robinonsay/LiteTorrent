@@ -2,11 +2,12 @@
 #define TCP_H
 
 #include "ltdefs.h"
+
 #include <atomic>
-#include <mutex>
-#include <sys/socket.h>
 #include <map>
+#include <mutex>
 #include <stdexcept>
+#include <sys/socket.h>
 
 #define ADDR_NOT_FOUND -500
 

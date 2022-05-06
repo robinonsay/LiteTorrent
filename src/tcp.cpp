@@ -1,18 +1,18 @@
-#include "tcp.h"
 #include "errors.h"
 #include "ltdefs.h"
+#include "tcp.h"
 
-#include <atomic>
-#include <mutex>
-#include <iostream>
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <map>
-#include <limits.h>
+#include <atomic>
 #include <errno.h>
+#include <fcntl.h>
+#include <iostream>
+#include <limits.h>
+#include <map>
+#include <mutex>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 ssize_t tcp::read(int sockfd,
                   char *buff, ssize_t size,

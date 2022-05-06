@@ -4,13 +4,13 @@
 #include "ltdefs.h"
 #include "tcp.h"
 
+#include <atomic>
 #include <iostream>
-#include <netinet/in.h>
 #include <list>
 #include <map>
-#include <thread>
-#include <atomic>
 #include <mutex>
+#include <netinet/in.h>
+#include <thread>
 
 #define PEER_TIMEOUT_ms 30000
 

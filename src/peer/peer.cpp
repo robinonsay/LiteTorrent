@@ -1,22 +1,22 @@
-#include "peer/peer.h"
-#include "errors.h"
-#include "peer/errors.h"
 #include "crc32.h"
+#include "errors.h"
 #include "ltdefs.h"
+#include "peer/errors.h"
+#include "peer/peer.h"
 #include "tcp.h"
 
+#include <atomic>
+#include <errno.h>
 #include <iostream>
-#include <netinet/in.h>
 #include <list>
 #include <map>
-#include <thread>
-#include <atomic>
 #include <mutex>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
+#include <netinet/in.h>
 #include <stdexcept>
+#include <stdio.h>
+#include <string.h>
+#include <thread>
+#include <unistd.h>
 
 
 

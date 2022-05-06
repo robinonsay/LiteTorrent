@@ -4,12 +4,12 @@
 #include "ltdefs.h"
 #include "tcp.h"
 
-#include <map>
-#include <list>
-#include <thread>
-#include <mutex>
-#include <iostream>
 #include <atomic>
+#include <iostream>
+#include <list>
+#include <map>
+#include <mutex>
+#include <thread>
 
 typedef std::list<std::thread> ThreadList;
 typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;

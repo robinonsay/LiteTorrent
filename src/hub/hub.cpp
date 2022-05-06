@@ -1,18 +1,18 @@
+#include "crc32.h"
+#include "errors.h"
 #include "hub/hub.h"
 #include "tcp.h"
-#include "errors.h"
-#include "crc32.h"
 
-#include <stdexcept>
-#include <sstream>
-#include <string>
-#include <string.h>
+#include <arpa/inet.h>
 #include <list>
 #include <map>
-#include <thread>
-#include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sstream>
+#include <stdexcept>
 #include <stdio.h>
+#include <string.h>
+#include <string>
+#include <thread>
 
 
 Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(HUB_PORT), closing(false){
