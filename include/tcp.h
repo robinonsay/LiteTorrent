@@ -2,11 +2,12 @@
 #define TCP_H
 
 #include "ltdefs.h"
+#include "mutex/mrsw_mutex.h"
+
 #include <atomic>
-#include <mutex>
-#include <sys/socket.h>
 #include <map>
 #include <stdexcept>
+#include <sys/socket.h>
 
 #define ADDR_NOT_FOUND -500
 
@@ -43,19 +44,7 @@ namespace tcp{
               char *buff, ssize_t size,
               bool complete=true, bool blocking=true);
 
-    /** Exception for TCP related errors */
-    class error: public std::runtime_error {
-        public:
-          explicit error(const std::string& what_arg);
-          explicit error(const char* what_arg);
-    };
 
-    /** Exception for TCP related system errors */
-    class sys_error: public std::runtime_error {
-        public:
-          explicit sys_error(const std::string& what_arg);
-          explicit sys_error(const char* what_arg);
-    };
 }
 
 /** TCPServer Class */
@@ -67,8 +56,8 @@ class TCPServer{
         AddrMtxMap addrMtxMap;
         std::atomic<uint32_t> clientCount;  /** Counts the number of clients */
         std::mutex mainSockMtx;  /** Synchronizes reads and writes */
-        std::mutex addrMapMtx;  /** Synchronizes map access */
-        std::mutex mtxMapMtx;
+        MRSWMutex addrMapMtx;  /** Synchronizes map access */
+        MRSWMutex mtxMapMtx;
 
         /** Gets FD for given client address */
         int getFD(sockaddr_in *client_addr);
@@ -129,7 +118,7 @@ class TCPServer{
                   bool complete=true, bool blocking=true);
 
         /** Returns number of clients connected to the server atomically */
-        uint32_t getClientCount();
+        size_t getClientCount();
 
         /**
         * Closes the Socket

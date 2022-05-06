@@ -1,18 +1,17 @@
-#include "tcp.h"
 #include "errors.h"
 #include "ltdefs.h"
+#include "tcp.h"
 
-#include <atomic>
-#include <mutex>
-#include <iostream>
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <map>
-#include <limits.h>
+#include <atomic>
 #include <errno.h>
+#include <fcntl.h>
+#include <iostream>
+#include <limits.h>
+#include <map>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 ssize_t tcp::read(int sockfd,
                   char *buff, ssize_t size,
@@ -92,22 +91,6 @@ ssize_t tcp::write(int sockfd,
     return bytes;
 }
 
-tcp::error::error(const std::string& what_arg): std::runtime_error(what_arg){
-
-}
-
-tcp::error::error(const char* what_arg): std::runtime_error(what_arg){
-
-}
-
-tcp::sys_error::sys_error(const std::string& what_arg): std::runtime_error(what_arg){
-
-}
-
-tcp::sys_error::sys_error(const char* what_arg): std::runtime_error(what_arg){
-
-}
-
 TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
     int status, flags;
     // Create socket
@@ -146,31 +129,31 @@ TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
 
 int TCPServer::getFD(sockaddr_in *client_addr){
     int fd;
-    this->addrMapMtx.lock();
+    this->addrMapMtx.lockRead();
     // Check if address is in map
     AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
     if(it == this->addrFDMap.end()){
         // If address is not in map error out
         error("Address not found");
-        this->addrMapMtx.unlock();
+        this->addrMapMtx.unlockRead();
         return ADDR_NOT_FOUND;
     }
     fd = it->second;
-    this->addrMapMtx.unlock();
+    this->addrMapMtx.unlockRead();
     return fd;
 }
 
 std::mutex* TCPServer::getMtx(sockaddr_in *client_addr){
     std::mutex *mtx;
-    this->mtxMapMtx.lock();
+    this->mtxMapMtx.lockRead();
     AddrMtxMap::iterator it = this->addrMtxMap.find(addrIPv4ToString(client_addr));
     if(it == this->addrMtxMap.end()){
         error("Address not found");
-        this->mtxMapMtx.unlock();
+        this->mtxMapMtx.unlockRead();
         return NULL;
     }
     mtx = &it->second;
-    this->mtxMapMtx.unlock();
+    this->mtxMapMtx.unlockRead();
     return mtx;
 }
 
@@ -187,12 +170,12 @@ int TCPServer::accept(sockaddr_in *client_addr, size_t *addrlen){
                   (socklen_t *) addrlen);
     if(fd < 0) return fd;
     this->clientCount++;
-    this->addrMapMtx.lock();
+    this->addrMapMtx.lockWrite();
     this->addrFDMap[addrIPv4ToString(client_addr)] = fd;
-    this->addrMapMtx.unlock();
-    this->mtxMapMtx.lock();
+    this->addrMapMtx.unlockWrite();
+    this->mtxMapMtx.lockWrite();
     this->addrMtxMap[addrIPv4ToString(client_addr)];
-    this->mtxMapMtx.unlock();
+    this->mtxMapMtx.unlockWrite();
     return 0;
 }
 
@@ -228,7 +211,7 @@ ssize_t TCPServer::write(sockaddr_in *client_addr,
     return bytes;
 }
 
-uint32_t TCPServer::getClientCount(){
+size_t TCPServer::getClientCount(){
     return this->clientCount;
 }
 
@@ -239,8 +222,6 @@ int TCPServer::closeCli(sockaddr_in *client_addr, bool force){
     std::mutex *mtx;
     fd = this->getFD(client_addr);
     if(fd < 0) return fd;
-    // Decrement client counter
-    this->clientCount--;
     // Get mutex for client
     mtx = this->getMtx(client_addr);
     if(mtx == NULL) return -1;
@@ -250,14 +231,16 @@ int TCPServer::closeCli(sockaddr_in *client_addr, bool force){
     if(status < 0) return status;
     if(!force) mtx->unlock();
     // Erase fd from map
-    this->addrMapMtx.lock();
+    this->addrMapMtx.lockWrite();
     afdmIt = this->addrFDMap.find(addrIPv4ToString(client_addr));
     this->addrFDMap.erase(afdmIt);
-    this->addrMapMtx.unlock();
-    this->mtxMapMtx.lock();
+    this->addrMapMtx.unlockWrite();
+    this->mtxMapMtx.lockWrite();
     ammIt = this->addrMtxMap.find(addrIPv4ToString(client_addr));
     this->addrMtxMap.erase(ammIt);
-    this->mtxMapMtx.unlock();
+    this->mtxMapMtx.unlockWrite();
+    // Decrement client counter
+    this->clientCount--;
     return status;
 }
 

@@ -2,17 +2,17 @@
 #define HUB_H
 
 #include "ltdefs.h"
+#include "mutex/mrsw_mutex.h"
 #include "tcp.h"
 
-#include <map>
-#include <list>
-#include <thread>
-#include <mutex>
-#include <iostream>
 #include <atomic>
+#include <iostream>
+#include <list>
+#include <map>
+#include <mutex>
+#include <thread>
 
 typedef std::list<std::thread> ThreadList;
-typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;
 typedef std::map<std::string, sockaddr_in> AddrMap;
 
 
@@ -25,52 +25,61 @@ typedef std::map<std::string, sockaddr_in> AddrMap;
 * when a new peer has joined the network
 */
 class Hub{
-    public:
+public:
 
-        /**
-        * Creates Hub
-        * @param in_s The input stream to share with peers (most likely a file)
-        * @param log_s The log file stream; defaults to std::cout*/
-        Hub(std::istream& in_s=std::cin, std::ostream& log_s=std::cout);
-        ~Hub();
+    /**
+    * Creates Hub
+    * @param in_s The input stream to share with peers (most likely a file)
+    * @param log_s The log file stream; defaults to std::cout*/
+    Hub(std::istream& in_s=std::cin, std::ostream& log_s=std::cout);
+    ~Hub();
 
-        /**
-        * Closes the Hub
-        */
-        void close();
+    /**
+    * Closes the Hub
+    */
+    void close(bool interrupt=false);
 
-        /** Runs the Hub */
-        void run();
-    private:
+    /** Runs the Hub */
+    void run();
+private:
 
-        /** The input stream for chunking */
-        std::istream& in;
+    /** The input stream for chunking */
+    std::istream& in;
 
-        /** The log stream */
-        std::ostream& log;
+    /** The log stream */
+    std::ostream& log;
 
-        /** The torrent packet */
-        Packet torrentPkt;
+    /** The torrent packet */
+    Packet torrentPkt;
 
-        /** The TCP server */
-        TCPServer server;
+    /** The TCP server */
+    TCPServer server;
 
-        /** The thread pool */
-        ThreadList threads;
+    /** The thread pool */
+    ThreadList threads;
 
-        /** Map of peer address to chunks it owns */
-        AddrChunkMap peerMap;
+    /** Map of peer address to chunks it owns */
+    AddrChunkMap peerCHMap;
 
-        /** Map of IPv4 peer address strings to sockaddr_in structures */
-        AddrMap peerAddrMap;
+    /** AddrChunkMap mutex */
+    MRSWMutex pmMtx;
 
-        /** Flag indicating closing of the Hub */
-        std::atomic<bool> closing;
+    /** Map of IPv4 peer address strings to sockaddr_in structures */
+    AddrMap peerAddrMap;
 
-        /** Connection Handler */
-        void peerConnHandler(std::string peerIPv4);
+    /** Update Peers mutex */
+    std::mutex upMtx;
 
-        /** Updates peers of new peer on network */
-        void updatePeers();
+    /** Flag indicating closing of the Hub */
+    std::atomic<bool> closing;
+
+    /** Flag indicating closing of the Hub */
+    std::atomic<size_t> peersInMap;
+
+    /** Connection Handler */
+    void peerConnHandler(std::string peerIPv4);
+
+    /** Updates peers of new peer on network */
+    void updatePeers();
 };
 #endif

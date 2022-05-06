@@ -14,7 +14,7 @@ std::ifstream *inFile = NULL;
 std::ofstream *logFile = NULL;
 
 void signalHandler(int signum){
-    if(hub != NULL) hub->close();
+    if(hub != NULL) hub->close(true);
     if(inFile != NULL) inFile->close();
     if(logFile != NULL) logFile->close();
     exit(signum);

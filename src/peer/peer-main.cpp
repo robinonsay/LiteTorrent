@@ -19,7 +19,7 @@ Peer *peer = NULL;
 
 void signalHandler(int sigNum){
     if(peer != NULL){
-        peer->close();
+        peer->close(true);
     }
     if(outFile != NULL){
         outFile->close();

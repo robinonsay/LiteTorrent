@@ -3,10 +3,11 @@ SRC_DIR ?= ./src
 HUB_DIR ?= $(SRC_DIR)/hub
 PEER_DIR ?= $(SRC_DIR)/peer
 TEST_DIR ?= $(SRC_DIR)/tests
+MUTEX_DIR ?= $(SRC_DIR)/mutex
 BUILD_DIR ?= ./bin
 INC_DIR ?= ./include
 
-SRCS := $(shell ls $(SRC_DIR)/*.cpp)
+SRCS := $(shell ls $(SRC_DIR)/*.cpp) $(shell find $(MUTEX_DIR) -name *.cpp)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o) 
 DEPS := $(shell find $(INC_DIR) -name *.h)
 
