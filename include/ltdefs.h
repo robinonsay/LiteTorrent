@@ -1,6 +1,8 @@
 #ifndef LTDEFS_H
 #define LTDEFS_H
 
+#include "crypto.h"
+
 #include <list>
 #include <map>
 #include <netinet/in.h>
@@ -40,7 +42,7 @@ typedef struct Packet{
 typedef struct ChunkHeader{
     uint32_t index;  /** Chunk index */
     uint32_t size;  /** Chunk size */
-    uint32_t hash;  /** Chunk hash */
+    HashSHA3_256 hash_s;  /** Chunk hash */
 } ChunkHeader;
 
 /** Chunk structure */

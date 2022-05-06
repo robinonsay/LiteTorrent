@@ -119,7 +119,7 @@ void Peer::parseTorrent(Packet *pkt){
         // Copy memory to temp chunk header
         memcpy(&chunkHeader, &pkt->payload[n], sizeof(ChunkHeader));
         // TODO: Remove debugging statement
-        this->log << chunkHeader.index << ' ' << chunkHeader.size << ' ' << chunkHeader.hash << std::endl;
+        this->log << chunkHeader.index << ' ' << chunkHeader.size << std::endl;
         // Push chunk header onto torrent linked list
         this->torrent.push_back(chunkHeader);
     }
