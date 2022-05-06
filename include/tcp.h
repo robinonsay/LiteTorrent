@@ -6,6 +6,7 @@
 #include <mutex>
 #include <sys/socket.h>
 #include <map>
+#include <stdexcept>
 
 #define ADDR_NOT_FOUND -500
 
@@ -16,31 +17,45 @@ typedef std::map<std::string, int> AddrFDMap;
 typedef std::map<std::string, std::mutex> AddrMtxMap;
 
 namespace tcp{
-/**
-* Reads from socket file descriptor
-* @param sockfd The socket file desciptor
-* @param buff The buffer to read in to
-* @param size The size of the read
-* @param readAll Flag to read the whole size
-* @return status of the read() system call;
-* returns bytes read on success, -1 on failure and sets errno
-*/
-ssize_t read(int sockfd,
-             char *buff, ssize_t size,
-             bool complete=true, bool blocking=true);
+    /**
+    * Reads from socket file descriptor
+    * @param sockfd The socket file desciptor
+    * @param buff The buffer to read in to
+    * @param size The size of the read
+    * @param readAll Flag to read the whole size
+    * @return status of the read() system call;
+    * returns bytes read on success, -1 on failure and sets errno
+    */
+    ssize_t read(int sockfd,
+                 char *buff, ssize_t size,
+                 bool complete=true, bool blocking=true);
 
-/**
-* Write from socket file descriptor
-* @param sockfd The socket file desciptor
-* @param buff The buffer to write from
-* @param size The size of the write
-* @param readAll Flag to write the whole size
-* @return status of the write() system call;
-* returns bytes written on success, -1 on failure and sets errno
-*/
-ssize_t write(int sockfd,
-          char *buff, ssize_t size,
-          bool complete=true, bool blocking=true);
+    /**
+    * Write from socket file descriptor
+    * @param sockfd The socket file desciptor
+    * @param buff The buffer to write from
+    * @param size The size of the write
+    * @param readAll Flag to write the whole size
+    * @return status of the write() system call;
+    * returns bytes written on success, -1 on failure and sets errno
+    */
+    ssize_t write(int sockfd,
+              char *buff, ssize_t size,
+              bool complete=true, bool blocking=true);
+
+    /** Exception for TCP related errors */
+    class error: public std::runtime_error {
+        public:
+          explicit error(const std::string& what_arg);
+          explicit error(const char* what_arg);
+    };
+
+    /** Exception for TCP related system errors */
+    class sys_error: public std::runtime_error {
+        public:
+          explicit sys_error(const std::string& what_arg);
+          explicit sys_error(const char* what_arg);
+    };
 }
 
 /** TCPServer Class */

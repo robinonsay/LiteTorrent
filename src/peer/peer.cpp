@@ -15,6 +15,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdexcept>
 
 
 
@@ -40,7 +41,10 @@ void Peer::open(){
     // Connect to hub
     status = this->hub.connect();
     // Error out if a connection couldn't be established to hub
-    if(status < 0 && errno != EISCONN) sysError("ERROR connecting to hub");
+    if(status < 0 && errno != EISCONN){
+        sysError("Error connecting to hub");
+        throw p::sys_error("Error connecting to hub");
+    }
     info("Connected to hub", this->log);
     // Request torrent
     status = this->getTorrent();
@@ -118,7 +122,7 @@ void Peer::close(){
     status = this->hub.close((char *) &finHdr, sizeof(finHdr));
     if(status < 0){
         sysError("Couldn't close hub connection", this->log);
-        throw std::runtime_error("Couldn't close hub connection");
+        throw p::sys_error("Couldn't close hub connection");
     }
     info("FIN sent", this->log);
     // Notify other threads of closing
@@ -138,4 +142,20 @@ void Peer::server(){
 }
 
 void Peer::connHandler(sockaddr_in peerAddr){
+}
+
+p::error::error(const std::string& what_arg): std::runtime_error(what_arg){
+
+}
+
+p::error::error(const char* what_arg): std::runtime_error(what_arg){
+
+}
+
+p::sys_error::sys_error(const std::string& what_arg): std::runtime_error(what_arg){
+
+}
+
+p::sys_error::sys_error(const char* what_arg): std::runtime_error(what_arg){
+
 }

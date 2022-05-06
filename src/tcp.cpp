@@ -11,7 +11,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <map>
-#include <stdexcept>
 #include <limits.h>
 #include <errno.h>
 
@@ -93,6 +92,22 @@ ssize_t tcp::write(int sockfd,
     return bytes;
 }
 
+tcp::error::error(const std::string& what_arg): std::runtime_error(what_arg){
+
+}
+
+tcp::error::error(const char* what_arg): std::runtime_error(what_arg){
+
+}
+
+tcp::sys_error::sys_error(const std::string& what_arg): std::runtime_error(what_arg){
+
+}
+
+tcp::sys_error::sys_error(const char* what_arg): std::runtime_error(what_arg){
+
+}
+
 TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
     int status, flags;
     // Create socket
@@ -102,7 +117,7 @@ TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
     flags = fcntl(this->sockfd, F_GETFL);
     if(flags < 0){
         error("Could not get flags");
-        perror("ERROR");
+        throw tcp::sys_error("Could not get flags");
     };
     if(blocking){
         // If blocking unset O_NONBLOCK flag
@@ -112,8 +127,8 @@ TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
         flags = fcntl(this->sockfd, F_SETFL, flags | O_NONBLOCK);
     }
     if(flags < 0){
-        error("Could not set flags");
-        perror("ERROR");
+        sysError("Could not set flags");
+        throw tcp::sys_error("Could not set flags");
     };
     // Build address for server
     this->addr.sin_family = AF_INET;
@@ -123,7 +138,10 @@ TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
     status = bind(this->sockfd,
                   (struct sockaddr *) &this->addr,
                   sizeof(this->addr));
-    if(status < 0) sysError("ERROR binding socket");
+    if(status < 0){
+        sysError("ERROR binding socket");
+        throw tcp::sys_error("Could not bind to socket");
+    }
 }
 
 int TCPServer::getFD(sockaddr_in *client_addr){
@@ -227,11 +245,9 @@ int TCPServer::closeCli(sockaddr_in *client_addr, bool force){
     mtx = this->getMtx(client_addr);
     if(mtx == NULL) return -1;
     // Close fd
-    info("Closing client");
     if(!force) mtx->lock();
     status = ::close(fd);
     if(status < 0) return status;
-    info("Client closed");
     if(!force) mtx->unlock();
     // Erase fd from map
     this->addrMapMtx.lock();
@@ -247,10 +263,8 @@ int TCPServer::closeCli(sockaddr_in *client_addr, bool force){
 
 int TCPServer::close(bool force){
     int status;
-    info("Closing main");
     if(!force) this->mainSockMtx.lock();
     status = ::close(this->sockfd);
-    info("Main closed");
     if(!force) this->mainSockMtx.unlock();
     return status;
 }
@@ -263,8 +277,8 @@ TCPClient::TCPClient(const char ip[], uint32_t port, bool blocking): connected(f
     // Get current flags
     flags = fcntl(this->sockfd, F_GETFL);
     if(flags < 0){
-        error("Could not get flags");
-        perror("ERROR");
+        sysError("Could not get flags");
+        throw tcp::sys_error("Could not get flags");
     };
     if(blocking){
         // If blocking is required, unset O_NONBLOCK flag
@@ -274,8 +288,8 @@ TCPClient::TCPClient(const char ip[], uint32_t port, bool blocking): connected(f
         flags = fcntl(this->sockfd, F_SETFL, flags | O_NONBLOCK);
     }
     if(flags < 0){
-        error("Could not set flags");
-        perror("ERROR");
+        sysError("Could not set flags");
+        throw tcp::sys_error("Could not set flags");
     };
     // Create address to server
     this->addr.sin_family = AF_INET;
@@ -283,7 +297,7 @@ TCPClient::TCPClient(const char ip[], uint32_t port, bool blocking): connected(f
     status = inet_aton(ip, &this->addr.sin_addr);
     if(status < 0){
         error("Error: Invalid IPv4 address");
-        throw std::runtime_error("Invalid IPv4 address");
+        throw tcp::error("Invalid IPv4 address");
     }
 }
 
