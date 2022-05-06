@@ -23,8 +23,11 @@ Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(
     Chunk currChunk;
     std::list<ChunkHeader> chList;
     ChunkHeader *torrent;
-    HashSHA256 digest;
-    status = genHash();
+    HashSHA3_256 digest;
+    unsigned char msg[] = {
+        0x00, 0x01, 0x02, 0x03
+    };
+    status = genHash("SHA256", msg, sizeof(msg), &digest);
     // Chunk input stream
     for(int i=0; this->in.good(); i++){
         memset((char *) &currChunk, 0, sizeof(currChunk));

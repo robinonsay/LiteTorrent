@@ -1,12 +1,14 @@
 #ifndef CRYPTO_H
 #define CRYPTO_H
+#define SHA_256_BYTES 32
 
-#define SHA256_LEN_BYTES 32
+#include <stdio.h>
+#include <string.h>
 
-typedef struct HashSHA256{
-    char hash[SHA256_LEN_BYTES];
-} HashSHA256;
+typedef struct HashSHA3_256{
+    unsigned char hash[SHA_256_BYTES];
+} HashSHA3_256;
 
-int genHash();
+int genHash(const char hashFunc[], void *msg, size_t size, HashSHA3_256 *digest);
 
 #endif
