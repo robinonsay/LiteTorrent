@@ -125,10 +125,42 @@ TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
                   sizeof(this->addr));
     if(status < 0) sysError("ERROR binding socket");
 }
+
+int TCPServer::getFD(sockaddr_in *client_addr){
+    int fd;
+    this->addrMapMtx.lock();
+    // Check if address is in map
+    AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
+    if(it == this->addrFDMap.end()){
+        // If address is not in map error out
+        error("Address not found");
+        this->addrMapMtx.unlock();
+        return ADDR_NOT_FOUND;
+    }
+    fd = it->second;
+    this->addrMapMtx.unlock();
+    return fd;
+}
+
+std::mutex* TCPServer::getMtx(sockaddr_in *client_addr){
+    std::mutex *mtx;
+    this->mtxMapMtx.lock();
+    AddrMtxMap::iterator it = this->addrMtxMap.find(addrIPv4ToString(client_addr));
+    if(it == this->addrMtxMap.end()){
+        error("Address not found");
+        this->mtxMapMtx.unlock();
+        return NULL;
+    }
+    mtx = &it->second;
+    this->mtxMapMtx.unlock();
+    return mtx;
+}
+
 int TCPServer::listen(uint32_t backlog){
     // Listen for incoming connections
     return ::listen(this->sockfd, backlog);
 }
+
 int TCPServer::accept(sockaddr_in *client_addr, size_t *addrlen){
     // Accept incoming connection
     int fd;
@@ -137,9 +169,12 @@ int TCPServer::accept(sockaddr_in *client_addr, size_t *addrlen){
                   (socklen_t *) addrlen);
     if(fd < 0) return fd;
     this->clientCount++;
-    this->mapMutex.lock();
+    this->addrMapMtx.lock();
     this->addrFDMap[addrIPv4ToString(client_addr)] = fd;
-    this->mapMutex.unlock();
+    this->addrMapMtx.unlock();
+    this->mtxMapMtx.lock();
+    this->addrMtxMap[addrIPv4ToString(client_addr)];
+    this->mtxMapMtx.unlock();
     return 0;
 }
 
@@ -147,21 +182,15 @@ ssize_t TCPServer::read(sockaddr_in *client_addr,
                         char *buff, ssize_t size, bool complete, bool blocking){
     int fd;
     ssize_t bytes;
-    this->mapMutex.lock();
-    // Check if address is in map
-    AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
-    if(it == this->addrFDMap.end()){
-        // If address is not in map error out
-        error("Address not found");
-        this->mapMutex.unlock();
-        return ADDR_NOT_FOUND;
-    }
-    fd = it->second;
-    this->mapMutex.unlock();
+    std::mutex *mtx;
+    fd = this->getFD(client_addr);
+    if(fd < 0) return fd;
     // Read socket
-    this->rwMutex.lock();
+    mtx = this->getMtx(client_addr);
+    if(mtx == NULL) return -1;
+    mtx->lock();
     bytes = tcp::read(fd, buff, size, complete, blocking);
-    this->rwMutex.unlock();
+    mtx->unlock();
     return bytes;
 }
 
@@ -169,21 +198,15 @@ ssize_t TCPServer::write(sockaddr_in *client_addr,
                          char *buff, ssize_t size, bool complete, bool blocking){
     int fd;
     ssize_t bytes;
-    this->mapMutex.lock();
-    // Check if address is in map
-    AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
-    if(it == this->addrFDMap.end()){
-        // If address is not in map return -1
-        error("Address not found");
-        this->mapMutex.unlock();
-        return -1;
-    }
-    fd = it->second;
-    this->mapMutex.unlock();
+    std::mutex *mtx;
+    fd = this->getFD(client_addr);
+    if(fd < 0) return fd;
     // Write socket
-    this->rwMutex.lock();
+    mtx = this->getMtx(client_addr);
+    if(mtx == NULL) return -1;
+    mtx->lock();
     bytes = tcp::write(fd, buff, size, complete, blocking);
-    this->rwMutex.unlock();
+    mtx->unlock();
     return bytes;
 }
 
@@ -191,50 +214,45 @@ uint32_t TCPServer::getClientCount(){
     return this->clientCount;
 }
 
-int TCPServer::closeCli(sockaddr_in *client_addr){
+int TCPServer::closeCli(sockaddr_in *client_addr, bool force){
     int status, fd;
-    this->mapMutex.lock();
-    // Check if address is in map
-    AddrFDMap::iterator it = this->addrFDMap.find(addrIPv4ToString(client_addr));
-    if(it == this->addrFDMap.end()){
-        error("Address not found");
-        this->mapMutex.unlock();
-        return -1;
-    }
-    // Get fd
-    fd = it->second;
-    this->mapMutex.unlock();
+    AddrFDMap::iterator afdmIt;
+    AddrMtxMap::iterator ammIt;
+    std::mutex *mtx;
+    fd = this->getFD(client_addr);
+    if(fd < 0) return fd;
     // Decrement client counter
     this->clientCount--;
+    // Get mutex for client
+    mtx = this->getMtx(client_addr);
+    if(mtx == NULL) return -1;
     // Close fd
+    info("Closing client");
+    if(!force) mtx->lock();
     status = ::close(fd);
-    this->mapMutex.lock();
+    if(status < 0) return status;
+    info("Client closed");
+    if(!force) mtx->unlock();
     // Erase fd from map
-    if (status >= 0) this->addrFDMap.erase(it);
-    this->mapMutex.unlock();
+    this->addrMapMtx.lock();
+    afdmIt = this->addrFDMap.find(addrIPv4ToString(client_addr));
+    this->addrFDMap.erase(afdmIt);
+    this->addrMapMtx.unlock();
+    this->mtxMapMtx.lock();
+    ammIt = this->addrMtxMap.find(addrIPv4ToString(client_addr));
+    this->addrMtxMap.erase(ammIt);
+    this->mtxMapMtx.unlock();
     return status;
 }
 
-int TCPServer::shutdownCli(sockaddr_in *client_addr){
-    // Orderly shutdown of socket
+int TCPServer::close(bool force){
     int status;
-    char buff[1];
-    // Empty read buffer
-    do{
-        status = this->read(client_addr, buff, sizeof(buff), false);
-        if(status < 0) return status;
-    }while (status != 0);
-    // Close socket
-    return this->closeCli(client_addr);
-}
-
-int TCPServer::close(){
-    return ::close(this->sockfd);
-}
-
-int TCPServer::getFD(){
-    // Gets sock fd
-    return this->sockfd;
+    info("Closing main");
+    if(!force) this->mainSockMtx.lock();
+    status = ::close(this->sockfd);
+    info("Main closed");
+    if(!force) this->mainSockMtx.unlock();
+    return status;
 }
 
 TCPClient::TCPClient(const char ip[], uint32_t port, bool blocking): connected(false){
@@ -268,14 +286,18 @@ TCPClient::TCPClient(const char ip[], uint32_t port, bool blocking): connected(f
         throw std::runtime_error("Invalid IPv4 address");
     }
 }
+
 int TCPClient::connect(){
     int status;
     // Connect to server
+    this->rwMutex.lock();
     status = ::connect(this->sockfd, (sockaddr *) &this->addr, sizeof(this->addr));
+    this->rwMutex.unlock();
     // Set connected flag to true if sucesfully connects
     this->connected = status == 0;
     return status;
 }
+
 ssize_t TCPClient::read(char *buff, ssize_t size, bool complete, bool blocking){
     ssize_t bytes;
     // Write socket
@@ -284,6 +306,7 @@ ssize_t TCPClient::read(char *buff, ssize_t size, bool complete, bool blocking){
     this->rwMutex.unlock();
     return bytes;
 }
+
 ssize_t TCPClient::write(char *buff, ssize_t size, bool complete, bool blocking){
     ssize_t bytes;
     // Write socket
@@ -292,13 +315,22 @@ ssize_t TCPClient::write(char *buff, ssize_t size, bool complete, bool blocking)
     this->rwMutex.unlock();
     return bytes;
 }
-int TCPClient::close(){
+
+int TCPClient::close(bool force){
     // Close socket connection
+    if(!force) this->rwMutex.lock();
     return ::close(this->sockfd);
+    if(!force) this->rwMutex.unlock();
 }
-int TCPClient::getFD(){
-    // Get socket file desciptor
-    return this->sockfd;
+
+int TCPClient::close(char *buff, ssize_t size, bool force){
+    // Close socket connection
+    if(!force) this->rwMutex.lock();
+    int status = tcp::write(this->sockfd, buff, size);
+    if(status < 0) return status;
+    status = ::close(this->sockfd);
+    if(!force) this->rwMutex.unlock();
+    return status;
 }
 
 bool TCPClient::isConn(){

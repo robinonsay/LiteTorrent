@@ -30,7 +30,6 @@ class Peer{
         std::atomic<bool> closing;
         ChunkHList torrent;
         int getTorrent();
-        int sendFIN();
         void server();
         void connHandler(sockaddr_in peerAddr);
     public:

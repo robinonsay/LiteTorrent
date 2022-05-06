@@ -90,9 +90,9 @@ void Hub::run(){
         if(status < 0)
             sysError("ERROR: accepting connection", this->log);
         else{
-            this->log << "Accepted connection from " << peerIPv4 << std::endl;
             // Create address string stream
             peerIPv4 = addrIPv4ToString(&peerAddr);
+            this->log << "Accepted connection from " << peerIPv4 << std::endl;
             // Push connection to its own thread via the connection handler
             this->threads.push_back(std::thread(&Hub::peerConnHandler, this, peerIPv4));
             // Add peer to peer maps
@@ -140,12 +140,10 @@ void Hub::peerConnHandler(std::string peerIPv4){
         }
     }while(!isFIN);
     // Connection is finished, shutdown (close) connection to peer
-    info("Shutting down", this->log);
-    status = this->server.shutdownCli(peerAddr);
+    status = this->server.closeCli(peerAddr);
     if(status < 0){
         sysError("ERROR closing client sockfd", this->log);
     }
-    info("Shut down", this->log);
 }
 
 void Hub::updatePeers(){

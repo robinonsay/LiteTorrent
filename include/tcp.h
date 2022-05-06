@@ -12,6 +12,9 @@
 /** Address-to-FD mapping type*/
 typedef std::map<std::string, int> AddrFDMap;
 
+/** Address-to-mutex map */
+typedef std::map<std::string, std::mutex> AddrMtxMap;
+
 namespace tcp{
 /**
 * Reads from socket file descriptor
@@ -39,15 +42,24 @@ ssize_t write(int sockfd,
           char *buff, ssize_t size,
           bool complete=true, bool blocking=true);
 }
+
 /** TCPServer Class */
 class TCPServer{
     private:
         int sockfd;  /** Socket file descriptor */
         sockaddr_in addr;  /** Server address */
         AddrFDMap addrFDMap;
+        AddrMtxMap addrMtxMap;
         std::atomic<uint32_t> clientCount;  /** Counts the number of clients */
-        std::mutex rwMutex;  /** Synchronizes reads and writes */
-        std::mutex mapMutex;  /** Synchronizes map access */
+        std::mutex mainSockMtx;  /** Synchronizes reads and writes */
+        std::mutex addrMapMtx;  /** Synchronizes map access */
+        std::mutex mtxMapMtx;
+
+        /** Gets FD for given client address */
+        int getFD(sockaddr_in *client_addr);
+
+        /** Gets Mutex for given client address */
+        std::mutex* getMtx(sockaddr_in *client_addr);
     public:
 
         /**
@@ -110,21 +122,10 @@ class TCPServer{
         * @return status of the close() system call;
         * returns 0 on success, -1 on failure and sets errno
         */
-        int closeCli(sockaddr_in *client_addr);
-
-        /**
-        * Shutsdown the Socket
-        * @param client_addr The client address to shutdown
-        * @return status of the close() system call;
-        * returns 0 on success, -1 on failure and sets errno
-        */
-        int shutdownCli(sockaddr_in *client_addr);
+        int closeCli(sockaddr_in *client_addr, bool force=false);
 
         /** Closes server */
-        int close();
-
-        /** Gets the socket file descriptor */
-        int getFD();
+        int close(bool force=false);
 };
 
 class TCPClient{
@@ -171,10 +172,10 @@ class TCPClient{
                       bool complete=true, bool blocking=true);
 
         /** Close socket connection to server */
-        int close();
+        int close(bool force=false);
 
-        /** Get server socket file descriptor */
-        int getFD();
+        /** Close by sending a packet first */
+        int close(char *buff, ssize_t size, bool force=false);
 
         /** Check connection state atomically*/
         bool isConn();
