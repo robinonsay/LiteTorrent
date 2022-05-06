@@ -211,7 +211,7 @@ ssize_t TCPServer::write(sockaddr_in *client_addr,
     return bytes;
 }
 
-uint32_t TCPServer::getClientCount(){
+size_t TCPServer::getClientCount(){
     return this->clientCount;
 }
 

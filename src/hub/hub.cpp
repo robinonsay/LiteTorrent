@@ -101,10 +101,11 @@ void Hub::run(){
             // Push connection to its own thread via the connection handler
             this->threads.push_back(std::thread(&Hub::peerConnHandler, this, peerIPv4));
             // Add peer to peer maps
-            this->pmMtx.lockWrite();
             this->pamMtx.lockWrite();
-            this->peerCHMap[peerIPv4] = std::list<ChunkHeader>();
+            this->pmMtx.lockWrite();
             this->peerAddrMap[peerIPv4] = peerAddr;
+            this->peerCHMap[peerIPv4] = std::list<ChunkHeader>();
+            this->peersInMap = this->peerAddrMap.size();
             this->pmMtx.unlockWrite();
             this->pamMtx.unlockWrite();
         }
@@ -137,6 +138,7 @@ void Hub::peerConnHandler(std::string peerIPv4){
             this->pmMtx.lockWrite();
             this->peerAddrMap.erase(peerIPv4);
             this->peerCHMap.erase(peerIPv4);
+            this->peersInMap = this->peerAddrMap.size();
             this->pamMtx.unlockWrite();
             this->pmMtx.unlockWrite();
             isFIN = true;
@@ -174,7 +176,8 @@ void Hub::updatePeers(){
     // Only loop while the Hub is running
     pkt.ph.type = UPDATE;
     while(!this->closing){
-        if(peerCount != this->server.getClientCount()){
+        if(peerCount != this->server.getClientCount() &&
+           this->peersInMap == this->server.getClientCount()){
             this->log << "Peer count: " << this->server.getClientCount() << std::endl;
             pktStream.str("");
             pktStream.clear();
@@ -196,14 +199,15 @@ void Hub::updatePeers(){
             pktStr = pktStream.str();
             pkt.ph.size = pktStr.size();
             memcpy(pkt.payload, pktStr.c_str(), pktStr.size());
-            info("Sending UPDATE", this->log);
             this->pamMtx.lockRead();
-            for(amIt=this->peerAddrMap.begin(); amIt != this->peerAddrMap.end(); ++amIt){
+            for(amIt=this->peerAddrMap.begin();
+                amIt != this->peerAddrMap.end(); ++amIt){
+                this->log << "Sending update to:\t" << amIt->first << std::endl;
                 status = this->server.write(&amIt->second,(char *) &pkt, sizeof(pkt));
                 if(status < 0) sysError("Could not write packet to peer", this->log);
             }
             this->pamMtx.unlockRead();
-            info("UPDATE sent", this->log);
+            info("UPDATEs sent", this->log);
             peerCount = this->server.getClientCount();
         }
     }

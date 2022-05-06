@@ -118,7 +118,7 @@ class TCPServer{
                   bool complete=true, bool blocking=true);
 
         /** Returns number of clients connected to the server atomically */
-        uint32_t getClientCount();
+        size_t getClientCount();
 
         /**
         * Closes the Socket

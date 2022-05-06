@@ -76,6 +76,9 @@ private:
     /** Flag indicating closing of the Hub */
     std::atomic<bool> closing;
 
+    /** Flag indicating closing of the Hub */
+    std::atomic<size_t> peersInMap;
+
     /** Connection Handler */
     void peerConnHandler(std::string peerIPv4);
 
