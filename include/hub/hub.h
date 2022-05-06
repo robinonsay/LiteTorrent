@@ -67,9 +67,6 @@ private:
     /** Map of IPv4 peer address strings to sockaddr_in structures */
     AddrMap peerAddrMap;
 
-    /** AddrMap mutex */
-    MRSWMutex pamMtx;
-
     /** Update Peers mutex */
     std::mutex upMtx;
 

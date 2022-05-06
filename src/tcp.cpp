@@ -222,8 +222,6 @@ int TCPServer::closeCli(sockaddr_in *client_addr, bool force){
     std::mutex *mtx;
     fd = this->getFD(client_addr);
     if(fd < 0) return fd;
-    // Decrement client counter
-    this->clientCount--;
     // Get mutex for client
     mtx = this->getMtx(client_addr);
     if(mtx == NULL) return -1;
@@ -241,6 +239,8 @@ int TCPServer::closeCli(sockaddr_in *client_addr, bool force){
     ammIt = this->addrMtxMap.find(addrIPv4ToString(client_addr));
     this->addrMtxMap.erase(ammIt);
     this->mtxMapMtx.unlockWrite();
+    // Decrement client counter
+    this->clientCount--;
     return status;
 }
 
