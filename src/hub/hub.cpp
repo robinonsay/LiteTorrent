@@ -92,9 +92,9 @@ void Hub::run(){
         else{
             // Create address string stream
             peerIPv4 = addrIPv4ToString(&peerAddr);
-            // Push connection to its own thread via the connection handler
-            this->threads.push_back(std::thread(&Hub::connHandler, this, peerIPv4));
             this->log << "Accepted connection from " << peerIPv4 << std::endl;
+            // Push connection to its own thread via the connection handler
+            this->threads.push_back(std::thread(&Hub::peerConnHandler, this, peerIPv4));
             // Add peer to peer maps
             this->peerMap[peerIPv4] = std::list<ChunkHeader>();
             this->peerAddrMap[peerIPv4] = peerAddr;
@@ -102,7 +102,7 @@ void Hub::run(){
     }
 }
 
-void Hub::connHandler(std::string peerIPv4){
+void Hub::peerConnHandler(std::string peerIPv4){
     int status;
     bool isFIN = false;
     Packet pkt;
@@ -112,14 +112,18 @@ void Hub::connHandler(std::string peerIPv4){
         // Clear packet
         memset((char *) &pkt, 0, sizeof(pkt));
         // Read data into packet
-        status = this->server.read(peerAddr, (char *) &pkt, sizeof(pkt));
+        status = this->server.read(peerAddr,
+                                   (char *) &pkt.ph, sizeof(pkt.ph),
+                                   true, false);
         if(status < 0){
-            error("ERROR reading from client sockfd", this->log);
-            perror("ERROR");
+            sysError("ERROR reading from client sockfd", this->log);
             break;
         }
+        if(status == 0) continue;
+        this->log << "Bytes read: " << status << std::endl;
         if(pkt.ph.type == FIN && pkt.ph.size == 0){
             // If FIN erase peer from map and indicate that connection is done
+            info("Recieved FIN", this->log);
             this->peerAddrMap.erase(peerIPv4);
             this->peerMap.erase(peerIPv4);
             isFIN = true;
@@ -136,9 +140,14 @@ void Hub::connHandler(std::string peerIPv4){
         }
     }while(!isFIN);
     // Connection is finished, shutdown (close) connection to peer
-    status = this->server.shutdownCli(peerAddr);
+    status = this->server.closeCli(peerAddr);
     if(status < 0){
         sysError("ERROR closing client sockfd", this->log);
-        perror("ERROR");
+    }
+}
+
+void Hub::updatePeers(){
+    // Only loop while the Hub is running
+    while(!this->closing){
     }
 }

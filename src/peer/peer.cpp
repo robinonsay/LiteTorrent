@@ -48,11 +48,12 @@ void Peer::open(){
     do{
         // Set packet to 0
         memset((char *) &pkt, 0, sizeof(pkt));
-        status = this->hub.read((char *) &pkt, sizeof(pkt));
+        status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph), true, false);
         if(status < 0){
             sysError("Could not read packet from hub", this->log);
             break;
         }
+        if(status == 0) continue;
         isFIN = pkt.ph.type == FIN && pkt.ph.size == 0;
     }while(!isFIN);
 }
@@ -79,7 +80,13 @@ int Peer::getTorrent(){
         return -1;
     }
     // Read torrent response from hub
-    status = this->hub.read((char *) &pkt, sizeof(pkt));
+    status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph));
+    if(status < 0){
+        sysError("Could not read torrent request", this->log);
+        return -1;
+    }
+    // Read torrent response from hub
+    status = this->hub.read((char *) pkt.payload, pkt.ph.size);
     if(status < 0){
         sysError("Could not read torrent request", this->log);
         return -1;
@@ -102,33 +109,20 @@ int Peer::getTorrent(){
     return 0;
 }
 
-int Peer::sendFIN(){
-    int status;
-    // Form FIN packet
-    PacketHeader finHdr = {FIN, 0};
-    // Write FIN packet to hub
-    status = this->hub.write((char *) &finHdr, sizeof(finHdr));
-    if(status < 0){
-        sysError("Couldn't write FIN to hub", this->log);
-        return -1;
-    }
-    info("FIN sent", this->log);
-    return 0;
-}
-
 void Peer::close(){
     int status;
+    PacketHeader finHdr = {FIN, 0};
     this->log << std::endl;
-    // Send FIN to hub
-    status = this->sendFIN();
-    if(status < 0) error("Error sending FIN", this->log);
-    // Notify other threads of closing
-    this->closing = true;
-    // Close socket connection to hub
-    status = this->hub.close();
+    // Write FIN packet to hub
+    info("FIN sending", this->log);
+    status = this->hub.close((char *) &finHdr, sizeof(finHdr));
     if(status < 0){
         sysError("Couldn't close hub connection", this->log);
+        throw std::runtime_error("Couldn't close hub connection");
     }
+    info("FIN sent", this->log);
+    // Notify other threads of closing
+    this->closing = true;
     // Join threads
     ThreadList::iterator thi;
     for(thi=this->threads.begin(); thi != this->threads.end(); ++thi){

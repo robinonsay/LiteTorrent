@@ -7,7 +7,6 @@
 void sysError(const char msg[], std::ostream& stream){
     stream << BOLDRED << msg << RESET << std::endl;
     perror("ERROR");
-    throw std::runtime_error(msg);
 }
 
 
