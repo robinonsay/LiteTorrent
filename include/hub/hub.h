@@ -13,7 +13,6 @@
 #include <thread>
 
 typedef std::list<std::thread> ThreadList;
-typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;
 typedef std::map<std::string, sockaddr_in> AddrMap;
 
 
@@ -60,7 +59,7 @@ private:
     ThreadList threads;
 
     /** Map of peer address to chunks it owns */
-    AddrChunkMap peerMap;
+    AddrChunkMap peerCHMap;
 
     /** AddrChunkMap mutex */
     MRSWMutex pmMtx;

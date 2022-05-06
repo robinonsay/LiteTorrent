@@ -1,6 +1,8 @@
 #ifndef LTDEFS_H
 #define LTDEFS_H
 
+#include <list>
+#include <map>
 #include <netinet/in.h>
 #include <string>
 
@@ -48,5 +50,7 @@ typedef struct Chunk{
 } Chunk;
 
 std::string addrIPv4ToString(sockaddr_in *addr);
+
+typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;
 
 #endif

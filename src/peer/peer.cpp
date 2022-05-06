@@ -12,6 +12,7 @@
 #include <list>
 #include <map>
 #include <netinet/in.h>
+#include <sstream>
 #include <stdexcept>
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +23,8 @@
 
 Peer::Peer(const char myIP[], const char hubIP[],
            std::ostream& out_s, std::ostream& log_s):
-           out(out_s), log(log_s), hub(hubIP, HUB_PORT), peerServer(PEER_PORT), closing(false){
+           closing(false), log(log_s), out(out_s),
+           hub(hubIP, HUB_PORT), peerServer(PEER_PORT){
     this->myIP = myIP;
 }
 
@@ -124,7 +126,22 @@ void Peer::parseTorrent(Packet *pkt){
 }
 
 void Peer::update(Packet *pkt){
-    this->log << "Recieved Update: " << pkt->ph.size << std::endl;
+    std::istringstream pktStream(pkt->payload);
+    std::string ipv4Str;
+    size_t len;
+    ChunkHeader currCH;
+    info("Recieved Update", this->log);
+    while(pktStream >> ipv4Str){
+        this->log << "IPv4 string:\t" << ipv4Str << std::endl;
+        pktStream >> len;
+        this->log << "Length:\t" << len << std::endl;
+        for(size_t i=0; i < len; i++){
+            pktStream.read((char *) &currCH, sizeof(currCH));
+            this->pchmMtx.lockWrite();
+            this->peerCHMap[ipv4Str].push_back(currCH);
+            this->pchmMtx.unlockWrite();
+        }
+    }
 }
 
 void Peer::close(bool interrupt){

@@ -21,25 +21,27 @@ typedef std::list<ChunkHeader> ChunkHList;
 
 class Peer{
     private:
-        std::ostream& out;
+        ChunkHList torrent;
+        const char *myIP;
+        std::atomic<bool> closing;
         std::ostream& log;
+        std::ostream& out;
         TCPClient hub;
         TCPServer peerServer;
-        const char *myIP;
         ThreadList threads;
-        std::atomic<bool> closing;
-        ChunkHList torrent;
+        AddrChunkMap peerCHMap;
+        MRSWMutex pchmMtx;
         int reqTorrent();
+        void connHandler(sockaddr_in peerAddr);
         void parseTorrent(Packet *pkt);
         void server();
-        void connHandler(sockaddr_in peerAddr);
         void update(Packet *pkt);
     public:
         Peer(const char myIP[], const char hubIP[], std::ostream& out_s, std::ostream& log_s=std::cout);
         ~Peer();
-        void run();
-        void open();
         void close(bool interrupt=false);
+        void open();
+        void run();
 };
 
 #endif

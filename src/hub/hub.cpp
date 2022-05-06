@@ -103,7 +103,7 @@ void Hub::run(){
             // Add peer to peer maps
             this->pmMtx.lockWrite();
             this->pamMtx.lockWrite();
-            this->peerMap[peerIPv4] = std::list<ChunkHeader>();
+            this->peerCHMap[peerIPv4] = std::list<ChunkHeader>();
             this->peerAddrMap[peerIPv4] = peerAddr;
             this->pmMtx.unlockWrite();
             this->pamMtx.unlockWrite();
@@ -136,7 +136,7 @@ void Hub::peerConnHandler(std::string peerIPv4){
             this->pamMtx.lockWrite();
             this->pmMtx.lockWrite();
             this->peerAddrMap.erase(peerIPv4);
-            this->peerMap.erase(peerIPv4);
+            this->peerCHMap.erase(peerIPv4);
             this->pamMtx.unlockWrite();
             this->pmMtx.unlockWrite();
             isFIN = true;
@@ -179,7 +179,7 @@ void Hub::updatePeers(){
             pktStream.str("");
             pktStream.clear();
             this->pmMtx.lockRead();
-            for(acmIt=this->peerMap.begin(); acmIt != this->peerMap.end(); ++acmIt){
+            for(acmIt=this->peerCHMap.begin(); acmIt != this->peerCHMap.end(); ++acmIt){
                 pktStream << acmIt->first << std::endl;
                 pktStream << acmIt->second.size() << std::endl;
                 bufferSize = acmIt->second.size() * sizeof(ChunkHeader);
