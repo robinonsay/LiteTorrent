@@ -2,10 +2,10 @@
 #define TCP_H
 
 #include "ltdefs.h"
+#include "mutex/mrsw_mutex.h"
 
 #include <atomic>
 #include <map>
-#include <mutex>
 #include <stdexcept>
 #include <sys/socket.h>
 
@@ -56,8 +56,8 @@ class TCPServer{
         AddrMtxMap addrMtxMap;
         std::atomic<uint32_t> clientCount;  /** Counts the number of clients */
         std::mutex mainSockMtx;  /** Synchronizes reads and writes */
-        std::mutex addrMapMtx;  /** Synchronizes map access */
-        std::mutex mtxMapMtx;
+        MRSWMutex addrMapMtx;  /** Synchronizes map access */
+        MRSWMutex mtxMapMtx;
 
         /** Gets FD for given client address */
         int getFD(sockaddr_in *client_addr);

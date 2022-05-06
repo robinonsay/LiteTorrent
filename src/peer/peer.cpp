@@ -1,6 +1,7 @@
 #include "crc32.h"
 #include "errors.h"
 #include "ltdefs.h"
+#include "mutex/mrsw_mutex.h"
 #include "peer/errors.h"
 #include "peer/peer.h"
 #include "tcp.h"
@@ -10,7 +11,6 @@
 #include <iostream>
 #include <list>
 #include <map>
-#include <mutex>
 #include <netinet/in.h>
 #include <stdexcept>
 #include <stdio.h>
@@ -48,8 +48,9 @@ void Peer::open(){
     }
     info("Connected to hub", this->log);
     // Request torrent
-    status = this->getTorrent();
-    if(status < 0) error("Could not get torrent", this->log);
+    memset((char *) &pkt, 0, sizeof(pkt));
+    status = this->reqTorrent();
+    if(status < 0) error("Could not request torrent", this->log);
     do{
         // Set packet to 0
         memset((char *) &pkt, 0, sizeof(pkt));
@@ -59,45 +60,54 @@ void Peer::open(){
             break;
         }
         if(status == 0) continue;
-        isFIN = pkt.ph.type == FIN && pkt.ph.size == 0;
+        if(pkt.ph.type == FIN && pkt.ph.size == 0){
+            isFIN = true;
+        }else if(pkt.ph.type == TRRNT_RESP && pkt.ph.size > 0){
+            isFIN = false;
+            status = this->hub.read(pkt.payload, sizeof(pkt.payload), true);
+            if(status < 0){
+                sysError("Could not read packet", this->log);
+                break;
+            }
+            this->parseTorrent(&pkt);
+        }else if(pkt.ph.type == UPDATE && pkt.ph.size > 0){
+            isFIN = false;
+            status = this->hub.read(pkt.payload, sizeof(pkt.payload), true);
+            if(status < 0){
+                sysError("Could not read packet", this->log);
+                break;
+            }
+            this->update(&pkt);
+        }
     }while(!isFIN);
 }
 
-int Peer::getTorrent(){
+int Peer::reqTorrent(){
     int status;
-    Packet pkt;
-    ChunkHeader chunkHeader;
-    int numCHs;
+    PacketHeader trrntReq;
     // Check if connected
     if(!this->hub.isConn()){
         error("Hub not connected", this->log);
         return -1;
     }
     // Set packet to 0
-    memset((char *) &pkt, 0, sizeof(pkt));
     // Form torrent request
-    pkt.ph.type = TRRNT_REQ;
-    pkt.ph.size = 0;
+    trrntReq.type = TRRNT_REQ;
+    trrntReq.size = 0;
     // Write torrent request to hub
-    status = this->hub.write((char *) &pkt.ph, sizeof(pkt.ph));
+    status = this->hub.write((char *) &trrntReq, sizeof(trrntReq));
     if(status < 0){
         sysError("Could not write torrent request", this->log);
         return -1;
     }
-    // Read torrent response from hub
-    status = this->hub.read((char *) &pkt.ph, sizeof(pkt.ph));
-    if(status < 0){
-        sysError("Could not read torrent request", this->log);
-        return -1;
-    }
-    // Read torrent response from hub
-    status = this->hub.read((char *) pkt.payload, pkt.ph.size);
-    if(status < 0){
-        sysError("Could not read torrent request", this->log);
-        return -1;
-    }
+    return status;
+}
+
+void Peer::parseTorrent(Packet *pkt){
+    int numCHs;
+    ChunkHeader chunkHeader;
     // Determine number of chunk headers
-    numCHs = pkt.ph.size / sizeof(ChunkHeader);
+    numCHs = pkt->ph.size / sizeof(ChunkHeader);
     int n = 0;  // Chunk header location in payload
     for(int i=0; i < numCHs; i++){
         // Calculate chunk header location in payload
@@ -105,22 +115,25 @@ int Peer::getTorrent(){
         // Set temp chunk header to 0
         memset(&chunkHeader, 0 , sizeof(chunkHeader));
         // Copy memory to temp chunk header
-        memcpy(&chunkHeader, &pkt.payload[n], sizeof(ChunkHeader));
+        memcpy(&chunkHeader, &pkt->payload[n], sizeof(ChunkHeader));
         // TODO: Remove debugging statement
         this->log << chunkHeader.index << ' ' << chunkHeader.size << ' ' << chunkHeader.hash << std::endl;
         // Push chunk header onto torrent linked list
         this->torrent.push_back(chunkHeader);
     }
-    return 0;
 }
 
-void Peer::close(){
+void Peer::update(Packet *pkt){
+    this->log << "Recieved Update: " << pkt->ph.size << std::endl;
+}
+
+void Peer::close(bool interrupt){
     int status;
     PacketHeader finHdr = {FIN, 0};
     this->log << std::endl;
     // Write FIN packet to hub
     info("FIN sending", this->log);
-    status = this->hub.close((char *) &finHdr, sizeof(finHdr));
+    status = this->hub.close((char *) &finHdr, sizeof(finHdr), interrupt);
     if(status < 0){
         sysError("Couldn't close hub connection", this->log);
         throw p::sys_error("Couldn't close hub connection");

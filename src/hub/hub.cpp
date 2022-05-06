@@ -1,11 +1,13 @@
 #include "crc32.h"
 #include "errors.h"
 #include "hub/hub.h"
+#include "mutex/mrsw_mutex.h"
 #include "tcp.h"
 
 #include <arpa/inet.h>
 #include <list>
 #include <map>
+#include <mutex>
 #include <netinet/in.h>
 #include <sstream>
 #include <stdexcept>
@@ -51,7 +53,7 @@ Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(
 Hub::~Hub(){
 }
 
-void Hub::close(){
+void Hub::close(bool interrupt){
     int status;
     ThreadList::iterator th;
     AddrMap::iterator ami;
@@ -63,10 +65,12 @@ void Hub::close(){
     warning("Closing client connections...", this->log);
     // Write FIN to all peers
     // Connection handler will take care of closing in a clean manner
+    this->pamMtx.lockRead();
     for(ami=this->peerAddrMap.begin(); ami != this->peerAddrMap.end(); ++ami){
         status = this->server.write(&ami->second, (char *) &finPkt, sizeof(finPkt));
         if(status < 0) sysError("ERROR: writing FIN to socket", this->log);
     }
+    this->pamMtx.unlockRead();
     // Join threads
     for(th=this->threads.begin(); th != this->threads.end(); ++th){
         th->join();
@@ -84,6 +88,7 @@ void Hub::run(){
     status = this->server.listen(BACKLOG_SIZE);
     if(status < 0) sysError("ERROR: TCP server listen failed", this->log);
     this->log << "Listening on port " << HUB_PORT << std::endl;
+    this->threads.push_back(std::thread(&Hub::updatePeers, this));
     while(1){
         // Accept the connection
         status = this->server.accept(&peerAddr, &peerAddrLen);
@@ -96,8 +101,12 @@ void Hub::run(){
             // Push connection to its own thread via the connection handler
             this->threads.push_back(std::thread(&Hub::peerConnHandler, this, peerIPv4));
             // Add peer to peer maps
+            this->pmMtx.lockWrite();
+            this->pamMtx.lockWrite();
             this->peerMap[peerIPv4] = std::list<ChunkHeader>();
             this->peerAddrMap[peerIPv4] = peerAddr;
+            this->pmMtx.unlockWrite();
+            this->pamMtx.unlockWrite();
         }
     }
 }
@@ -124,15 +133,19 @@ void Hub::peerConnHandler(std::string peerIPv4){
         if(pkt.ph.type == FIN && pkt.ph.size == 0){
             // If FIN erase peer from map and indicate that connection is done
             info("Recieved FIN", this->log);
+            this->pamMtx.lockWrite();
+            this->pmMtx.lockWrite();
             this->peerAddrMap.erase(peerIPv4);
             this->peerMap.erase(peerIPv4);
+            this->pamMtx.unlockWrite();
+            this->pmMtx.unlockWrite();
             isFIN = true;
         }else if(pkt.ph.type == TRRNT_REQ && pkt.ph.size == 0){
             // If torrent request respond with torrent
             this->log << "Torrent request from: " << peerIPv4 << std::endl;
             status = this->server.write(peerAddr,
-                                      (char *) &this->torrentPkt,
-                                      sizeof(this->torrentPkt));
+                                        (char *) &this->torrentPkt,
+                                        sizeof(this->torrentPkt));
             if(status < 0){
                 sysError("ERROR writing torrent to client sockfd", this->log);
                 break;
@@ -147,7 +160,51 @@ void Hub::peerConnHandler(std::string peerIPv4){
 }
 
 void Hub::updatePeers(){
+    int status;
+    uint32_t peerCount;
+    Packet pkt;
+    std::ostringstream pktStream;
+    AddrMap::iterator amIt;
+    AddrChunkMap::iterator acmIt;
+    std::list<ChunkHeader>::iterator chlIt;
+    char *buffer;
+    size_t bufferSize;
+    std::string pktStr;
+    peerCount = this->server.getClientCount();
     // Only loop while the Hub is running
+    pkt.ph.type = UPDATE;
     while(!this->closing){
+        if(peerCount != this->server.getClientCount()){
+            this->log << "Peer count: " << this->server.getClientCount() << std::endl;
+            pktStream.str("");
+            pktStream.clear();
+            this->pmMtx.lockRead();
+            for(acmIt=this->peerMap.begin(); acmIt != this->peerMap.end(); ++acmIt){
+                pktStream << acmIt->first << std::endl;
+                pktStream << acmIt->second.size() << std::endl;
+                bufferSize = acmIt->second.size() * sizeof(ChunkHeader);
+                buffer = new char[bufferSize];
+                int i=0;
+                for(chlIt=acmIt->second.begin(); chlIt != acmIt->second.end(); ++chlIt){
+                    memcpy(&buffer[i], &*chlIt, sizeof(ChunkHeader));
+                    i += sizeof(ChunkHeader);
+                }
+                pktStream << buffer << std::endl;
+                delete buffer;
+            }
+            this->pmMtx.unlockRead();
+            pktStr = pktStream.str();
+            pkt.ph.size = pktStr.size();
+            memcpy(pkt.payload, pktStr.c_str(), pktStr.size());
+            info("Sending UPDATE", this->log);
+            this->pamMtx.lockRead();
+            for(amIt=this->peerAddrMap.begin(); amIt != this->peerAddrMap.end(); ++amIt){
+                status = this->server.write(&amIt->second,(char *) &pkt, sizeof(pkt));
+                if(status < 0) sysError("Could not write packet to peer", this->log);
+            }
+            this->pamMtx.unlockRead();
+            info("UPDATE sent", this->log);
+            peerCount = this->server.getClientCount();
+        }
     }
 }

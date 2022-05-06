@@ -2,13 +2,13 @@
 #define PEER_H
 
 #include "ltdefs.h"
+#include "mutex/mrsw_mutex.h"
 #include "tcp.h"
 
 #include <atomic>
 #include <iostream>
 #include <list>
 #include <map>
-#include <mutex>
 #include <netinet/in.h>
 #include <thread>
 
@@ -29,15 +29,17 @@ class Peer{
         ThreadList threads;
         std::atomic<bool> closing;
         ChunkHList torrent;
-        int getTorrent();
+        int reqTorrent();
+        void parseTorrent(Packet *pkt);
         void server();
         void connHandler(sockaddr_in peerAddr);
+        void update(Packet *pkt);
     public:
         Peer(const char myIP[], const char hubIP[], std::ostream& out_s, std::ostream& log_s=std::cout);
         ~Peer();
         void run();
         void open();
-        void close();
+        void close(bool interrupt=false);
 };
 
 #endif

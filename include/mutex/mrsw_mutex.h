@@ -1,19 +1,19 @@
 #ifndef SHARED_MUTEX_H
 #define SHARED_MUTEX_H
 
-#include <atomic>
 #include <mutex>
 
-class SharedMutex{
+class MRSWMutex{
 public:
-    SharedMutex();
+    MRSWMutex();
     void lockRead();
     void lockWrite();
     void unlockRead();
     void unlockWrite();
 private:
-    std::atomic<int> n;
+    int n = 0;
     std::mutex wMtx;
+    std::mutex rMtx;
 };
 
 #endif
