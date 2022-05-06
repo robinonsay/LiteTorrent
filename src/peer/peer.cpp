@@ -132,9 +132,11 @@ void Peer::update(Packet *pkt){
     ChunkHeader currCH;
     info("Recieved Update", this->log);
     while(pktStream >> ipv4Str){
-        this->log << "IPv4 string:\t" << ipv4Str << std::endl;
+        this->log << "IPv4 string:" << std::endl;
+        this->log << '\t' << ipv4Str << std::endl;
         pktStream >> len;
-        this->log << "Length:\t" << len << std::endl;
+        this->log << "Length:" << std::endl;
+        this->log << '\t' << len << std::endl;
         for(size_t i=0; i < len; i++){
             pktStream.read((char *) &currCH, sizeof(currCH));
             this->pchmMtx.lockWrite();
