@@ -25,3 +25,19 @@ void info(const char msg[], std::ostream& stream){
 void print(const char msg[], std::ostream& stream){
     stream << msg << std::endl;
 }
+
+tcp::error::error(const std::string& what_arg): std::runtime_error(what_arg){
+
+}
+
+tcp::error::error(const char* what_arg): std::runtime_error(what_arg){
+
+}
+
+tcp::sys_error::sys_error(const std::string& what_arg): std::runtime_error(what_arg){
+
+}
+
+tcp::sys_error::sys_error(const char* what_arg): std::runtime_error(what_arg){
+
+}

@@ -92,22 +92,6 @@ ssize_t tcp::write(int sockfd,
     return bytes;
 }
 
-tcp::error::error(const std::string& what_arg): std::runtime_error(what_arg){
-
-}
-
-tcp::error::error(const char* what_arg): std::runtime_error(what_arg){
-
-}
-
-tcp::sys_error::sys_error(const std::string& what_arg): std::runtime_error(what_arg){
-
-}
-
-tcp::sys_error::sys_error(const char* what_arg): std::runtime_error(what_arg){
-
-}
-
 TCPServer::TCPServer(uint32_t port, bool blocking): clientCount(0){
     int status, flags;
     // Create socket
