@@ -23,11 +23,6 @@ Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(
     Chunk currChunk;
     std::list<ChunkHeader> chList;
     ChunkHeader *torrent;
-    HashSHA3_256 digest;
-    unsigned char msg[] = {
-        0x00, 0x01, 0x02, 0x03
-    };
-    status = genHash("SHA256", msg, sizeof(msg), &digest);
     // Chunk input stream
     for(int i=0; this->in.good(); i++){
         memset((char *) &currChunk, 0, sizeof(currChunk));
@@ -35,7 +30,14 @@ Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(
         if(this->in.fail() && !this->in.eof()) throw std::runtime_error("Could not read input file");
         currChunk.ch.index = i;
         currChunk.ch.size = this->in.gcount();
-        currChunk.ch.hash = crc32(currChunk.payload, sizeof(currChunk.payload));
+        status = genHash("SHA3-256",
+                         currChunk.payload,
+                         sizeof(currChunk.payload),
+                         &currChunk.ch.hash_s);
+        if(status < 0){
+            error("Could not generate hash", this->log);
+            throw std::runtime_error("Could not generate hash");
+        }
         chList.push_back(currChunk.ch);
     }
     // Create chunk header list used for payload

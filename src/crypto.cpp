@@ -12,12 +12,16 @@ int genHash(const char hashFunc[], void *msg, size_t size, HashSHA3_256 *digest)
     EVP_MD_CTX *ctx = NULL;
     EVP_MD *func = NULL;
     unsigned int len = 0;
-    int ret = 1;
-
     /* Create a context for the digest operation */
     ctx = EVP_MD_CTX_new();
-    if (ctx == NULL)
-        goto err;
+    if (ctx == NULL){
+        /* Clean up all the resources we allocated */
+        EVP_MD_free(func);
+        EVP_MD_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        error("Context returned NULL");
+        return -1;
+    }
 
     /*
      * Fetch the SHA256 algorithm implementation for doing the digest. We're
@@ -27,36 +31,49 @@ int genHash(const char hashFunc[], void *msg, size_t size, HashSHA3_256 *digest)
      * do.
      */
     func = EVP_MD_fetch(NULL, hashFunc, NULL);
-    if (func == NULL)
-        goto err;
+    if (func == NULL){
+        /* Clean up all the resources we allocated */
+        EVP_MD_free(func);
+        EVP_MD_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        error("Function returned NULL");
+        return -1;
+    }
 
    /* Initialise the digest operation */
-   if (!EVP_DigestInit_ex(ctx, func, NULL))
-       goto err;
+   if (!EVP_DigestInit_ex(ctx, func, NULL)){
+       /* Clean up all the resources we allocated */
+       EVP_MD_free(func);
+       EVP_MD_CTX_free(ctx);
+       ERR_print_errors_fp(stderr);
+       error("Could not initialise the digest operation");
+       return -1;
+   }
 
     /*
      * Pass the message to be digested. This can be passed in over multiple
      * EVP_DigestUpdate calls if necessary
      */
-    if (!EVP_DigestUpdate(ctx, (char *) msg, size))
-        goto err;
+    if (!EVP_DigestUpdate(ctx, (char *) msg, size)){
+        /* Clean up all the resources we allocated */
+        EVP_MD_free(func);
+        EVP_MD_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        error("Could not pass message to be digested");
+        return -1;
+    }
 
     // Zero out digest structure
     memset(digest, 0, sizeof(HashSHA3_256));
 
     /* Now calculate the digest itself */
-    if (!EVP_DigestFinal_ex(ctx, (unsigned char *) digest, &len))
-        goto err;
-
-    /* Print out the digest result */
-    BIO_dump_fp(stdout, (unsigned char *) digest, len);
-    ret = 0;
-
- err:
-    /* Clean up all the resources we allocated */
-    EVP_MD_free(func);
-    EVP_MD_CTX_free(ctx);
-    if (ret != 0)
-       ERR_print_errors_fp(stderr);
-    return ret;
+    if (!EVP_DigestFinal_ex(ctx, (unsigned char *) digest, &len)){
+        /* Clean up all the resources we allocated */
+        EVP_MD_free(func);
+        EVP_MD_CTX_free(ctx);
+        ERR_print_errors_fp(stderr);
+        error("Could not calcualte digest");
+        return -1;
+    }
+    return 0;
 }
