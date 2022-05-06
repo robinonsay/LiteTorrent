@@ -1,5 +1,6 @@
 #include "peer/peer.h"
 #include "errors.h"
+#include "peer/errors.h"
 #include "crc32.h"
 #include "ltdefs.h"
 #include "tcp.h"
@@ -142,20 +143,4 @@ void Peer::server(){
 }
 
 void Peer::connHandler(sockaddr_in peerAddr){
-}
-
-p::error::error(const std::string& what_arg): std::runtime_error(what_arg){
-
-}
-
-p::error::error(const char* what_arg): std::runtime_error(what_arg){
-
-}
-
-p::sys_error::sys_error(const std::string& what_arg): std::runtime_error(what_arg){
-
-}
-
-p::sys_error::sys_error(const char* what_arg): std::runtime_error(what_arg){
-
 }
