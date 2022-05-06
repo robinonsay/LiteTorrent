@@ -1,4 +1,5 @@
 #include "crc32.h"
+#include "crypto.h"
 #include "errors.h"
 #include "hub/hub.h"
 #include "mutex/mrsw_mutex.h"
@@ -18,9 +19,12 @@
 
 
 Hub::Hub(std::istream& in_s, std::ostream& log_s): in(in_s), log(log_s), server(HUB_PORT), closing(false){
+    int status;
     Chunk currChunk;
     std::list<ChunkHeader> chList;
     ChunkHeader *torrent;
+    HashSHA256 digest;
+    status = genHash();
     // Chunk input stream
     for(int i=0; this->in.good(); i++){
         memset((char *) &currChunk, 0, sizeof(currChunk));

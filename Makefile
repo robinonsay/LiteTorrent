@@ -7,9 +7,12 @@ MUTEX_DIR ?= $(SRC_DIR)/mutex
 BUILD_DIR ?= ./bin
 INC_DIR ?= ./include
 
+OPENSSL_LIB ?= /opt/openssl/lib64
+OPENSSL_INCLUDE ?= /opt/openssl/include
+
 SRCS := $(shell ls $(SRC_DIR)/*.cpp) $(shell find $(MUTEX_DIR) -name *.cpp)
-OBJS := $(SRCS:%=$(BUILD_DIR)/%.o) 
-DEPS := $(shell find $(INC_DIR) -name *.h)
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+DEPS := $(shell find $(INC_DIR) -name *.h) $(shell find $(OPENSSL_INCLUDE) -name *.h)
 
 HUB_SRCS := $(shell find $(HUB_DIR) -name *.cpp ! -name *main.cpp)
 HUB_MAIN := $(shell find $(HUB_DIR) -name *main.cpp)
@@ -26,19 +29,19 @@ PEER_OBJS := $(PEER_SRCS:%=$(BUILD_DIR)/%.o)
 TEST_SRCS := $(shell find $(TEST_DIR) -name *.cpp)
 TEST_OBJS := $(TEST_SRCS:%=$(BUILD_DIR)/%.o)
 
-CXXFLAGS := -std=c++11 -g -Wall -I$(INC_DIR)
+CXXFLAGS := -std=c++11 -g -Wall -I$(INC_DIR) -I$(OPENSSL_INCLUDE)
 CXX := g++
 
-all: peer hub test
+all: peer hub # test
 
 hub: $(HUB_ALL_OBJS) $(OBJS)
-	$(CXX) $(HUB_ALL_OBJS) $(OBJS) -o $@ -pthread
+	$(CXX) $(HUB_ALL_OBJS) $(OBJS) -o $@ -L$(OPENSSL_LIB) -lssl -lcrypto  -pthread
 
 peer: $(PEER_ALL_OBJS) $(OBJS)
-	$(CXX) $(PEER_ALL_OBJS) $(OBJS) -o $@ -pthread
+	$(CXX) $(PEER_ALL_OBJS) $(OBJS) -o $@ -L$(OPENSSL_LIB) -lssl -lcrypto -pthread
 
-test: $(TEST_OBJS) $(PEER_OBJS) $(HUB_OBJS) $(OBJS)
-	$(CXX) $(TEST_OBJS) $(PEER_OBJS) $(HUB_OBJS) $(OBJS) -o $@ -static -lboost_unit_test_framework -pthread
+# test: $(TEST_OBJS) $(PEER_OBJS) $(HUB_OBJS) $(OBJS)
+# 	$(CXX) $(TEST_OBJS) $(PEER_OBJS) $(HUB_OBJS) $(OBJS) -o $@ -static -lboost_unit_test_framework -L$(OPENSSL_LIB) -lssl -lcrypto -pthread
 
 $(BUILD_DIR)/%.cpp.o: %.cpp $(DEPS)
 	$(MKDIR_P) $(dir $@)
@@ -47,7 +50,6 @@ $(BUILD_DIR)/%.cpp.o: %.cpp $(DEPS)
 .PHONY: all clean
 clean:
 	$(RM) -r $(BUILD_DIR)
-	$(RM) hub peer test
+	$(RM) hub peer # test
 
 MKDIR_P ?= mkdir -p
-
