@@ -53,6 +53,4 @@ typedef struct Chunk{
 
 std::string addrIPv4ToString(sockaddr_in *addr);
 
-typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;
-
 #endif
