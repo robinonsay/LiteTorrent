@@ -1,6 +1,6 @@
 #include "hub/hub.h"
-#include "errors.h"
-#include "argparse.h"
+#include "lite_torrent/errors.h"
+#include "lite_torrent/argparse.h"
 
 #include <fstream>
 #include <iostream>

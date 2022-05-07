@@ -1,8 +1,8 @@
-#include "crypto.h"
-#include "errors.h"
+#include "lite_torrent/crypto.h"
+#include "lite_torrent/errors.h"
 #include "hub/hub.h"
-#include "mutex/mrsw_mutex.h"
-#include "tcp.h"
+#include "lite_torrent/mrsw_mutex.h"
+#include "lite_torrent/tcp.h"
 
 #include <arpa/inet.h>
 #include <list>

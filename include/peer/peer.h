@@ -1,10 +1,10 @@
 #ifndef PEER_H
 #define PEER_H
 
-#include "ltdefs.h"
-#include "mutex/mrsw_mutex.h"
-#include "peer/ltpeer.h"
-#include "tcp.h"
+#include "lite_torrent/ltdefs.h"
+#include "lite_torrent/mrsw_mutex.h"
+#include "lite_torrent/ltpeer.h"
+#include "lite_torrent/tcp.h"
 
 #include <atomic>
 #include <iostream>

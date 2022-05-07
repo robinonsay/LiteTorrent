@@ -1,7 +1,7 @@
 #ifndef PEER_WRPR_H
 #define PEER_WRPR_H
 
-#include "ltdefs.h"
+#include "lite_torrent/ltdefs.h"
 
 #include <list>
 #include <map>

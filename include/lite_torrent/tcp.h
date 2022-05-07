@@ -1,8 +1,8 @@
 #ifndef TCP_H
 #define TCP_H
 
-#include "ltdefs.h"
-#include "mutex/mrsw_mutex.h"
+#include "lite_torrent/ltdefs.h"
+#include "lite_torrent/mrsw_mutex.h"
 
 #include <atomic>
 #include <map>

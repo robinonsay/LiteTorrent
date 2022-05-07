@@ -1,5 +1,5 @@
-#include "peer/ltpeer.h"
-#include "ltdefs.h"
+#include "lite_torrent/ltpeer.h"
+#include "lite_torrent/ltdefs.h"
 
 LtPeer::LtPeer(std::string ipv4Str){
     this->ipv4Str = ipv4Str;

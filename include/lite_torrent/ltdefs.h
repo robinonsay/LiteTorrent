@@ -1,7 +1,7 @@
 #ifndef LTDEFS_H
 #define LTDEFS_H
 
-#include "crypto.h"
+#include "lite_torrent/crypto.h"
 #include <list>
 #include <map>
 #include <netinet/in.h>

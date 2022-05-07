@@ -1,6 +1,6 @@
-#include "errors.h"
-#include "ltdefs.h"
-#include "tcp.h"
+#include "lite_torrent/errors.h"
+#include "lite_torrent/ltdefs.h"
+#include "lite_torrent/tcp.h"
 
 #include <arpa/inet.h>
 #include <atomic>

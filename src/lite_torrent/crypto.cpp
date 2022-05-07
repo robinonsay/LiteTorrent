@@ -1,5 +1,5 @@
-#include "crypto.h"
-#include "errors.h"
+#include "lite_torrent/crypto.h"
+#include "lite_torrent/errors.h"
 
 #include <openssl/evp.h>
 #include <openssl/bio.h>

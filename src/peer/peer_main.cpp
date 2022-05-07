@@ -1,7 +1,7 @@
-#include "errors.h"
+#include "lite_torrent/errors.h"
 #include "peer/peer.h"
-#include "ltdefs.h"
-#include "argparse.h"
+#include "lite_torrent/ltdefs.h"
+#include "lite_torrent/argparse.h"
 
 #include <iostream>
 #include <fstream>
