@@ -9,6 +9,11 @@ test
 !test/
 testing/
 vim-sessions/
-bin/
+build/
 hub
 !hub/
+Makefile
+*.cmake
+CMakeFiles/
+CMakeCache.txt
+lib/

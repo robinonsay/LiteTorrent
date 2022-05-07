@@ -1,7 +1,6 @@
 #include "errors.h"
 #include "peer/peer.h"
 #include "ltdefs.h"
-#include "crc32.h"
 #include "argparse.h"
 
 #include <iostream>
@@ -10,6 +9,7 @@
 #include <string.h>
 #include <list>
 #include <map>
+#include <csignal>
 
 #define MIN_ARGS 7
 
