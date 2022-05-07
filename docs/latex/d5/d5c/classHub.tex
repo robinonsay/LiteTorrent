@@ -1,0 +1,63 @@
+\hypertarget{classHub}{}\doxysection{Hub Class Reference}
+\label{classHub}\index{Hub@{Hub}}
+
+
+{\ttfamily \#include $<$hub.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classHub_abb27513c6a8d416dc4da276151ae02dc}{Hub}} (std\+::istream \&in\+\_\+s=std\+::cin, std\+::ostream \&log\+\_\+s=std\+::cout)
+\item 
+\mbox{\hyperlink{classHub_aeb43a79c823bf9875703db01bf71bc61}{$\sim$\+Hub}} ()
+\item 
+void \mbox{\hyperlink{classHub_a800ed2902116f229c3b0261030290786}{close}} (bool interrupt=false)
+\item 
+void \mbox{\hyperlink{classHub_a8e528ed3056885e83185cdc77f7af92c}{run}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHub}{Hub}} is the central server for Lite\+Torrent. It sends peers the torrent list and updates all peers when a new peer has joined the network 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classHub_abb27513c6a8d416dc4da276151ae02dc}\label{classHub_abb27513c6a8d416dc4da276151ae02dc}} 
+\index{Hub@{Hub}!Hub@{Hub}}
+\index{Hub@{Hub}!Hub@{Hub}}
+\doxysubsubsection{\texorpdfstring{Hub()}{Hub()}}
+{\footnotesize\ttfamily Hub\+::\+Hub (\begin{DoxyParamCaption}\item[{std\+::istream \&}]{in\+\_\+s = {\ttfamily std\+:\+:cin},  }\item[{std\+::ostream \&}]{log\+\_\+s = {\ttfamily std\+:\+:cout} }\end{DoxyParamCaption})}
+
+Creates \mbox{\hyperlink{classHub}{Hub}} 
+\begin{DoxyParams}{Parameters}
+{\em in\+\_\+s} & The input stream to share with peers (most likely a file) \\
+\hline
+{\em log\+\_\+s} & The log file stream; defaults to std\+::cout \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classHub_aeb43a79c823bf9875703db01bf71bc61}\label{classHub_aeb43a79c823bf9875703db01bf71bc61}} 
+\index{Hub@{Hub}!````~Hub@{$\sim$Hub}}
+\index{````~Hub@{$\sim$Hub}!Hub@{Hub}}
+\doxysubsubsection{\texorpdfstring{$\sim$Hub()}{~Hub()}}
+{\footnotesize\ttfamily Hub\+::$\sim$\+Hub (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHub_a800ed2902116f229c3b0261030290786}\label{classHub_a800ed2902116f229c3b0261030290786}} 
+\index{Hub@{Hub}!close@{close}}
+\index{close@{close}!Hub@{Hub}}
+\doxysubsubsection{\texorpdfstring{close()}{close()}}
+{\footnotesize\ttfamily void Hub\+::close (\begin{DoxyParamCaption}\item[{bool}]{interrupt = {\ttfamily false} }\end{DoxyParamCaption})}
+
+Closes the \mbox{\hyperlink{classHub}{Hub}} \mbox{\Hypertarget{classHub_a8e528ed3056885e83185cdc77f7af92c}\label{classHub_a8e528ed3056885e83185cdc77f7af92c}} 
+\index{Hub@{Hub}!run@{run}}
+\index{run@{run}!Hub@{Hub}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Hub\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Runs the \mbox{\hyperlink{classHub}{Hub}} 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/hub/\mbox{\hyperlink{hub_8h}{hub.\+h}}\item 
+src/hub/\mbox{\hyperlink{hub_8cpp}{hub.\+cpp}}\end{DoxyCompactItemize}

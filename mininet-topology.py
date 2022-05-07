@@ -1,3 +1,7 @@
+import time
+import subprocess
+import signal
+
 from mininet.cli import CLI
 from mininet.net import Mininet
 from mininet.link import TCLink
@@ -29,8 +33,8 @@ if __name__ == '__main__':
     topo = AssignmentNetworks()
     net = Mininet(topo=topo, link=TCLink, autoSetMacs=True,
            autoStaticArp=True)
-
     # Run network
     net.start()
     CLI(net)
     net.stop()
+

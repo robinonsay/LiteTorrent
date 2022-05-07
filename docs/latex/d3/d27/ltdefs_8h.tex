@@ -1,0 +1,168 @@
+\hypertarget{ltdefs_8h}{}\doxysection{include/lite\+\_\+torrent/ltdefs.h File Reference}
+\label{ltdefs_8h}\index{include/lite\_torrent/ltdefs.h@{include/lite\_torrent/ltdefs.h}}
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/crypto.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$list$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$netinet/in.\+h$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+Include dependency graph for ltdefs.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{da/de2/ltdefs_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{db/d29/ltdefs_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structPacketHeader}{Packet\+Header}}
+\item 
+struct \mbox{\hyperlink{structPacket}{Packet}}
+\item 
+struct \mbox{\hyperlink{structChunkHeader}{Chunk\+Header}}
+\item 
+struct \mbox{\hyperlink{structChunk}{Chunk}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{ltdefs_8h_aabb501e1f8bf0ccfc129c4cc1a886389}{H\+U\+B\+\_\+\+P\+O\+RT}}~6969
+\item 
+\#define \mbox{\hyperlink{ltdefs_8h_a4020e4419b81ecb8e3595a552ef37cfa}{P\+E\+E\+R\+\_\+\+P\+O\+RT}}~6881
+\item 
+\#define \mbox{\hyperlink{ltdefs_8h_aea3cfda4f3a9f978ec759f206cf186fe}{C\+H\+U\+N\+K\+\_\+\+S\+I\+ZE}}~524288
+\item 
+\#define \mbox{\hyperlink{ltdefs_8h_adf978238a685bc9810477dfcf2c9c17c}{B\+A\+C\+K\+L\+O\+G\+\_\+\+Q\+U\+E\+U\+E\+\_\+\+S\+I\+ZE}}~20
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} \mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}}
+\item 
+typedef struct \mbox{\hyperlink{structPacketHeader}{Packet\+Header}} \mbox{\hyperlink{ltdefs_8h_a17368b40fc702858c5f0078d91bf4e1b}{Packet\+Header}}
+\item 
+typedef struct \mbox{\hyperlink{structPacket}{Packet}} \mbox{\hyperlink{ltdefs_8h_a9351530394464c1d1892ddeca8a6aea1}{Packet}}
+\item 
+typedef struct \mbox{\hyperlink{structChunkHeader}{Chunk\+Header}} \mbox{\hyperlink{ltdefs_8h_ab09478d3e50ed50b199941f967fde319}{Chunk\+Header}}
+\item 
+typedef struct \mbox{\hyperlink{structChunk}{Chunk}} \mbox{\hyperlink{ltdefs_8h_ac3addd1f4caf0ce9547dc20e95664253}{Chunk}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249d}{types}} \{ \mbox{\hyperlink{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249daea3c073df31939c172972ef6ccbc988b}{F\+IN}} =100, 
+\mbox{\hyperlink{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249da3912ed627c0090ccc7fa1b03fef04202}{U\+P\+D\+A\+TE}} =200, 
+\mbox{\hyperlink{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249da8029b91620ffc736b24a1e014badf155}{T\+R\+R\+N\+T\+\_\+\+R\+EQ}} =300, 
+\mbox{\hyperlink{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249dae7a108ad4f12f6015c42f65aaac89fa8}{T\+R\+R\+N\+T\+\_\+\+R\+E\+SP}} =400
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{ltdefs_8h_a138cd23cb07598f29d20846cf8536e8b}{addr\+I\+Pv4\+To\+String}} (\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$addr)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{ltdefs_8h_adf978238a685bc9810477dfcf2c9c17c}\label{ltdefs_8h_adf978238a685bc9810477dfcf2c9c17c}} 
+\index{ltdefs.h@{ltdefs.h}!BACKLOG\_QUEUE\_SIZE@{BACKLOG\_QUEUE\_SIZE}}
+\index{BACKLOG\_QUEUE\_SIZE@{BACKLOG\_QUEUE\_SIZE}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{BACKLOG\_QUEUE\_SIZE}{BACKLOG\_QUEUE\_SIZE}}
+{\footnotesize\ttfamily \#define B\+A\+C\+K\+L\+O\+G\+\_\+\+Q\+U\+E\+U\+E\+\_\+\+S\+I\+ZE~20}
+
+\mbox{\Hypertarget{ltdefs_8h_aea3cfda4f3a9f978ec759f206cf186fe}\label{ltdefs_8h_aea3cfda4f3a9f978ec759f206cf186fe}} 
+\index{ltdefs.h@{ltdefs.h}!CHUNK\_SIZE@{CHUNK\_SIZE}}
+\index{CHUNK\_SIZE@{CHUNK\_SIZE}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{CHUNK\_SIZE}{CHUNK\_SIZE}}
+{\footnotesize\ttfamily \#define C\+H\+U\+N\+K\+\_\+\+S\+I\+ZE~524288}
+
+\mbox{\Hypertarget{ltdefs_8h_aabb501e1f8bf0ccfc129c4cc1a886389}\label{ltdefs_8h_aabb501e1f8bf0ccfc129c4cc1a886389}} 
+\index{ltdefs.h@{ltdefs.h}!HUB\_PORT@{HUB\_PORT}}
+\index{HUB\_PORT@{HUB\_PORT}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{HUB\_PORT}{HUB\_PORT}}
+{\footnotesize\ttfamily \#define H\+U\+B\+\_\+\+P\+O\+RT~6969}
+
+\mbox{\Hypertarget{ltdefs_8h_a4020e4419b81ecb8e3595a552ef37cfa}\label{ltdefs_8h_a4020e4419b81ecb8e3595a552ef37cfa}} 
+\index{ltdefs.h@{ltdefs.h}!PEER\_PORT@{PEER\_PORT}}
+\index{PEER\_PORT@{PEER\_PORT}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{PEER\_PORT}{PEER\_PORT}}
+{\footnotesize\ttfamily \#define P\+E\+E\+R\+\_\+\+P\+O\+RT~6881}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{ltdefs_8h_ac3addd1f4caf0ce9547dc20e95664253}\label{ltdefs_8h_ac3addd1f4caf0ce9547dc20e95664253}} 
+\index{ltdefs.h@{ltdefs.h}!Chunk@{Chunk}}
+\index{Chunk@{Chunk}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{Chunk}{Chunk}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structChunk}{Chunk}} \mbox{\hyperlink{structChunk}{Chunk}}}
+
+\mbox{\hyperlink{structChunk}{Chunk}} structure \mbox{\Hypertarget{ltdefs_8h_ab09478d3e50ed50b199941f967fde319}\label{ltdefs_8h_ab09478d3e50ed50b199941f967fde319}} 
+\index{ltdefs.h@{ltdefs.h}!ChunkHeader@{ChunkHeader}}
+\index{ChunkHeader@{ChunkHeader}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{ChunkHeader}{ChunkHeader}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structChunkHeader}{Chunk\+Header}} \mbox{\hyperlink{structChunkHeader}{Chunk\+Header}}}
+
+\mbox{\hyperlink{structChunk}{Chunk}} Header structure \mbox{\Hypertarget{ltdefs_8h_a9351530394464c1d1892ddeca8a6aea1}\label{ltdefs_8h_a9351530394464c1d1892ddeca8a6aea1}} 
+\index{ltdefs.h@{ltdefs.h}!Packet@{Packet}}
+\index{Packet@{Packet}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{Packet}{Packet}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structPacket}{Packet}} \mbox{\hyperlink{structPacket}{Packet}}}
+
+\mbox{\hyperlink{structPacket}{Packet}} structure \mbox{\Hypertarget{ltdefs_8h_a17368b40fc702858c5f0078d91bf4e1b}\label{ltdefs_8h_a17368b40fc702858c5f0078d91bf4e1b}} 
+\index{ltdefs.h@{ltdefs.h}!PacketHeader@{PacketHeader}}
+\index{PacketHeader@{PacketHeader}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{PacketHeader}{PacketHeader}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structPacketHeader}{Packet\+Header}} \mbox{\hyperlink{structPacketHeader}{Packet\+Header}}}
+
+\mbox{\hyperlink{structPacket}{Packet}} header structure \mbox{\Hypertarget{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}\label{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}} 
+\index{ltdefs.h@{ltdefs.h}!sockaddr\_in@{sockaddr\_in}}
+\index{sockaddr\_in@{sockaddr\_in}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{sockaddr\_in}{sockaddr\_in}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} \mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249d}\label{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249d}} 
+\index{ltdefs.h@{ltdefs.h}!types@{types}}
+\index{types@{types}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{types}{types}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249d}{types}}}
+
+Types for packets Starts at 100 so it is not confused with N\+U\+LL packets \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FIN@{FIN}!ltdefs.h@{ltdefs.h}}\index{ltdefs.h@{ltdefs.h}!FIN@{FIN}}}\mbox{\Hypertarget{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249daea3c073df31939c172972ef6ccbc988b}\label{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249daea3c073df31939c172972ef6ccbc988b}} 
+F\+IN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UPDATE@{UPDATE}!ltdefs.h@{ltdefs.h}}\index{ltdefs.h@{ltdefs.h}!UPDATE@{UPDATE}}}\mbox{\Hypertarget{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249da3912ed627c0090ccc7fa1b03fef04202}\label{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249da3912ed627c0090ccc7fa1b03fef04202}} 
+U\+P\+D\+A\+TE&F\+IN packet type \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TRRNT\_REQ@{TRRNT\_REQ}!ltdefs.h@{ltdefs.h}}\index{ltdefs.h@{ltdefs.h}!TRRNT\_REQ@{TRRNT\_REQ}}}\mbox{\Hypertarget{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249da8029b91620ffc736b24a1e014badf155}\label{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249da8029b91620ffc736b24a1e014badf155}} 
+T\+R\+R\+N\+T\+\_\+\+R\+EQ&Update packet type \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TRRNT\_RESP@{TRRNT\_RESP}!ltdefs.h@{ltdefs.h}}\index{ltdefs.h@{ltdefs.h}!TRRNT\_RESP@{TRRNT\_RESP}}}\mbox{\Hypertarget{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249dae7a108ad4f12f6015c42f65aaac89fa8}\label{ltdefs_8h_a1fdc6153be01333d9ad64a8ae450249dae7a108ad4f12f6015c42f65aaac89fa8}} 
+T\+R\+R\+N\+T\+\_\+\+R\+E\+SP&Torrent request packet type \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{ltdefs_8h_a138cd23cb07598f29d20846cf8536e8b}\label{ltdefs_8h_a138cd23cb07598f29d20846cf8536e8b}} 
+\index{ltdefs.h@{ltdefs.h}!addrIPv4ToString@{addrIPv4ToString}}
+\index{addrIPv4ToString@{addrIPv4ToString}!ltdefs.h@{ltdefs.h}}
+\doxysubsubsection{\texorpdfstring{addrIPv4ToString()}{addrIPv4ToString()}}
+{\footnotesize\ttfamily std\+::string addr\+I\+Pv4\+To\+String (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$}]{addr }\end{DoxyParamCaption})}
+
