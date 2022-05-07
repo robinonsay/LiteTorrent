@@ -4,6 +4,7 @@
 #include "ltdefs.h"
 #include "mutex/mrsw_mutex.h"
 #include "tcp.h"
+#include "peer/ltpeer.h"
 
 #include <atomic>
 #include <iostream>
@@ -58,8 +59,8 @@ private:
     /** The thread pool */
     ThreadList threads;
 
-    /** Map of peer address to chunks it owns */
-    AddrChunkMap peerCHMap;
+    /** Map IPv4 strs of peers to LtPeers */
+    PeerMap peerMap;
 
     /** AddrChunkMap mutex */
     MRSWMutex pmMtx;

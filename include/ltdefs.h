@@ -2,7 +2,6 @@
 #define LTDEFS_H
 
 #include "crypto.h"
-
 #include <list>
 #include <map>
 #include <netinet/in.h>
@@ -14,7 +13,6 @@
 #define BACKLOG_QUEUE_SIZE 20
 
 typedef struct sockaddr_in sockaddr_in;
-
 /**
 * Types for packets
 * Starts at 100 so it is not confused with NULL packets

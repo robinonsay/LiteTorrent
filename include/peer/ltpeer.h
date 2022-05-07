@@ -1,7 +1,7 @@
 #ifndef PEER_WRPR_H
 #define PEER_WRPR_H
 
-#include "ltpeer.h"
+#include "ltdefs.h"
 
 #include <list>
 #include <map>
@@ -15,13 +15,18 @@ private:
     std::string ipv4Str;
 public:
     LtPeer(std::string ipv4Str);
+    LtPeer();
     ~LtPeer();
     ChunkHeader& back();
     ChunkHeader& front();
-    ChunkHList::iterator& begin();
-    ChunkHList::iterator& end();
+    ChunkHList::iterator begin();
+    ChunkHList::iterator end();
+    size_t size();
     void sort();
     std::string& getIPv4Str();
     void addChunk(ChunkHeader ch);
 };
+
+typedef std::map<std::string, LtPeer> PeerMap;
+
 #endif

@@ -3,6 +3,7 @@
 #include "mutex/mrsw_mutex.h"
 #include "peer/errors.h"
 #include "peer/peer.h"
+#include "peer/ltpeer.h"
 #include "tcp.h"
 
 #include <atomic>
@@ -139,7 +140,8 @@ void Peer::update(Packet *pkt){
         for(size_t i=0; i < len; i++){
             pktStream.read((char *) &currCH, sizeof(currCH));
             this->pchmMtx.lockWrite();
-            this->peerCHMap[ipv4Str].push_back(currCH);
+            this->peerMap[ipv4Str] = LtPeer(ipv4Str);
+            this->peerMap[ipv4Str].addChunk(currCH);
             this->pchmMtx.unlockWrite();
         }
     }
