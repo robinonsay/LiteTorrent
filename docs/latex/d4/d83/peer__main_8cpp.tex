@@ -1,0 +1,87 @@
+\hypertarget{peer__main_8cpp}{}\doxysection{src/peer/peer\+\_\+main.cpp File Reference}
+\label{peer__main_8cpp}\index{src/peer/peer\_main.cpp@{src/peer/peer\_main.cpp}}
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/errors.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}peer/peer.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/ltdefs.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/argparse.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$list$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$csignal$>$}\newline
+Include dependency graph for peer\+\_\+main.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/dc7/peer__main_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{peer__main_8cpp_adad6dda307ec7fc93b243519d7691f34}{M\+I\+N\+\_\+\+A\+R\+GS}}~7
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{peer__main_8cpp_a29de55d5c8cbe5eb73aded7d649b79b7}{signal\+Handler}} (int sig\+Num)
+\item 
+int \mbox{\hyperlink{peer__main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+std\+::ofstream $\ast$ \mbox{\hyperlink{peer__main_8cpp_a716d20d5ddeb0f908509eab6be2ef088}{out\+File}} = N\+U\+LL
+\item 
+std\+::ofstream $\ast$ \mbox{\hyperlink{peer__main_8cpp_a17afe4d582996c6706cdcdaf1c4efc67}{log\+File}} = N\+U\+LL
+\item 
+\mbox{\hyperlink{classPeer}{Peer}} $\ast$ \mbox{\hyperlink{peer__main_8cpp_a5c53b0b0e944e36a275892626fdcdb0e}{peer}} = N\+U\+LL
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{peer__main_8cpp_adad6dda307ec7fc93b243519d7691f34}\label{peer__main_8cpp_adad6dda307ec7fc93b243519d7691f34}} 
+\index{peer\_main.cpp@{peer\_main.cpp}!MIN\_ARGS@{MIN\_ARGS}}
+\index{MIN\_ARGS@{MIN\_ARGS}!peer\_main.cpp@{peer\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{MIN\_ARGS}{MIN\_ARGS}}
+{\footnotesize\ttfamily \#define M\+I\+N\+\_\+\+A\+R\+GS~7}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{peer__main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}\label{peer__main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}} 
+\index{peer\_main.cpp@{peer\_main.cpp}!main@{main}}
+\index{main@{main}!peer\_main.cpp@{peer\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{peer__main_8cpp_a29de55d5c8cbe5eb73aded7d649b79b7}\label{peer__main_8cpp_a29de55d5c8cbe5eb73aded7d649b79b7}} 
+\index{peer\_main.cpp@{peer\_main.cpp}!signalHandler@{signalHandler}}
+\index{signalHandler@{signalHandler}!peer\_main.cpp@{peer\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{signalHandler()}{signalHandler()}}
+{\footnotesize\ttfamily void signal\+Handler (\begin{DoxyParamCaption}\item[{int}]{sig\+Num }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{peer__main_8cpp_a17afe4d582996c6706cdcdaf1c4efc67}\label{peer__main_8cpp_a17afe4d582996c6706cdcdaf1c4efc67}} 
+\index{peer\_main.cpp@{peer\_main.cpp}!logFile@{logFile}}
+\index{logFile@{logFile}!peer\_main.cpp@{peer\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{logFile}{logFile}}
+{\footnotesize\ttfamily std\+::ofstream$\ast$ log\+File = N\+U\+LL}
+
+\mbox{\Hypertarget{peer__main_8cpp_a716d20d5ddeb0f908509eab6be2ef088}\label{peer__main_8cpp_a716d20d5ddeb0f908509eab6be2ef088}} 
+\index{peer\_main.cpp@{peer\_main.cpp}!outFile@{outFile}}
+\index{outFile@{outFile}!peer\_main.cpp@{peer\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{outFile}{outFile}}
+{\footnotesize\ttfamily std\+::ofstream$\ast$ out\+File = N\+U\+LL}
+
+\mbox{\Hypertarget{peer__main_8cpp_a5c53b0b0e944e36a275892626fdcdb0e}\label{peer__main_8cpp_a5c53b0b0e944e36a275892626fdcdb0e}} 
+\index{peer\_main.cpp@{peer\_main.cpp}!peer@{peer}}
+\index{peer@{peer}!peer\_main.cpp@{peer\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{peer}{peer}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classPeer}{Peer}}$\ast$ peer = N\+U\+LL}
+

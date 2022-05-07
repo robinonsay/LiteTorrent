@@ -1,0 +1,68 @@
+\hypertarget{classArgParse}{}\doxysection{Arg\+Parse Class Reference}
+\label{classArgParse}\index{ArgParse@{ArgParse}}
+
+
+{\ttfamily \#include $<$argparse.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classArgParse_aeb56280015472c03cc12d6eea9a103e6}{Arg\+Parse}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]}, std\+::initializer\+\_\+list$<$ std\+::string $>$ il)
+\item 
+\mbox{\hyperlink{classArgParse_a69ccf99570df5914b2fbc3c77f8a5e00}{$\sim$\+Arg\+Parse}} ()
+\item 
+std\+::string \mbox{\hyperlink{classArgParse_ae8723f5308bccd0120caacc5bd2b982e}{get\+Help}} ()
+\item 
+\mbox{\hyperlink{argparse_8h_a4c718559bd66f86788917d4fac4b9487}{Arg\+Map}} \& \mbox{\hyperlink{classArgParse_ace8d0cbb5cbbcfed5ffecf9941a7d6b6}{parse\+Args}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classArgParse_aeb56280015472c03cc12d6eea9a103e6}\label{classArgParse_aeb56280015472c03cc12d6eea9a103e6}} 
+\index{ArgParse@{ArgParse}!ArgParse@{ArgParse}}
+\index{ArgParse@{ArgParse}!ArgParse@{ArgParse}}
+\doxysubsubsection{\texorpdfstring{ArgParse()}{ArgParse()}}
+{\footnotesize\ttfamily Arg\+Parse\+::\+Arg\+Parse (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{std\+::initializer\+\_\+list$<$ std\+::string $>$}]{il }\end{DoxyParamCaption})}
+
+\mbox{\hyperlink{classArgParse}{Arg\+Parse}} parses the given command line arguments given that all command line arguments provided are required 
+\begin{DoxyParams}{Parameters}
+{\em argc} & argument count \\
+\hline
+{\em argv} & argument list \\
+\hline
+{\em il} & initializer list for required arguments \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classArgParse_a69ccf99570df5914b2fbc3c77f8a5e00}\label{classArgParse_a69ccf99570df5914b2fbc3c77f8a5e00}} 
+\index{ArgParse@{ArgParse}!````~ArgParse@{$\sim$ArgParse}}
+\index{````~ArgParse@{$\sim$ArgParse}!ArgParse@{ArgParse}}
+\doxysubsubsection{\texorpdfstring{$\sim$ArgParse()}{~ArgParse()}}
+{\footnotesize\ttfamily Arg\+Parse\+::$\sim$\+Arg\+Parse (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\hyperlink{classArgParse}{Arg\+Parse}} destructor 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classArgParse_ae8723f5308bccd0120caacc5bd2b982e}\label{classArgParse_ae8723f5308bccd0120caacc5bd2b982e}} 
+\index{ArgParse@{ArgParse}!getHelp@{getHelp}}
+\index{getHelp@{getHelp}!ArgParse@{ArgParse}}
+\doxysubsubsection{\texorpdfstring{getHelp()}{getHelp()}}
+{\footnotesize\ttfamily std\+::string Arg\+Parse\+::get\+Help (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Gets help message \begin{DoxyReturn}{Returns}
+help message 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classArgParse_ace8d0cbb5cbbcfed5ffecf9941a7d6b6}\label{classArgParse_ace8d0cbb5cbbcfed5ffecf9941a7d6b6}} 
+\index{ArgParse@{ArgParse}!parseArgs@{parseArgs}}
+\index{parseArgs@{parseArgs}!ArgParse@{ArgParse}}
+\doxysubsubsection{\texorpdfstring{parseArgs()}{parseArgs()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{argparse_8h_a4c718559bd66f86788917d4fac4b9487}{Arg\+Map}} \& Arg\+Parse\+::parse\+Args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Parse command line arguments \begin{DoxyReturn}{Returns}
+Mapping of required arguments to command line arguments 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/lite\+\_\+torrent/\mbox{\hyperlink{argparse_8h}{argparse.\+h}}\item 
+src/lite\+\_\+torrent/\mbox{\hyperlink{argparse_8cpp}{argparse.\+cpp}}\end{DoxyCompactItemize}

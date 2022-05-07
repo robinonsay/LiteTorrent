@@ -1,0 +1,67 @@
+\hypertarget{crypto_8h}{}\doxysection{include/lite\+\_\+torrent/crypto.h File Reference}
+\label{crypto_8h}\index{include/lite\_torrent/crypto.h@{include/lite\_torrent/crypto.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+Include dependency graph for crypto.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{d7/d42/crypto_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d6/d99/crypto_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structHashSHA3__256}{Hash\+S\+H\+A3\+\_\+256}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{crypto_8h_aa946f9bfe4333dfbeecbe28190a23a98}{S\+H\+A\+\_\+256\+\_\+\+B\+Y\+T\+ES}}~32
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structHashSHA3__256}{Hash\+S\+H\+A3\+\_\+256}} \mbox{\hyperlink{crypto_8h_a881051462c7c91612c78534bb08eda40}{Hash\+S\+H\+A3\+\_\+256}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{crypto_8h_aa28dae471b6c34f468d21dc4b9da0db0}{gen\+Hash}} (const char hash\+Func\mbox{[}$\,$\mbox{]}, void $\ast$msg, size\+\_\+t size, \mbox{\hyperlink{structHashSHA3__256}{Hash\+S\+H\+A3\+\_\+256}} $\ast$digest)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{crypto_8h_aa946f9bfe4333dfbeecbe28190a23a98}\label{crypto_8h_aa946f9bfe4333dfbeecbe28190a23a98}} 
+\index{crypto.h@{crypto.h}!SHA\_256\_BYTES@{SHA\_256\_BYTES}}
+\index{SHA\_256\_BYTES@{SHA\_256\_BYTES}!crypto.h@{crypto.h}}
+\doxysubsubsection{\texorpdfstring{SHA\_256\_BYTES}{SHA\_256\_BYTES}}
+{\footnotesize\ttfamily \#define S\+H\+A\+\_\+256\+\_\+\+B\+Y\+T\+ES~32}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{crypto_8h_a881051462c7c91612c78534bb08eda40}\label{crypto_8h_a881051462c7c91612c78534bb08eda40}} 
+\index{crypto.h@{crypto.h}!HashSHA3\_256@{HashSHA3\_256}}
+\index{HashSHA3\_256@{HashSHA3\_256}!crypto.h@{crypto.h}}
+\doxysubsubsection{\texorpdfstring{HashSHA3\_256}{HashSHA3\_256}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structHashSHA3__256}{Hash\+S\+H\+A3\+\_\+256}} \mbox{\hyperlink{structHashSHA3__256}{Hash\+S\+H\+A3\+\_\+256}}}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{crypto_8h_aa28dae471b6c34f468d21dc4b9da0db0}\label{crypto_8h_aa28dae471b6c34f468d21dc4b9da0db0}} 
+\index{crypto.h@{crypto.h}!genHash@{genHash}}
+\index{genHash@{genHash}!crypto.h@{crypto.h}}
+\doxysubsubsection{\texorpdfstring{genHash()}{genHash()}}
+{\footnotesize\ttfamily int gen\+Hash (\begin{DoxyParamCaption}\item[{const char}]{hash\+Func\mbox{[}$\,$\mbox{]},  }\item[{void $\ast$}]{msg,  }\item[{size\+\_\+t}]{size,  }\item[{\mbox{\hyperlink{structHashSHA3__256}{Hash\+S\+H\+A3\+\_\+256}} $\ast$}]{digest }\end{DoxyParamCaption})}
+

@@ -1,0 +1,80 @@
+\hypertarget{tcp_8h}{}\doxysection{include/lite\+\_\+torrent/tcp.h File Reference}
+\label{tcp_8h}\index{include/lite\_torrent/tcp.h@{include/lite\_torrent/tcp.h}}
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/ltdefs.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/mrsw\+\_\+mutex.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$atomic$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$stdexcept$>$}\newline
+{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
+Include dependency graph for tcp.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d03/tcp_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/d48/tcp_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classTCPServer}{T\+C\+P\+Server}}
+\item 
+class \mbox{\hyperlink{classTCPClient}{T\+C\+P\+Client}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacetcp}{tcp}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{tcp_8h_a33cfae272398587a16cc121fbc24ab95}{A\+D\+D\+R\+\_\+\+N\+O\+T\+\_\+\+F\+O\+U\+ND}}~-\/500
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::map$<$ std\+::string, int $>$ \mbox{\hyperlink{tcp_8h_a7cfd25b65bd469bbfc01fd04e50d8cf2}{Addr\+F\+D\+Map}}
+\item 
+typedef std\+::map$<$ std\+::string, std\+::mutex $>$ \mbox{\hyperlink{tcp_8h_a22e5190d8b502d432b60bf6a0e626c98}{Addr\+Mtx\+Map}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+ssize\+\_\+t \mbox{\hyperlink{namespacetcp_aecd72ca6ef1d8d88319d0846faa9cb65}{tcp\+::read}} (int sockfd, char $\ast$buff, ssize\+\_\+t size, bool complete=true, bool blocking=true)
+\item 
+ssize\+\_\+t \mbox{\hyperlink{namespacetcp_a660f4203c87f9391b5ff022b491a1cb2}{tcp\+::write}} (int sockfd, char $\ast$buff, ssize\+\_\+t size, bool complete=true, bool blocking=true)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{tcp_8h_a33cfae272398587a16cc121fbc24ab95}\label{tcp_8h_a33cfae272398587a16cc121fbc24ab95}} 
+\index{tcp.h@{tcp.h}!ADDR\_NOT\_FOUND@{ADDR\_NOT\_FOUND}}
+\index{ADDR\_NOT\_FOUND@{ADDR\_NOT\_FOUND}!tcp.h@{tcp.h}}
+\doxysubsubsection{\texorpdfstring{ADDR\_NOT\_FOUND}{ADDR\_NOT\_FOUND}}
+{\footnotesize\ttfamily \#define A\+D\+D\+R\+\_\+\+N\+O\+T\+\_\+\+F\+O\+U\+ND~-\/500}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{tcp_8h_a7cfd25b65bd469bbfc01fd04e50d8cf2}\label{tcp_8h_a7cfd25b65bd469bbfc01fd04e50d8cf2}} 
+\index{tcp.h@{tcp.h}!AddrFDMap@{AddrFDMap}}
+\index{AddrFDMap@{AddrFDMap}!tcp.h@{tcp.h}}
+\doxysubsubsection{\texorpdfstring{AddrFDMap}{AddrFDMap}}
+{\footnotesize\ttfamily typedef std\+::map$<$std\+::string, int$>$ \mbox{\hyperlink{tcp_8h_a7cfd25b65bd469bbfc01fd04e50d8cf2}{Addr\+F\+D\+Map}}}
+
+Address-\/to-\/\+FD mapping type \mbox{\Hypertarget{tcp_8h_a22e5190d8b502d432b60bf6a0e626c98}\label{tcp_8h_a22e5190d8b502d432b60bf6a0e626c98}} 
+\index{tcp.h@{tcp.h}!AddrMtxMap@{AddrMtxMap}}
+\index{AddrMtxMap@{AddrMtxMap}!tcp.h@{tcp.h}}
+\doxysubsubsection{\texorpdfstring{AddrMtxMap}{AddrMtxMap}}
+{\footnotesize\ttfamily typedef std\+::map$<$std\+::string, std\+::mutex$>$ \mbox{\hyperlink{tcp_8h_a22e5190d8b502d432b60bf6a0e626c98}{Addr\+Mtx\+Map}}}
+
+Address-\/to-\/mutex map 

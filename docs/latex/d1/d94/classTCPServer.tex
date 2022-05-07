@@ -1,0 +1,149 @@
+\hypertarget{classTCPServer}{}\doxysection{T\+C\+P\+Server Class Reference}
+\label{classTCPServer}\index{TCPServer@{TCPServer}}
+
+
+{\ttfamily \#include $<$tcp.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classTCPServer_afe235a78c410eed929a204e4e923cc8f}{T\+C\+P\+Server}} (uint32\+\_\+t port, bool blocking=true)
+\item 
+int \mbox{\hyperlink{classTCPServer_a460be93d1d0317f1aceaeb9f498c3eed}{listen}} (uint32\+\_\+t backlog)
+\item 
+int \mbox{\hyperlink{classTCPServer_a65ef9495525eb190d225309e4a6a5f12}{accept}} (\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$client\+\_\+addr, size\+\_\+t $\ast$addrlen)
+\item 
+ssize\+\_\+t \mbox{\hyperlink{classTCPServer_aa3423b020a5deacb34b0d6a2910afb74}{read}} (\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$client\+\_\+addr, char $\ast$buff, ssize\+\_\+t size, bool complete=true, bool blocking=true)
+\item 
+ssize\+\_\+t \mbox{\hyperlink{classTCPServer_a617743a3ff2ea1b4029a1d2ef9c59c80}{write}} (\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$client\+\_\+addr, char $\ast$buff, ssize\+\_\+t size, bool complete=true, bool blocking=true)
+\item 
+size\+\_\+t \mbox{\hyperlink{classTCPServer_a35546a805ffbbc8f8d08f6f5cc825b5d}{get\+Client\+Count}} ()
+\item 
+int \mbox{\hyperlink{classTCPServer_af14c515bc66c0129099304bf3c760906}{close\+Cli}} (\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$client\+\_\+addr, bool force=false)
+\item 
+int \mbox{\hyperlink{classTCPServer_a88ee8181762e810e30d89a54766b6983}{close}} (bool force=false)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classTCPServer}{T\+C\+P\+Server}} Class 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classTCPServer_afe235a78c410eed929a204e4e923cc8f}\label{classTCPServer_afe235a78c410eed929a204e4e923cc8f}} 
+\index{TCPServer@{TCPServer}!TCPServer@{TCPServer}}
+\index{TCPServer@{TCPServer}!TCPServer@{TCPServer}}
+\doxysubsubsection{\texorpdfstring{TCPServer()}{TCPServer()}}
+{\footnotesize\ttfamily T\+C\+P\+Server\+::\+T\+C\+P\+Server (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{port,  }\item[{bool}]{blocking = {\ttfamily true} }\end{DoxyParamCaption})}
+
+\mbox{\hyperlink{classTCPServer}{T\+C\+P\+Server}} constructor 
+\begin{DoxyParams}{Parameters}
+{\em port} & Port of Server \\
+\hline
+{\em blocking} & Flag for if the server is blocking; defaults to true \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classTCPServer_a65ef9495525eb190d225309e4a6a5f12}\label{classTCPServer_a65ef9495525eb190d225309e4a6a5f12}} 
+\index{TCPServer@{TCPServer}!accept@{accept}}
+\index{accept@{accept}!TCPServer@{TCPServer}}
+\doxysubsubsection{\texorpdfstring{accept()}{accept()}}
+{\footnotesize\ttfamily int T\+C\+P\+Server\+::accept (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$}]{client\+\_\+addr,  }\item[{size\+\_\+t $\ast$}]{addrlen }\end{DoxyParamCaption})}
+
+Accepts incoming connections 
+\begin{DoxyParams}{Parameters}
+{\em client\+\_\+addr} & Client address pointer. Write the client address to this pointer\textquotesingle{}s value \\
+\hline
+{\em addrlen} & Length of the client address after reading the address \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of \mbox{\hyperlink{classTCPServer_a65ef9495525eb190d225309e4a6a5f12}{accept()}} system call; returns 0 on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTCPServer_a88ee8181762e810e30d89a54766b6983}\label{classTCPServer_a88ee8181762e810e30d89a54766b6983}} 
+\index{TCPServer@{TCPServer}!close@{close}}
+\index{close@{close}!TCPServer@{TCPServer}}
+\doxysubsubsection{\texorpdfstring{close()}{close()}}
+{\footnotesize\ttfamily int T\+C\+P\+Server\+::close (\begin{DoxyParamCaption}\item[{bool}]{force = {\ttfamily false} }\end{DoxyParamCaption})}
+
+Closes server \mbox{\Hypertarget{classTCPServer_af14c515bc66c0129099304bf3c760906}\label{classTCPServer_af14c515bc66c0129099304bf3c760906}} 
+\index{TCPServer@{TCPServer}!closeCli@{closeCli}}
+\index{closeCli@{closeCli}!TCPServer@{TCPServer}}
+\doxysubsubsection{\texorpdfstring{closeCli()}{closeCli()}}
+{\footnotesize\ttfamily int T\+C\+P\+Server\+::close\+Cli (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$}]{client\+\_\+addr,  }\item[{bool}]{force = {\ttfamily false} }\end{DoxyParamCaption})}
+
+Closes the Socket 
+\begin{DoxyParams}{Parameters}
+{\em client\+\_\+addr} & The client address to Close \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of the \mbox{\hyperlink{classTCPServer_a88ee8181762e810e30d89a54766b6983}{close()}} system call; returns 0 on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTCPServer_a35546a805ffbbc8f8d08f6f5cc825b5d}\label{classTCPServer_a35546a805ffbbc8f8d08f6f5cc825b5d}} 
+\index{TCPServer@{TCPServer}!getClientCount@{getClientCount}}
+\index{getClientCount@{getClientCount}!TCPServer@{TCPServer}}
+\doxysubsubsection{\texorpdfstring{getClientCount()}{getClientCount()}}
+{\footnotesize\ttfamily size\+\_\+t T\+C\+P\+Server\+::get\+Client\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Returns number of clients connected to the server atomically \mbox{\Hypertarget{classTCPServer_a460be93d1d0317f1aceaeb9f498c3eed}\label{classTCPServer_a460be93d1d0317f1aceaeb9f498c3eed}} 
+\index{TCPServer@{TCPServer}!listen@{listen}}
+\index{listen@{listen}!TCPServer@{TCPServer}}
+\doxysubsubsection{\texorpdfstring{listen()}{listen()}}
+{\footnotesize\ttfamily int T\+C\+P\+Server\+::listen (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{backlog }\end{DoxyParamCaption})}
+
+Listens to incoming connections 
+\begin{DoxyParams}{Parameters}
+{\em backlog} & Queue size for incoming connections \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of system call to \mbox{\hyperlink{classTCPServer_a460be93d1d0317f1aceaeb9f498c3eed}{listen()}}; returns 0 on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTCPServer_aa3423b020a5deacb34b0d6a2910afb74}\label{classTCPServer_aa3423b020a5deacb34b0d6a2910afb74}} 
+\index{TCPServer@{TCPServer}!read@{read}}
+\index{read@{read}!TCPServer@{TCPServer}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily ssize\+\_\+t T\+C\+P\+Server\+::read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$}]{client\+\_\+addr,  }\item[{char $\ast$}]{buff,  }\item[{ssize\+\_\+t}]{size,  }\item[{bool}]{complete = {\ttfamily true},  }\item[{bool}]{blocking = {\ttfamily true} }\end{DoxyParamCaption})}
+
+Reads from client socket file descriptor 
+\begin{DoxyParams}{Parameters}
+{\em client\+\_\+addr} & The client address to read \\
+\hline
+{\em buff} & The buffer to read in to \\
+\hline
+{\em size} & The size of the read \\
+\hline
+{\em read\+All} & Flag to read the whole size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of the \mbox{\hyperlink{classTCPServer_aa3423b020a5deacb34b0d6a2910afb74}{read()}} system call; returns bytes read on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTCPServer_a617743a3ff2ea1b4029a1d2ef9c59c80}\label{classTCPServer_a617743a3ff2ea1b4029a1d2ef9c59c80}} 
+\index{TCPServer@{TCPServer}!write@{write}}
+\index{write@{write}!TCPServer@{TCPServer}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily ssize\+\_\+t T\+C\+P\+Server\+::write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $\ast$}]{client\+\_\+addr,  }\item[{char $\ast$}]{buff,  }\item[{ssize\+\_\+t}]{size,  }\item[{bool}]{complete = {\ttfamily true},  }\item[{bool}]{blocking = {\ttfamily true} }\end{DoxyParamCaption})}
+
+Writes to client socket file descriptor 
+\begin{DoxyParams}{Parameters}
+{\em client\+\_\+addr} & The client address to write \\
+\hline
+{\em buff} & The buffer to write from \\
+\hline
+{\em size} & The size of the write \\
+\hline
+{\em read\+All} & Flag to write the whole size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of the \mbox{\hyperlink{classTCPServer_a617743a3ff2ea1b4029a1d2ef9c59c80}{write()}} system call; returns bytes written on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/lite\+\_\+torrent/\mbox{\hyperlink{tcp_8h}{tcp.\+h}}\item 
+src/lite\+\_\+torrent/\mbox{\hyperlink{tcp_8cpp}{tcp.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,59 @@
+\hypertarget{namespacetcp}{}\doxysection{tcp Namespace Reference}
+\label{namespacetcp}\index{tcp@{tcp}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classtcp_1_1error}{error}}
+\item 
+class \mbox{\hyperlink{classtcp_1_1sys__error}{sys\+\_\+error}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+ssize\+\_\+t \mbox{\hyperlink{namespacetcp_aecd72ca6ef1d8d88319d0846faa9cb65}{read}} (int sockfd, char $\ast$buff, ssize\+\_\+t size, bool complete=true, bool blocking=true)
+\item 
+ssize\+\_\+t \mbox{\hyperlink{namespacetcp_a660f4203c87f9391b5ff022b491a1cb2}{write}} (int sockfd, char $\ast$buff, ssize\+\_\+t size, bool complete=true, bool blocking=true)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacetcp_aecd72ca6ef1d8d88319d0846faa9cb65}\label{namespacetcp_aecd72ca6ef1d8d88319d0846faa9cb65}} 
+\index{tcp@{tcp}!read@{read}}
+\index{read@{read}!tcp@{tcp}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily ssize\+\_\+t tcp\+::read (\begin{DoxyParamCaption}\item[{int}]{sockfd,  }\item[{char $\ast$}]{buff,  }\item[{ssize\+\_\+t}]{size,  }\item[{bool}]{complete = {\ttfamily true},  }\item[{bool}]{blocking = {\ttfamily true} }\end{DoxyParamCaption})}
+
+Reads from socket file descriptor 
+\begin{DoxyParams}{Parameters}
+{\em sockfd} & The socket file desciptor \\
+\hline
+{\em buff} & The buffer to read in to \\
+\hline
+{\em size} & The size of the read \\
+\hline
+{\em read\+All} & Flag to read the whole size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of the \mbox{\hyperlink{namespacetcp_aecd72ca6ef1d8d88319d0846faa9cb65}{read()}} system call; returns bytes read on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacetcp_a660f4203c87f9391b5ff022b491a1cb2}\label{namespacetcp_a660f4203c87f9391b5ff022b491a1cb2}} 
+\index{tcp@{tcp}!write@{write}}
+\index{write@{write}!tcp@{tcp}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily ssize\+\_\+t tcp\+::write (\begin{DoxyParamCaption}\item[{int}]{sockfd,  }\item[{char $\ast$}]{buff,  }\item[{ssize\+\_\+t}]{size,  }\item[{bool}]{complete = {\ttfamily true},  }\item[{bool}]{blocking = {\ttfamily true} }\end{DoxyParamCaption})}
+
+Write from socket file descriptor 
+\begin{DoxyParams}{Parameters}
+{\em sockfd} & The socket file desciptor \\
+\hline
+{\em buff} & The buffer to write from \\
+\hline
+{\em size} & The size of the write \\
+\hline
+{\em read\+All} & Flag to write the whole size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of the \mbox{\hyperlink{namespacetcp_a660f4203c87f9391b5ff022b491a1cb2}{write()}} system call; returns bytes written on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}

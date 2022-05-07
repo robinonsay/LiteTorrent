@@ -1,0 +1,96 @@
+\hypertarget{lite__torrent_2errors_8cpp}{}\doxysection{src/lite\+\_\+torrent/errors.cpp File Reference}
+\label{lite__torrent_2errors_8cpp}\index{src/lite\_torrent/errors.cpp@{src/lite\_torrent/errors.cpp}}
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/errors.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$stdexcept$>$}\newline
+Include dependency graph for errors.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d9d/lite__torrent_2errors_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{lite__torrent_2errors_8cpp_a34810ca10d426d6c0dd8afc53cbca169}{sys\+Error}} (const char msg\mbox{[}$\,$\mbox{]}, std\+::ostream \&stream)
+\item 
+void \mbox{\hyperlink{lite__torrent_2errors_8cpp_ab48360b1b8274535db81873e5cb35050}{error}} (const char msg\mbox{[}$\,$\mbox{]}, std\+::ostream \&stream)
+\item 
+void \mbox{\hyperlink{lite__torrent_2errors_8cpp_a5186ffe7dc1916fbb7ff6e80af2ee845}{warning}} (const char msg\mbox{[}$\,$\mbox{]}, std\+::ostream \&stream)
+\item 
+void \mbox{\hyperlink{lite__torrent_2errors_8cpp_a75f91ac4fc3fa8f96f419318a4c4c6ce}{info}} (const char msg\mbox{[}$\,$\mbox{]}, std\+::ostream \&stream)
+\item 
+void \mbox{\hyperlink{lite__torrent_2errors_8cpp_a9729863ebea72b2fc68539af1f7cd1b3}{print}} (const char msg\mbox{[}$\,$\mbox{]}, std\+::ostream \&stream)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{lite__torrent_2errors_8cpp_ab48360b1b8274535db81873e5cb35050}\label{lite__torrent_2errors_8cpp_ab48360b1b8274535db81873e5cb35050}} 
+\index{errors.cpp@{errors.cpp}!error@{error}}
+\index{error@{error}!errors.cpp@{errors.cpp}}
+\doxysubsubsection{\texorpdfstring{error()}{error()}}
+{\footnotesize\ttfamily void error (\begin{DoxyParamCaption}\item[{const char}]{msg\mbox{[}$\,$\mbox{]},  }\item[{std\+::ostream \&}]{stream = {\ttfamily std\+:\+:cerr} }\end{DoxyParamCaption})}
+
+Logs error to stream 
+\begin{DoxyParams}{Parameters}
+{\em stream} & Stream to log error to; defaults to std\+::cerr \\
+\hline
+{\em msg} & Error message \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{lite__torrent_2errors_8cpp_a75f91ac4fc3fa8f96f419318a4c4c6ce}\label{lite__torrent_2errors_8cpp_a75f91ac4fc3fa8f96f419318a4c4c6ce}} 
+\index{errors.cpp@{errors.cpp}!info@{info}}
+\index{info@{info}!errors.cpp@{errors.cpp}}
+\doxysubsubsection{\texorpdfstring{info()}{info()}}
+{\footnotesize\ttfamily void info (\begin{DoxyParamCaption}\item[{const char}]{msg\mbox{[}$\,$\mbox{]},  }\item[{std\+::ostream \&}]{stream = {\ttfamily std\+:\+:cout} }\end{DoxyParamCaption})}
+
+Logs info to stream 
+\begin{DoxyParams}{Parameters}
+{\em stream} & Stream to log info to; defaults to std\+::cout \\
+\hline
+{\em msg} & Error message \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{lite__torrent_2errors_8cpp_a9729863ebea72b2fc68539af1f7cd1b3}\label{lite__torrent_2errors_8cpp_a9729863ebea72b2fc68539af1f7cd1b3}} 
+\index{errors.cpp@{errors.cpp}!print@{print}}
+\index{print@{print}!errors.cpp@{errors.cpp}}
+\doxysubsubsection{\texorpdfstring{print()}{print()}}
+{\footnotesize\ttfamily void print (\begin{DoxyParamCaption}\item[{const char}]{msg\mbox{[}$\,$\mbox{]},  }\item[{std\+::ostream \&}]{stream = {\ttfamily std\+:\+:cout} }\end{DoxyParamCaption})}
+
+Prints info to stream 
+\begin{DoxyParams}{Parameters}
+{\em stream} & Stream to log info to; defaults to std\+::cout \\
+\hline
+{\em msg} & Error message \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{lite__torrent_2errors_8cpp_a34810ca10d426d6c0dd8afc53cbca169}\label{lite__torrent_2errors_8cpp_a34810ca10d426d6c0dd8afc53cbca169}} 
+\index{errors.cpp@{errors.cpp}!sysError@{sysError}}
+\index{sysError@{sysError}!errors.cpp@{errors.cpp}}
+\doxysubsubsection{\texorpdfstring{sysError()}{sysError()}}
+{\footnotesize\ttfamily void sys\+Error (\begin{DoxyParamCaption}\item[{const char}]{msg\mbox{[}$\,$\mbox{]},  }\item[{std\+::ostream \&}]{stream = {\ttfamily std\+:\+:cerr} }\end{DoxyParamCaption})}
+
+Logs system error to stream and prints message to console 
+\begin{DoxyParams}{Parameters}
+{\em stream} & Stream to log error to; defaults to std\+::cerr \\
+\hline
+{\em msg} & Error message \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{lite__torrent_2errors_8cpp_a5186ffe7dc1916fbb7ff6e80af2ee845}\label{lite__torrent_2errors_8cpp_a5186ffe7dc1916fbb7ff6e80af2ee845}} 
+\index{errors.cpp@{errors.cpp}!warning@{warning}}
+\index{warning@{warning}!errors.cpp@{errors.cpp}}
+\doxysubsubsection{\texorpdfstring{warning()}{warning()}}
+{\footnotesize\ttfamily void warning (\begin{DoxyParamCaption}\item[{const char}]{msg\mbox{[}$\,$\mbox{]},  }\item[{std\+::ostream \&}]{stream = {\ttfamily std\+:\+:cout} }\end{DoxyParamCaption})}
+
+Logs warning to stream 
+\begin{DoxyParams}{Parameters}
+{\em stream} & Stream to log warning to; defaults to std\+::cout \\
+\hline
+{\em msg} & Warning message \\
+\hline
+\end{DoxyParams}
