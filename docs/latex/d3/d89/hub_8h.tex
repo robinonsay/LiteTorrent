@@ -1,0 +1,77 @@
+\hypertarget{hub_8h}{}\doxysection{include/hub/hub.h File Reference}
+\label{hub_8h}\index{include/hub/hub.h@{include/hub/hub.h}}
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/ltdefs.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/mrsw\+\_\+mutex.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/tcp.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/ltpeer.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$atomic$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$list$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$mutex$>$}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+Include dependency graph for hub.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/d2c/hub_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=314pt]{da/d25/hub_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classHub}{Hub}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{hub_8h_a45ba202b05caf39795aeca91b0ae547e}{T\+I\+M\+E\+O\+UT}}~30000
+\item 
+\#define \mbox{\hyperlink{hub_8h_a3ad4fc9ee46bb5711e8b6531fbbbcae9}{B\+A\+C\+K\+L\+O\+G\+\_\+\+S\+I\+ZE}}~10
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::list$<$ std\+::thread $>$ \mbox{\hyperlink{hub_8h_a22f9dc4894dd5fb434828269c3a718c3}{Thread\+List}}
+\item 
+typedef std\+::map$<$ std\+::string, \mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}} $>$ \mbox{\hyperlink{hub_8h_a363967528ed1ffc92a24fee513bb1a6b}{Addr\+Map}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{hub_8h_a3ad4fc9ee46bb5711e8b6531fbbbcae9}\label{hub_8h_a3ad4fc9ee46bb5711e8b6531fbbbcae9}} 
+\index{hub.h@{hub.h}!BACKLOG\_SIZE@{BACKLOG\_SIZE}}
+\index{BACKLOG\_SIZE@{BACKLOG\_SIZE}!hub.h@{hub.h}}
+\doxysubsubsection{\texorpdfstring{BACKLOG\_SIZE}{BACKLOG\_SIZE}}
+{\footnotesize\ttfamily \#define B\+A\+C\+K\+L\+O\+G\+\_\+\+S\+I\+ZE~10}
+
+\mbox{\Hypertarget{hub_8h_a45ba202b05caf39795aeca91b0ae547e}\label{hub_8h_a45ba202b05caf39795aeca91b0ae547e}} 
+\index{hub.h@{hub.h}!TIMEOUT@{TIMEOUT}}
+\index{TIMEOUT@{TIMEOUT}!hub.h@{hub.h}}
+\doxysubsubsection{\texorpdfstring{TIMEOUT}{TIMEOUT}}
+{\footnotesize\ttfamily \#define T\+I\+M\+E\+O\+UT~30000}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{hub_8h_a363967528ed1ffc92a24fee513bb1a6b}\label{hub_8h_a363967528ed1ffc92a24fee513bb1a6b}} 
+\index{hub.h@{hub.h}!AddrMap@{AddrMap}}
+\index{AddrMap@{AddrMap}!hub.h@{hub.h}}
+\doxysubsubsection{\texorpdfstring{AddrMap}{AddrMap}}
+{\footnotesize\ttfamily typedef std\+::map$<$std\+::string, \mbox{\hyperlink{ltdefs_8h_a448f4d0be082ffd426565074f78b6e32}{sockaddr\+\_\+in}}$>$ \mbox{\hyperlink{hub_8h_a363967528ed1ffc92a24fee513bb1a6b}{Addr\+Map}}}
+
+\mbox{\Hypertarget{hub_8h_a22f9dc4894dd5fb434828269c3a718c3}\label{hub_8h_a22f9dc4894dd5fb434828269c3a718c3}} 
+\index{hub.h@{hub.h}!ThreadList@{ThreadList}}
+\index{ThreadList@{ThreadList}!hub.h@{hub.h}}
+\doxysubsubsection{\texorpdfstring{ThreadList}{ThreadList}}
+{\footnotesize\ttfamily typedef std\+::list$<$std\+::thread$>$ \mbox{\hyperlink{hub_8h_a22f9dc4894dd5fb434828269c3a718c3}{Thread\+List}}}
+

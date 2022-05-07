@@ -1,0 +1,69 @@
+\hypertarget{peer_8h}{}\doxysection{include/peer/peer.h File Reference}
+\label{peer_8h}\index{include/peer/peer.h@{include/peer/peer.h}}
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/ltdefs.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/mrsw\+\_\+mutex.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/ltpeer.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/tcp.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$atomic$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$list$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$netinet/in.\+h$>$}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+Include dependency graph for peer.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/d3d/peer_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=330pt]{da/d92/peer_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classPeer}{Peer}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{peer_8h_a37d1619c91a193d939d04b19c6440843}{P\+E\+E\+R\+\_\+\+T\+I\+M\+E\+O\+U\+T\+\_\+ms}}~30000
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::list$<$ std\+::thread $>$ \mbox{\hyperlink{peer_8h_a22f9dc4894dd5fb434828269c3a718c3}{Thread\+List}}
+\item 
+typedef std\+::list$<$ \mbox{\hyperlink{structChunkHeader}{Chunk\+Header}} $>$ \mbox{\hyperlink{peer_8h_a0dbd04a3221054ffdbb13c229eff0328}{Chunk\+H\+List}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{peer_8h_a37d1619c91a193d939d04b19c6440843}\label{peer_8h_a37d1619c91a193d939d04b19c6440843}} 
+\index{peer.h@{peer.h}!PEER\_TIMEOUT\_ms@{PEER\_TIMEOUT\_ms}}
+\index{PEER\_TIMEOUT\_ms@{PEER\_TIMEOUT\_ms}!peer.h@{peer.h}}
+\doxysubsubsection{\texorpdfstring{PEER\_TIMEOUT\_ms}{PEER\_TIMEOUT\_ms}}
+{\footnotesize\ttfamily \#define P\+E\+E\+R\+\_\+\+T\+I\+M\+E\+O\+U\+T\+\_\+ms~30000}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{peer_8h_a0dbd04a3221054ffdbb13c229eff0328}\label{peer_8h_a0dbd04a3221054ffdbb13c229eff0328}} 
+\index{peer.h@{peer.h}!ChunkHList@{ChunkHList}}
+\index{ChunkHList@{ChunkHList}!peer.h@{peer.h}}
+\doxysubsubsection{\texorpdfstring{ChunkHList}{ChunkHList}}
+{\footnotesize\ttfamily typedef std\+::list$<$\mbox{\hyperlink{structChunkHeader}{Chunk\+Header}}$>$ \mbox{\hyperlink{ltpeer_8h_a0dbd04a3221054ffdbb13c229eff0328}{Chunk\+H\+List}}}
+
+\mbox{\Hypertarget{peer_8h_a22f9dc4894dd5fb434828269c3a718c3}\label{peer_8h_a22f9dc4894dd5fb434828269c3a718c3}} 
+\index{peer.h@{peer.h}!ThreadList@{ThreadList}}
+\index{ThreadList@{ThreadList}!peer.h@{peer.h}}
+\doxysubsubsection{\texorpdfstring{ThreadList}{ThreadList}}
+{\footnotesize\ttfamily typedef std\+::list$<$std\+::thread$>$ \mbox{\hyperlink{hub_8h_a22f9dc4894dd5fb434828269c3a718c3}{Thread\+List}}}
+

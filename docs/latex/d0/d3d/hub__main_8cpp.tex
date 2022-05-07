@@ -1,0 +1,71 @@
+\hypertarget{hub__main_8cpp}{}\doxysection{src/hub/hub\+\_\+main.cpp File Reference}
+\label{hub__main_8cpp}\index{src/hub/hub\_main.cpp@{src/hub/hub\_main.cpp}}
+{\ttfamily \#include \char`\"{}hub/hub.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/errors.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}lite\+\_\+torrent/argparse.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$list$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$csignal$>$}\newline
+Include dependency graph for hub\+\_\+main.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/ddd/hub__main_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{hub__main_8cpp_a8ee3282bc313e547dbbb8d4f4010db61}{signal\+Handler}} (int signum)
+\item 
+int \mbox{\hyperlink{hub__main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classHub}{Hub}} $\ast$ \mbox{\hyperlink{hub__main_8cpp_ad702b07240de0e0cf9e4b781a38317ad}{hub}} = N\+U\+LL
+\item 
+std\+::ifstream $\ast$ \mbox{\hyperlink{hub__main_8cpp_aa4855fe6d74b3d65d347b4614acf4c50}{in\+File}} = N\+U\+LL
+\item 
+std\+::ofstream $\ast$ \mbox{\hyperlink{hub__main_8cpp_a17afe4d582996c6706cdcdaf1c4efc67}{log\+File}} = N\+U\+LL
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{hub__main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}\label{hub__main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}} 
+\index{hub\_main.cpp@{hub\_main.cpp}!main@{main}}
+\index{main@{main}!hub\_main.cpp@{hub\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{hub__main_8cpp_a8ee3282bc313e547dbbb8d4f4010db61}\label{hub__main_8cpp_a8ee3282bc313e547dbbb8d4f4010db61}} 
+\index{hub\_main.cpp@{hub\_main.cpp}!signalHandler@{signalHandler}}
+\index{signalHandler@{signalHandler}!hub\_main.cpp@{hub\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{signalHandler()}{signalHandler()}}
+{\footnotesize\ttfamily void signal\+Handler (\begin{DoxyParamCaption}\item[{int}]{signum }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{hub__main_8cpp_ad702b07240de0e0cf9e4b781a38317ad}\label{hub__main_8cpp_ad702b07240de0e0cf9e4b781a38317ad}} 
+\index{hub\_main.cpp@{hub\_main.cpp}!hub@{hub}}
+\index{hub@{hub}!hub\_main.cpp@{hub\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{hub}{hub}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHub}{Hub}}$\ast$ hub = N\+U\+LL}
+
+\mbox{\Hypertarget{hub__main_8cpp_aa4855fe6d74b3d65d347b4614acf4c50}\label{hub__main_8cpp_aa4855fe6d74b3d65d347b4614acf4c50}} 
+\index{hub\_main.cpp@{hub\_main.cpp}!inFile@{inFile}}
+\index{inFile@{inFile}!hub\_main.cpp@{hub\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{inFile}{inFile}}
+{\footnotesize\ttfamily std\+::ifstream$\ast$ in\+File = N\+U\+LL}
+
+\mbox{\Hypertarget{hub__main_8cpp_a17afe4d582996c6706cdcdaf1c4efc67}\label{hub__main_8cpp_a17afe4d582996c6706cdcdaf1c4efc67}} 
+\index{hub\_main.cpp@{hub\_main.cpp}!logFile@{logFile}}
+\index{logFile@{logFile}!hub\_main.cpp@{hub\_main.cpp}}
+\doxysubsubsection{\texorpdfstring{logFile}{logFile}}
+{\footnotesize\ttfamily std\+::ofstream$\ast$ log\+File = N\+U\+LL}
+

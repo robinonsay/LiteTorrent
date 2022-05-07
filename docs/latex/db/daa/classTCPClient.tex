@@ -1,0 +1,110 @@
+\hypertarget{classTCPClient}{}\doxysection{T\+C\+P\+Client Class Reference}
+\label{classTCPClient}\index{TCPClient@{TCPClient}}
+
+
+{\ttfamily \#include $<$tcp.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classTCPClient_adf0ae5edefb2424af31c4426911747a1}{T\+C\+P\+Client}} (const char ip\mbox{[}$\,$\mbox{]}, uint32\+\_\+t port, bool blocking=true)
+\item 
+int \mbox{\hyperlink{classTCPClient_a402354cd1bc8e734dd7f950e7929c18a}{connect}} ()
+\item 
+ssize\+\_\+t \mbox{\hyperlink{classTCPClient_ac4f66abee006b2e65f44e845cc53522e}{read}} (char $\ast$buff, ssize\+\_\+t size, bool complete=true, bool blocking=true)
+\item 
+ssize\+\_\+t \mbox{\hyperlink{classTCPClient_a73f2d9f182e52d5c95d5c49cf76651d6}{write}} (char $\ast$buff, ssize\+\_\+t size, bool complete=true, bool blocking=true)
+\item 
+int \mbox{\hyperlink{classTCPClient_a250d2047c8b9617deeb1383916be83e3}{close}} (bool force=false)
+\item 
+int \mbox{\hyperlink{classTCPClient_ad768aa9d98f72cc0081b7bf01951a480}{close}} (char $\ast$buff, ssize\+\_\+t size, bool force=false)
+\item 
+bool \mbox{\hyperlink{classTCPClient_ae950dd934581113e3329be8bc07aac72}{is\+Conn}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classTCPClient_adf0ae5edefb2424af31c4426911747a1}\label{classTCPClient_adf0ae5edefb2424af31c4426911747a1}} 
+\index{TCPClient@{TCPClient}!TCPClient@{TCPClient}}
+\index{TCPClient@{TCPClient}!TCPClient@{TCPClient}}
+\doxysubsubsection{\texorpdfstring{TCPClient()}{TCPClient()}}
+{\footnotesize\ttfamily T\+C\+P\+Client\+::\+T\+C\+P\+Client (\begin{DoxyParamCaption}\item[{const char}]{ip\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{port,  }\item[{bool}]{blocking = {\ttfamily true} }\end{DoxyParamCaption})}
+
+Mutex synchronizing reads and writes \mbox{\hyperlink{classTCPClient}{T\+C\+P\+Client}} constructor 
+\begin{DoxyParams}{Parameters}
+{\em ip} & I\+Pv4 address string of server \\
+\hline
+{\em port} & Port of server \\
+\hline
+{\em Blocking} & flag for socket \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classTCPClient_a250d2047c8b9617deeb1383916be83e3}\label{classTCPClient_a250d2047c8b9617deeb1383916be83e3}} 
+\index{TCPClient@{TCPClient}!close@{close}}
+\index{close@{close}!TCPClient@{TCPClient}}
+\doxysubsubsection{\texorpdfstring{close()}{close()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily int T\+C\+P\+Client\+::close (\begin{DoxyParamCaption}\item[{bool}]{force = {\ttfamily false} }\end{DoxyParamCaption})}
+
+Close socket connection to server \mbox{\Hypertarget{classTCPClient_ad768aa9d98f72cc0081b7bf01951a480}\label{classTCPClient_ad768aa9d98f72cc0081b7bf01951a480}} 
+\index{TCPClient@{TCPClient}!close@{close}}
+\index{close@{close}!TCPClient@{TCPClient}}
+\doxysubsubsection{\texorpdfstring{close()}{close()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily int T\+C\+P\+Client\+::close (\begin{DoxyParamCaption}\item[{char $\ast$}]{buff,  }\item[{ssize\+\_\+t}]{size,  }\item[{bool}]{force = {\ttfamily false} }\end{DoxyParamCaption})}
+
+Close by sending a packet first \mbox{\Hypertarget{classTCPClient_a402354cd1bc8e734dd7f950e7929c18a}\label{classTCPClient_a402354cd1bc8e734dd7f950e7929c18a}} 
+\index{TCPClient@{TCPClient}!connect@{connect}}
+\index{connect@{connect}!TCPClient@{TCPClient}}
+\doxysubsubsection{\texorpdfstring{connect()}{connect()}}
+{\footnotesize\ttfamily int T\+C\+P\+Client\+::connect (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Connects to server \mbox{\Hypertarget{classTCPClient_ae950dd934581113e3329be8bc07aac72}\label{classTCPClient_ae950dd934581113e3329be8bc07aac72}} 
+\index{TCPClient@{TCPClient}!isConn@{isConn}}
+\index{isConn@{isConn}!TCPClient@{TCPClient}}
+\doxysubsubsection{\texorpdfstring{isConn()}{isConn()}}
+{\footnotesize\ttfamily bool T\+C\+P\+Client\+::is\+Conn (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Check connection state atomically \mbox{\Hypertarget{classTCPClient_ac4f66abee006b2e65f44e845cc53522e}\label{classTCPClient_ac4f66abee006b2e65f44e845cc53522e}} 
+\index{TCPClient@{TCPClient}!read@{read}}
+\index{read@{read}!TCPClient@{TCPClient}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily ssize\+\_\+t T\+C\+P\+Client\+::read (\begin{DoxyParamCaption}\item[{char $\ast$}]{buff,  }\item[{ssize\+\_\+t}]{size,  }\item[{bool}]{complete = {\ttfamily true},  }\item[{bool}]{blocking = {\ttfamily true} }\end{DoxyParamCaption})}
+
+Read from server socket file descriptor 
+\begin{DoxyParams}{Parameters}
+{\em buff} & The buffer to read in to \\
+\hline
+{\em size} & The size of the read \\
+\hline
+{\em read\+All} & Flag to read the whole size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of the \mbox{\hyperlink{classTCPClient_ac4f66abee006b2e65f44e845cc53522e}{read()}} system call; returns bytes read on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classTCPClient_a73f2d9f182e52d5c95d5c49cf76651d6}\label{classTCPClient_a73f2d9f182e52d5c95d5c49cf76651d6}} 
+\index{TCPClient@{TCPClient}!write@{write}}
+\index{write@{write}!TCPClient@{TCPClient}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily ssize\+\_\+t T\+C\+P\+Client\+::write (\begin{DoxyParamCaption}\item[{char $\ast$}]{buff,  }\item[{ssize\+\_\+t}]{size,  }\item[{bool}]{complete = {\ttfamily true},  }\item[{bool}]{blocking = {\ttfamily true} }\end{DoxyParamCaption})}
+
+Write from server socket file descriptor 
+\begin{DoxyParams}{Parameters}
+{\em buff} & The buffer to write in to \\
+\hline
+{\em size} & The size of the write \\
+\hline
+{\em read\+All} & Flag to write the whole size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+status of the \mbox{\hyperlink{classTCPClient_a73f2d9f182e52d5c95d5c49cf76651d6}{write()}} system call; returns bytes read on success, -\/1 on failure and sets errno 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/lite\+\_\+torrent/\mbox{\hyperlink{tcp_8h}{tcp.\+h}}\item 
+src/lite\+\_\+torrent/\mbox{\hyperlink{tcp_8cpp}{tcp.\+cpp}}\end{DoxyCompactItemize}
