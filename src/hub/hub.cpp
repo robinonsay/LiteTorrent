@@ -1,8 +1,8 @@
-#include "crypto.h"
-#include "errors.h"
+#include "lite_torrent/crypto.h"
+#include "lite_torrent/errors.h"
 #include "hub/hub.h"
-#include "mutex/mrsw_mutex.h"
-#include "tcp.h"
+#include "lite_torrent/mrsw_mutex.h"
+#include "lite_torrent/tcp.h"
 
 #include <arpa/inet.h>
 #include <list>
@@ -107,7 +107,7 @@ void Hub::run(){
             // Add peer to peer maps
             this->pmMtx.lockWrite();
             this->peerAddrMap[peerIPv4] = peerAddr;
-            this->peerCHMap[peerIPv4] = std::list<ChunkHeader>();
+            this->peerMap[peerIPv4];
             this->peersInMap = this->peerAddrMap.size();
             this->pmMtx.unlockWrite();
         }
@@ -137,7 +137,7 @@ void Hub::peerConnHandler(std::string peerIPv4){
             info("Recieved FIN", this->log);
             this->pmMtx.lockWrite();
             this->peerAddrMap.erase(peerIPv4);
-            this->peerCHMap.erase(peerIPv4);
+            this->peerMap.erase(peerIPv4);
             this->peersInMap = this->peerAddrMap.size();
             this->pmMtx.unlockWrite();
             isFIN = true;
@@ -166,7 +166,7 @@ void Hub::updatePeers(){
     Packet pkt;
     std::ostringstream pktStream;
     AddrMap::iterator amIt;
-    AddrChunkMap::iterator acmIt;
+    PeerMap::iterator pmIt;
     std::list<ChunkHeader>::iterator chlIt;
     char *buffer;
     size_t bufferSize;
@@ -181,14 +181,14 @@ void Hub::updatePeers(){
             pktStream.clear();
             this->pmMtx.lockRead();
             info("Peers:", this->log);
-            for(acmIt=this->peerCHMap.begin(); acmIt != this->peerCHMap.end(); ++acmIt){
-                this->log << '\t' << acmIt->first << std::endl;
-                pktStream << acmIt->first << std::endl;
-                pktStream << acmIt->second.size() << std::endl;
-                bufferSize = acmIt->second.size() * sizeof(ChunkHeader);
+            for(pmIt=this->peerMap.begin(); pmIt != this->peerMap.end(); ++pmIt){
+                this->log << '\t' << pmIt->first << std::endl;
+                pktStream << pmIt->first << std::endl;
+                pktStream << pmIt->second.size() << std::endl;
+                bufferSize = pmIt->second.size() * sizeof(ChunkHeader);
                 buffer = new char[bufferSize];
                 int i=0;
-                for(chlIt=acmIt->second.begin(); chlIt != acmIt->second.end(); ++chlIt){
+                for(chlIt=pmIt->second.begin(); chlIt != pmIt->second.end(); ++chlIt){
                     memcpy(&buffer[i], &*chlIt, sizeof(ChunkHeader));
                     i += sizeof(ChunkHeader);
                 }

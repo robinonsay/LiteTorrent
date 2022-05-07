@@ -1,9 +1,10 @@
-#include "errors.h"
-#include "ltdefs.h"
-#include "mutex/mrsw_mutex.h"
+#include "lite_torrent/errors.h"
+#include "lite_torrent/ltdefs.h"
+#include "lite_torrent/mrsw_mutex.h"
 #include "peer/errors.h"
 #include "peer/peer.h"
-#include "tcp.h"
+#include "lite_torrent/ltpeer.h"
+#include "lite_torrent/tcp.h"
 
 #include <atomic>
 #include <errno.h>
@@ -139,7 +140,8 @@ void Peer::update(Packet *pkt){
         for(size_t i=0; i < len; i++){
             pktStream.read((char *) &currCH, sizeof(currCH));
             this->pchmMtx.lockWrite();
-            this->peerCHMap[ipv4Str].push_back(currCH);
+            this->peerMap[ipv4Str] = LtPeer(ipv4Str);
+            this->peerMap[ipv4Str].addChunk(currCH);
             this->pchmMtx.unlockWrite();
         }
     }

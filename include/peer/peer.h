@@ -1,9 +1,10 @@
 #ifndef PEER_H
 #define PEER_H
 
-#include "ltdefs.h"
-#include "mutex/mrsw_mutex.h"
-#include "tcp.h"
+#include "lite_torrent/ltdefs.h"
+#include "lite_torrent/mrsw_mutex.h"
+#include "lite_torrent/ltpeer.h"
+#include "lite_torrent/tcp.h"
 
 #include <atomic>
 #include <iostream>
@@ -15,8 +16,6 @@
 #define PEER_TIMEOUT_ms 30000
 
 typedef std::list<std::thread> ThreadList;
-typedef std::map<uint32_t, ChunkHeader> HashChunkHMap;
-typedef std::map<uint32_t, ChunkHeader> IndexChunkHMap;
 typedef std::list<ChunkHeader> ChunkHList;
 
 class Peer{
@@ -29,7 +28,7 @@ class Peer{
         TCPClient hub;
         TCPServer peerServer;
         ThreadList threads;
-        AddrChunkMap peerCHMap;
+        PeerMap peerMap;
         MRSWMutex pchmMtx;
         int reqTorrent();
         void connHandler(sockaddr_in peerAddr);

@@ -1,9 +1,10 @@
 #ifndef HUB_H
 #define HUB_H
 
-#include "ltdefs.h"
-#include "mutex/mrsw_mutex.h"
-#include "tcp.h"
+#include "lite_torrent/ltdefs.h"
+#include "lite_torrent/mrsw_mutex.h"
+#include "lite_torrent/tcp.h"
+#include "lite_torrent/ltpeer.h"
 
 #include <atomic>
 #include <iostream>
@@ -58,8 +59,8 @@ private:
     /** The thread pool */
     ThreadList threads;
 
-    /** Map of peer address to chunks it owns */
-    AddrChunkMap peerCHMap;
+    /** Map IPv4 strs of peers to LtPeers */
+    PeerMap peerMap;
 
     /** AddrChunkMap mutex */
     MRSWMutex pmMtx;

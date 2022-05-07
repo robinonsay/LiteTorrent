@@ -1,8 +1,7 @@
 #ifndef LTDEFS_H
 #define LTDEFS_H
 
-#include "crypto.h"
-
+#include "lite_torrent/crypto.h"
 #include <list>
 #include <map>
 #include <netinet/in.h>
@@ -14,7 +13,6 @@
 #define BACKLOG_QUEUE_SIZE 20
 
 typedef struct sockaddr_in sockaddr_in;
-
 /**
 * Types for packets
 * Starts at 100 so it is not confused with NULL packets
@@ -52,7 +50,5 @@ typedef struct Chunk{
 } Chunk;
 
 std::string addrIPv4ToString(sockaddr_in *addr);
-
-typedef std::map<std::string, std::list<ChunkHeader>> AddrChunkMap;
 
 #endif

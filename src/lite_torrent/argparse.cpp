@@ -1,5 +1,5 @@
-#include "argparse.h"
-#include "errors.h"
+#include "lite_torrent/argparse.h"
+#include "lite_torrent/errors.h"
 
 #include <iostream>
 #include <string>
