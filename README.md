@@ -1,6 +1,4 @@
-![logo-white-bkgrnd](resources/logo-white-bkgrnd.png)
-
-# LiteTorrent
+<img src="resources/logo.png" alt="logo-white-bkgrnd" style="zoom:10%;" />
 
 LiteTorrent is a simple peer to peer file sharing network.
 
