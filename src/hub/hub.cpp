@@ -119,7 +119,9 @@ void Hub::peerConnHandler(std::string peerIPv4){
     bool isFIN = false;
     Packet pkt;
     sockaddr_in *peerAddr;
+    this->pmMtx.lockRead();
     peerAddr = &this->peerAddrMap[peerIPv4];
+    this->pmMtx.unlockRead();
     do{
         // Clear packet
         memset((char *) &pkt, 0, sizeof(pkt));
@@ -149,6 +151,13 @@ void Hub::peerConnHandler(std::string peerIPv4){
                                         sizeof(this->torrentPkt));
             if(status < 0){
                 sysError("ERROR writing torrent to client sockfd", this->log);
+                break;
+            }
+        }else if(pkt.ph.type == CHUNK_REQ && pkt.ph.size == 0){
+            this->log << "Chunk Request from: " << peerIPv4 << std::endl;
+            status = this->chunkReqHandler(peerIPv4);
+            if(status < 0){
+                sysError("ERROR handling chunk request", this->log);
                 break;
             }
         }
@@ -209,5 +218,34 @@ void Hub::updatePeers(){
             this->pmMtx.unlockRead();
             peerCount = this->server.getClientCount();
         }
+    }
+}
+
+ssize_t Hub::chunkReqHandler(std::string peerIPv4){
+    int status;
+    float maxNumChunks;
+    ssize_t bytesWritten = 0;
+    Packet pkt;
+    sockaddr_in *peerAddr;
+    this->pmMtx.lockRead();
+    peerAddr = &this->peerAddrMap[peerIPv4];
+    this->pmMtx.unlockRead();
+    this->in.seekg(0);
+    if(this->server.getClientCount() == 0){
+        error("No peers connected to hub", this->log);
+        return -1;
+    }
+    maxNumChunks = this->torrentPkt.ph.size/
+                   (sizeof(ChunkHeader) * this->server.getClientCount());
+    for(int i=0; this->in.good() && i <= maxNumChunks; i++){
+        memset((char *) &pkt, 0, sizeof(pkt));
+        this->in.read(pkt.payload, sizeof(pkt.payload));
+        if(this->in.fail() && !this->in.eof())
+            throw std::runtime_error("Could not read input file");
+        pkt.ph.type = CHUNK_RESP;
+        pkt.ph.size = this->in.gcount();
+        status = this->server.write(peerAddr, (char *) &pkt, sizeof(pkt));
+        if(status < 0) return -1;
+        bytesWritten += status;
     }
 }

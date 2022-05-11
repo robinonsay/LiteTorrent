@@ -21,7 +21,9 @@ enum types{
     FIN=100,  /** FIN packet type*/
     UPDATE=200, /** Update packet type */
     TRRNT_REQ=300, /** Torrent request packet type */
-    TRRNT_RESP=400  /** Torrent response packet type */
+    TRRNT_RESP=350,  /** Torrent response packet type */
+    CHUNK_REQ=400,  /** Chunk Request packet type */
+    CHUNK_RESP=450  /** Chunk response packet type */
 };
 
 /** Packet header structure */

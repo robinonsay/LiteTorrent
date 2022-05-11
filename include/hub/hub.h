@@ -74,7 +74,7 @@ private:
     /** Flag indicating closing of the Hub */
     std::atomic<bool> closing;
 
-    /** Flag indicating closing of the Hub */
+    /** Number of peers in the map */
     std::atomic<size_t> peersInMap;
 
     /** Connection Handler */
@@ -82,5 +82,11 @@ private:
 
     /** Updates peers of new peer on network */
     void updatePeers();
+
+    /**
+    * Handles chunk requests from peers
+    * @param peerIPv4 The IPv4 address string of the peer
+    */
+    ssize_t chunkReqHandler(std::string peerIPv4);
 };
 #endif
