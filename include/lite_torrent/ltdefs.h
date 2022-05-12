@@ -23,7 +23,8 @@ enum types{
     TRRNT_REQ=300, /** Torrent request packet type */
     TRRNT_RESP=350,  /** Torrent response packet type */
     CHUNK_REQ=400,  /** Chunk Request packet type */
-    CHUNK_RESP=450  /** Chunk response packet type */
+    CHUNK_RESP=450,  /** Chunk response packet type */
+    CHUNK_FIN=475  /** Signifies that chunk transfer is over */
 };
 
 /** Packet header structure */

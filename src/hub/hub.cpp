@@ -248,4 +248,8 @@ ssize_t Hub::chunkReqHandler(std::string peerIPv4){
         if(status < 0) return -1;
         bytesWritten += status;
     }
+    pkt.ph.type = CHUNK_FIN;
+    pkt.ph.size = 0;
+    status = this->server.write(peerAddr, (char *) &pkt.ph, sizeof(pkt.ph));
+    if(status < 0) return -1;
 }
